@@ -50,7 +50,7 @@ jobs:
       - name: Branch name
         run: echo running on branch '${GITHUB_REF##*/}'
       - name: Build the Docker image
-        run: docker build . --file .docker/frontend/Dockerfile.dev --tag careplace-business-build-development:$(date +%s)
+        run: docker build . --file .docker/frontend/Dockerfile.dev --tag careplace-back-office-build-development:$(date +%s)
 
   test:
     name: Test
@@ -88,6 +88,6 @@ jobs:
       - name: Snyk Test Code
         run: npx snyk test --severity-threshold=high
       - name: Build the Docker image
-        run: docker build . --file .docker/frontend/Dockerfile.dev --tag careplace/business-web:dev
+        run: docker build . --file .docker/frontend/Dockerfile.dev --tag careplace/back-office-web:dev
       - name: Snyk Test Docker Image
-        run: npx snyk container test careplace/business-web:dev --file=.docker/frontend/Dockerfile.dev --severity-threshold=high
+        run: npx snyk container test careplace/back-office-web:dev --file=.docker/frontend/Dockerfile.dev --severity-threshold=high

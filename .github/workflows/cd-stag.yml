@@ -32,11 +32,11 @@ on:
 
 env:
   AWS_REGION: eu-west-3 # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: careplace-staging-ecr-repository-business # set this to your Amazon ECR repository name
-  ECS_SERVICE: careplace-staging-ecs-service-business # set this to your Amazon ECS service name
-  ECS_CLUSTER: careplace-staging-ecs-cluster-business # set this to your Amazon ECS cluster name
+  ECR_REPOSITORY: careplace-staging-ecr-repository-back-office # set this to your Amazon ECR repository name
+  ECS_SERVICE: careplace-staging-ecs-service-back-office # set this to your Amazon ECS service name
+  ECS_CLUSTER: careplace-staging-ecs-cluster-back-office # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/task-definition.staging.json # set this to the path to your Amazon ECS task definition file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: careplace-business # set this to the name of the container in the containerDefinitions section of your task definition
+  CONTAINER_NAME: careplace-back-office # set this to the name of the container in the containerDefinitions section of your task definition
 
 permissions:
   contents: read
