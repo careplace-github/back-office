@@ -1,4 +1,0 @@
-/**
- * Views
- */
-export { default as DashboardView } from './views/DashboardView';
