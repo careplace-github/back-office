@@ -1,0 +1,19 @@
+version: "1.0.0"
+name: business-web
+services:
+  frontend:
+    stdin_open: true
+    tty: true
+    build: 
+      context: ../../
+      dockerfile: ./.docker/frontend/Dockerfile.stag
+    image: careplace/business-web-stag:latest  
+    ports:
+      - "4000:4000"
+    container_name: frontend-stag
+    volumes:
+      - ../../:/usr/src/app
+    environment:
+      - APP_NAME=business-web-staging
+      - CHOKIDAR_USEPOLLING=true
+    

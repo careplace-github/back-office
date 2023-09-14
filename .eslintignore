@@ -1,0 +1,14 @@
+// .eslintignore
+**/node_modules/*
+**/out/*
+**/.next/**
+**/_next/**
+**/dist/**
+package.json
+package-lock.json
+
+/config
+/coverage
+cypress.config.ts
+jest.config.ts
+

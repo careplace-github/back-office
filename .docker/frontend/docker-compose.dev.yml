@@ -1,0 +1,21 @@
+version: "1.0.0"
+name: business-web
+services:
+  frontend:
+    stdin_open: true
+    tty: true
+    build: 
+      context: ../../
+      dockerfile: ./.docker/frontend/Dockerfile.dev
+    image: careplace/business-web-dev:latest  
+    ports:
+      - "4000:4000"
+    container_name: frontend-dev
+    volumes:
+      - type: bind
+        source: ../../
+        target: /usr/src/app
+    environment:
+      - APP_NAME=business-web-development
+      - CHOKIDAR_USEPOLLING=true
+    
