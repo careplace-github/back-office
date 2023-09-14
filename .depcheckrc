@@ -1,0 +1,13 @@
+{
+  "ignores": [
+    "ngrok",
+    "jenkins",
+    "concurrently",
+    "@snyk/protect",
+    "@fullcalendar/common",
+    "standard-version",
+    "typescript",
+    "@commitlint/config-angular",
+    "src"
+  ]
+}
