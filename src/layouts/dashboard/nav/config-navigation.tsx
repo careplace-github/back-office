@@ -41,6 +41,7 @@ const ICONS = {
   case: icon('1_ic_case'),
   invoice: icon('1_ic_invoice'),
   chat: icon('1_ic_chat'),
+  healthUnits: icon('ic_healthUnits'),
 };
 
 const navConfig = [
@@ -49,50 +50,10 @@ const navConfig = [
   {
     subheader: ' ',
     items: [
-      {
-        title: 'Dashboard',
-        path: PATHS.dashboard,
-        icon: ICONS.dashboard,
-        permission: 'dashboard_view',
-      },
-      { title: 'Pedidos', path: PATHS.orders.root, icon: ICONS.file, permission: 'orders_view' },
+     
+      { title: 'Health Units', path: PATHS.healthUnits.root, icon: ICONS.healthUnits, permission: 'admin' },
 
-      {
-        title: 'Agendamentos',
-        path: PATHS.calendar,
-        icon: ICONS.calendar,
-        permission: 'app_user',
-        iconWidth: '15px',
-        iconHeight: '15px',
-      },
-      { title: 'Equipa', path: PATHS.users.root, icon: ICONS.user, permission: 'users_view' },
-
-      {
-        title: 'Recrutamento',
-        path: '#disabled',
-        icon: ICONS.case,
-        info: <Label color="info">Brevemente</Label>,
-        disabled: true,
-        permission: 'app_user',
-      },
-
-      {
-        title: 'Faturação',
-        path: '#disabled',
-        icon: ICONS.invoice,
-        info: <Label color="info">Brevemente</Label>,
-        disabled: true,
-        permission: 'app_user',
-      },
-
-      {
-        title: 'Chat',
-        path: '#disabled',
-        icon: ICONS.chat,
-        info: <Label color="info">Brevemente</Label>,
-        disabled: true,
-        permission: 'app_user',
-      },
+     
     ],
   },
 ];

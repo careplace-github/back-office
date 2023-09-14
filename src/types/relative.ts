@@ -3,7 +3,7 @@
 export type IRelativeProps = {
   _id?: string;
   name: string;
-  profile_picture: string;
+  picture: string;
   kinship: string;
   birthdate: string;
   phone_number: string;

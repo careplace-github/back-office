@@ -44,8 +44,8 @@ export default function AccountGeneral({ user }) {
     firstName: user?.name ? user.name.split(' ')[0] : null,
     lastName: user?.name ? user.name.split(' ').pop() : null,
     email: user?.email || '',
-    profile_picture: user?.profile_picture || '',
-    phoneNumber: user?.phone || '',
+    picture: user?.picture || '',
+    phoneNumber: user?.phone_number || '',
     gender: user?.gender || 'male',
     birthdate: user?.birthdate ? user.birthdate : '',
     address: user?.address?.street || '',
@@ -105,7 +105,7 @@ export default function AccountGeneral({ user }) {
           city: data.city,
           postal_code: data.zipCode,
         },
-        profile_picture: data.fileChanged ? fileURL : data.profile_picture,
+        picture: data.fileChanged ? fileURL : data.picture,
       };
 
       await fetch('/api/account', {
@@ -118,7 +118,7 @@ export default function AccountGeneral({ user }) {
       // refresh the page
       window.location.reload();
     } catch (error) {
-      enqueueSnackbar('Erro ao guardar, por favor tente novamnete.', { variant: 'error' });
+      enqueueSnackbar('Erro ao Save, por favor tente novamnete.', { variant: 'error' });
     }
   };
 
@@ -138,7 +138,7 @@ export default function AccountGeneral({ user }) {
       if (file) {
         setValue('fileChanged', Date.now().toString());
 
-        setValue('profile_picture', newFile.preview, { shouldDirty: true });
+        setValue('picture', newFile.preview, { shouldDirty: true });
       }
     },
     [setValue]
@@ -161,7 +161,7 @@ export default function AccountGeneral({ user }) {
         <Grid item xs={12} md={4}>
           <Card sx={{ py: 10, px: 3, textAlign: 'center' }}>
             <RHFUploadAvatar
-              name="profile_picture"
+              name="picture"
               maxSize={3145728}
               onDrop={handleDrop}
               helperText={
@@ -174,8 +174,8 @@ export default function AccountGeneral({ user }) {
                     textAlign: 'center',
                     color: 'text.secondary',
                   }}>
-                  Permitido *.jpeg, *.jpg, *.png, *.gif
-                  <br /> tamanho máximo de 5MB
+                  Allowed *.jpeg, *.jpg, *.png, *.gif
+                  <br /> Max size: 5MB
                 </Typography>
               }
             />
@@ -193,8 +193,8 @@ export default function AccountGeneral({ user }) {
                 xs: 'repeat(1, 1fr)',
                 sm: 'repeat(2, 1fr)',
               }}>
-              <RHFTextField name="firstName" label="Nome" />
-              <RHFTextField name="lastName" label="Apelido" />
+              <RHFTextField name="firstName" label="Name" />
+              <RHFTextField name="lastName" label="Surname" />
 
               <RHFTextField
                 name="email"
@@ -215,7 +215,7 @@ export default function AccountGeneral({ user }) {
               <Box>
                 <RHFPhoneField
                   name="phoneNumber"
-                  label="Telefone"
+                  label="Phone"
                   defaultCountry="PT"
                   forceCallingCode
                   disabled
@@ -269,84 +269,14 @@ export default function AccountGeneral({ user }) {
                         color: 'primary.main',
                       },
                     }}>
-                    Confirmar telemóvel
+                    Confirm phone
                   </Typography>
                 )}
               </Box>
 
-              <Controller
-                name="birthdate"
-                render={({ field, fieldState: { error } }) => (
-                  <DatePicker
-                    format="dd-MM-yyyy"
-                    label="Data de nascimento"
-                    maxDate={new Date()}
-                    slotProps={{
-                      textField: {
-                        helperText: error?.message,
-                        error: !!error?.message,
-                      },
-                    }}
-                    {...field}
-                    value={new Date(field.value)}
-                  />
-                )}
-              />
+             
 
-              <RHFSelect native name="gender" label="Género">
-                {genders.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </RHFSelect>
-
-              <RHFTextField name="address" label="Rua" />
-              <RHFTextField
-                name="zipCode"
-                label="Código Postal"
-                onChange={e => {
-                  const { value } = e.target;
-
-                  /**
-                   * Only allow numbers and dashes
-                   */
-                  if (!/^[0-9-]*$/.test(value)) {
-                    return;
-                  }
-
-                  /**
-                   * Portugal Zip Code Validation
-                   */
-                  if (getValues('country') === 'PT' || getValues('country') === '') {
-                    // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
-                    if (value.length === 5 && value[4] !== '-') {
-                      setValue(
-                        'zipCode',
-                        `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
-                      );
-                      return;
-                    }
-
-                    // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
-                    if (value.length > 8) {
-                      return;
-                    }
-                  }
-
-                  setValue('zipCode', value);
-                }}
-              />
-              <RHFTextField name="city" label="Cidade" />
-
-              <RHFSelect native name="country" label="País">
-                <option value="" />
-                {countries.map(country => (
-                  <option key={country.code} value={country.code}>
-                    {country.label}
-                  </option>
-                ))}
-              </RHFSelect>
+             
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
               <LoadingButton
@@ -366,7 +296,7 @@ export default function AccountGeneral({ user }) {
                 type="submit"
                 variant="contained"
                 loading={isSubmitting}>
-                Guardar
+                Save
               </LoadingButton>
             </Box>
           </Card>

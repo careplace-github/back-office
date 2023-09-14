@@ -18,7 +18,6 @@ import useResponsive from 'src/hooks/useResponsive';
 //
 import navConfig from './config-navigation';
 import NavAccount from './NavAccount';
-import NavContactCallout from './NavContactCallout';
 
 // ----------------------------------------------------------------------
 
@@ -61,17 +60,17 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           sx={{
             [`& .${badgeClasses.badge}`]: {
               top: 8,
-              right: -16,
+              right: 15,
             },
           }}
           badgeContent={
             <Link href="" target="_blank" rel="noopener" underline="none" sx={{ ml: -7 }}>
               <Label color="info" sx={{ textTransform: 'unset', height: 22, px: 0.5 }}>
-                beta
+                ADMIN
               </Label>
             </Link>
           }>
-          <Logo height={37} />
+          <Logo height={33} />
         </Badge>
 
         <NavAccount sx={{ mt: 5 }} />
@@ -81,7 +80,6 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
       <Box sx={{ flexGrow: 1 }} />
 
-      <NavContactCallout />
     </Scrollbar>
   );
 

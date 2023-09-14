@@ -23,17 +23,12 @@ import useSessionStorage from 'src/hooks/use-session-storage';
 
 const OPTIONS = [
   {
-    label: 'Início',
+    label: 'Home',
     linkTo: '/',
     icon: 'mdi:house-outline',
   },
   {
-    label: 'A Minha Empresa',
-    linkTo: PATHS.company.root,
-    icon: 'carbon:location-company',
-  },
-  {
-    label: 'Definições',
+    label: 'Settings',
     linkTo: PATHS.account.settings,
     icon: 'material-symbols:settings-outline-rounded',
   },
@@ -45,14 +40,14 @@ export default function AccountPopover() {
   const { data: user } = useSession();
 
   // Use useSessionStorage to get and set values
-  const [profilePicture, setProfilePicture] = useSessionStorage('profile_picture', '');
+  const [profilePicture, setProfilePicture] = useSessionStorage('picture', '');
   const [name, setName] = useSessionStorage('name', '');
   const [email, setEmail] = useSessionStorage('email', '');
 
   // Update session storage values when user data changes
   useEffect(() => {
     if (user) {
-      setProfilePicture(user.profile_picture || '');
+      setProfilePicture(user.picture || '');
       setName(user.name || '');
       setEmail(user.email || '');
     }
@@ -165,7 +160,7 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleLogout} sx={{ m: 1, color: '#212B36' }}>
-          Terminar Sessão
+          Logout
         </MenuItem>
       </MenuPopover>
     </>

@@ -26,7 +26,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
     const fullLogo = (
       <Box
         component="img"
-        src="/logo/careplace-business-logo.svg"
+        src="/logo/careplace-logo.svg"
         sx={{ ...sx, height: height || 40, cursor: 'pointer' }}
       />
     );

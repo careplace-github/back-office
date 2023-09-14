@@ -7,7 +7,7 @@ export type IOrderProps = {
     _id: string;
     name: string;
     birthdate: string;
-    profile_picture?: string;
+    picture?: string;
     medical_conditions: string;
     gender: string;
     kinship: string;
@@ -17,7 +17,7 @@ export type IOrderProps = {
     name: string;
     gender?: string;
     birthdate?: string;
-    profile_picture?: string;
+    picture?: string;
   };
   services: [];
   schedule_information: {

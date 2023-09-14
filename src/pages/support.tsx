@@ -15,7 +15,7 @@ export default function FAQsPage() {
   return (
     <>
       <Head>
-        <title>Suporte | Careplace Business</title>
+        <title>Suporte | Careplace Admin</title>
       </Head>
       <MainLayout>
         <FaqsView />

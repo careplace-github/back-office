@@ -19,17 +19,12 @@ import { IconButtonAnimate } from 'src/components/animate';
 
 const OPTIONS = [
   {
-    label: 'Início',
+    label: 'Home',
     linkTo: '/',
     icon: 'mdi:house-outline',
   },
   {
-    label: 'A Minha Empresa',
-    linkTo: PATHS.company.root,
-    icon: 'carbon:location-company',
-  },
-  {
-    label: 'Definições',
+    label: 'Settings',
     linkTo: PATHS.account.settings,
     icon: 'material-symbols:settings-outline-rounded',
   },
@@ -96,7 +91,7 @@ export default function AccountPopover() {
             cursor: 'pointer',
           }}>
           <CustomAvatar
-            src={user?.profile_picture}
+            src={user?.picture}
             alt={user?.name || ''}
             name={user?.name || ''}
             type="custom"
@@ -152,7 +147,7 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleLogout} sx={{ m: 1, color: '#212B36' }}>
-          Terminar Sessão
+          Logout
         </MenuItem>
       </MenuPopover>
     </>

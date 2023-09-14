@@ -54,18 +54,7 @@ export default async function sessionRoute(req: NextApiRequest, res: NextApiResp
     }
 
     const user = {
-      name: response.data.name,
-      email: response.data.email,
-      profile_picture: response.data.profile_picture,
-      role: response.data.role,
-      permissions: response.data.permissions,
-      health_unit: {
-        _id: response.data.health_unit?._id,
-        business_profile: {
-          logo: response.data.health_unit?.business_profile?.logo,
-          name: response.data.health_unit?.business_profile?.name,
-        },
-      },
+      ...response.data,
     };
 
     return res.status(200).json(user);

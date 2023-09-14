@@ -29,28 +29,22 @@ export default function UserSettingstView({ user }) {
   const TABS = [
     {
       value: 'general',
-      label: 'Perfil',
+      label: 'Profile',
       icon: <Iconify icon="ic:round-account-box" />,
       component: <AccountGeneral user={user} />,
     },
 
-    {
-      value: 'notifications',
-      label: 'Notificações',
-      icon: <Iconify icon="eva:bell-fill" />,
-      component: <AccountNotifications user={user} />,
-    },
 
     {
       value: 'change_password',
-      label: 'Alterar Password',
+      label: 'Change Password',
       icon: <Iconify icon="ic:round-vpn-key" />,
       component: <AccountChangePassword />,
     },
 
     {
       value: 'account_settings',
-      label: 'Definições de Conta',
+      label: 'Account Settings',
       icon: <Iconify icon="ic:round-settings" />,
       component: <AccountSettings />,
     },
@@ -60,8 +54,8 @@ export default function UserSettingstView({ user }) {
     <>
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Definições de Conta"
-          links={[{ name: 'Conta' }, { name: 'Definições' }]}
+          heading="Account Settings"
+          links={[{ name: 'Account' }, { name: 'Settings' }]}
         />
 
         <Tabs value={currentTab} onChange={(event, newValue) => setCurrentTab(newValue)}>

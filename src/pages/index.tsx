@@ -10,7 +10,7 @@ export default function Index() {
   const { pathname, push } = useRouter();
 
   useEffect(() => {
-    push(PATHS.dashboard);
+    push(PATHS.healthUnits.root);
   }, [pathname]);
 
   return null;

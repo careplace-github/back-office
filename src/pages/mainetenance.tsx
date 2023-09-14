@@ -15,7 +15,7 @@ export default function MaintenancePage() {
   return (
     <>
       <Head>
-        <title>Manutenção | Careplace Business</title>
+        <title>Manutenção | Careplace Admin</title>
       </Head>
 
       <MaintenanceView />

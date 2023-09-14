@@ -52,7 +52,7 @@ export function AvatarDropdown({
           return (
             <Stack gap="10px" direction="row" alignItems="center" justifyContent="flex-start">
               <Avatar
-                src={_selected.profile_picture}
+                src={_selected.picture}
                 sx={{
                   width: avatarSize || 40,
                   height: avatarSize || 40,
@@ -74,7 +74,7 @@ export function AvatarDropdown({
                 fontSize: fontSize || 14,
               }}>
               <Avatar
-                src={item.profile_picture}
+                src={item.picture}
                 sx={{
                   width: avatarSize || 40,
                   height: avatarSize || 40,

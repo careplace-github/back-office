@@ -15,6 +15,6 @@ export type ICaregiverProps = {
     country: string;
   };
   role: string;
-  profile_picture: string;
+  picture: string;
   services: string[];
 };
