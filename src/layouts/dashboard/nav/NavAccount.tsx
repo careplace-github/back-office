@@ -34,33 +34,28 @@ export default function NavAccount({ sx, ...other }: StackProps) {
 
   // Use useSessionStorage to get and set values
   const [name, setName] = useSessionStorage('name', '');
-  const [role, setRole] = useSessionStorage('role', '');
-  const [healthUnitName, setHealthUnitName] = useSessionStorage('health_unit_name', '');
-  const [healthUnitLogo, setHealthUnitLogo] = useSessionStorage('health_unit_logo', '');
+  const [picture, setPicture] = useSessionStorage('picture', '');
 
   // Update session storage values when user data changes
   useEffect(() => {
     if (user) {
       setName(user.name || '');
-      setRole(user.role || '');
-      setHealthUnitName(user.health_unit?.business_profile?.name || '');
-      setHealthUnitLogo(user.health_unit?.business_profile?.logo || '');
     }
-  }, [user, setName, setRole, setHealthUnitName, setHealthUnitLogo]);
+  }, [user, setName]);
 
   return (
     <Stack sx={sx} {...other}>
       <Link component={NextLink} href={PATHS.account.root} underline="none" color="inherit">
         <StyledRoot>
-          <CustomAvatar src={healthUnitLogo} alt={name} name={name} />
+          <CustomAvatar src={picture} alt={name} name={name} />
 
           <Box sx={{ ml: 2, minWidth: 0 }}>
             <Typography variant="subtitle2" noWrap>
-              {healthUnitName}
+              {name}
             </Typography>
 
             <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-              {fRole(role)}
+              {'Admin'}
             </Typography>
           </Box>
         </StyledRoot>

@@ -15,7 +15,7 @@ export default function Page404() {
   return (
     <>
       <Head>
-        <title> 404 Página Não Encontrada | Careplace Business </title>
+        <title> 404 Página Não Encontrada | Careplace Admin </title>
       </Head>
 
       <Error404View />

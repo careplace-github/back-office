@@ -25,7 +25,7 @@ module.exports = withTM({
       {
         source: '/',
         // Only use while home page is under construction
-        destination: '/app/dashboard',
+        destination: '/health-units',
         permanent: false,
       },
     ];

@@ -83,7 +83,7 @@ export default function AccountChangePassword() {
           enqueueSnackbar('A password antiga está incorreta!', { variant: 'error' });
           break;
         default:
-          enqueueSnackbar('Erro ao guardar, por favor tente novamnete.', { variant: 'error' });
+          enqueueSnackbar('Erro ao Save, por favor tente novamnete.', { variant: 'error' });
       }
 
       console.error('error: ', error);
@@ -99,7 +99,7 @@ export default function AccountChangePassword() {
           <RHFTextField
             name="oldPassword"
             type={showOldPassword ? 'text' : 'password'}
-            label="Password Antiga"
+            label="Old Password"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -114,11 +114,10 @@ export default function AccountChangePassword() {
           <RHFTextField
             name="newPassword"
             type={showNewPassword ? 'text' : 'password'}
-            label="Nova Password"
+            label="New Password"
             helperText={
               <Stack component="span" direction="row" alignItems="center">
-                <Iconify icon="eva:info-fill" width={16} sx={{ mr: 0.5 }} /> A password tem de ter
-                6+ caracteres
+                <Iconify icon="eva:info-fill" width={16} sx={{ mr: 0.5 }} /> The new password must contain at least 8 characters, 1 number, 1 uppercase letter, 1 lowercase letter and 1 special character
               </Stack>
             }
             InputProps={{
@@ -135,7 +134,7 @@ export default function AccountChangePassword() {
           <RHFTextField
             name="confirmNewPassword"
             type={showConfirmNewPassword ? 'text' : 'password'}
-            label="Confirmar Nova Password"
+            label="Confirm New Password"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -152,7 +151,7 @@ export default function AccountChangePassword() {
             variant="contained"
             loading={isSubmitting}
             disabled={!isDirty}>
-            Guardar
+            Save
           </LoadingButton>
         </Stack>
       </Card>

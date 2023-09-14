@@ -21,25 +21,6 @@ export default function LoginView() {
         </Stack>
       )}
 
-      <Alert
-        severity="info"
-        sx={{
-          mb: 3,
-          // on hover change the pointer to a hand
-          '&:hover': {
-            cursor: 'pointer',
-          },
-        }}
-        onClick={() => router.push(PATHS.demo)}>
-        <strong>Gostaria de se registar? </strong>
-        <br></br>
-        <Tooltip title="Registar">
-          <Box component="span" sx={{}}>
-            Clique aqui para obter uma demonstração da Plataforma #1 de gestão de operações de
-            Empresas SAD, Lares e Residências Sénior em Portugal.
-          </Box>
-        </Tooltip>
-      </Alert>
 
       <AuthLoginForm />
     </>

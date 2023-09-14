@@ -68,7 +68,7 @@ export default function AccountNotifications({ user }) {
 
       enqueueSnackbar('Guardado com sucesso!');
     } catch (error) {
-      enqueueSnackbar('Erro ao guardar, por favor tente novamnete.', { variant: 'error' });
+      enqueueSnackbar('Erro ao Save, por favor tente novamnete.', { variant: 'error' });
 
       console.error(error);
     }

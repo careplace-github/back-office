@@ -148,7 +148,7 @@ export default function AccountSettingsChangePhone() {
         <Card>
           <Stack spacing={3} alignItems="flex-end" sx={{ p: 3 }}>
             <Typography variant="h5" sx={{ mb: 3, width: '100%', textAlign: 'left' }}>
-              Alterar Telemóvel
+              Change Phone
             </Typography>
 
             <RHFPhoneField
@@ -159,7 +159,7 @@ export default function AccountSettingsChangePhone() {
                   width: '100%',
                 },
               }}
-              label="Telemóvel"
+              label="Phone"
               defaultCountry="PT"
               forceCallingCode
               fullWidth
@@ -206,7 +206,7 @@ export default function AccountSettingsChangePhone() {
                 disabled={!isValid}
                 loading={isSubmitting}
                 onClick={handleOnSubmit}>
-                Alterar Telemóvel
+                Change Phone
               </LoadingButton>
             </Box>
           </Stack>

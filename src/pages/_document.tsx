@@ -48,10 +48,10 @@ const Meta = () => (
     <meta name="msapplication-TileColor" content="#ffffff" />
 
     {/* SEO */}
-    <meta name="title" content="Careplace Business" />
+    <meta name="title" content="Careplace Admin" />
     <meta
       name="description"
-      content="Careplace Business é um software de gestão de operações para empresas de apoio domiciliário, lares de idosos e residências sénior. Através da Careplace Business, as empresas de apoio domiciliário podem gerir os seus clientes, colaboradores, faturação, recrutamento, serviços e muito mais. A Careplace Business é a solução ideal para empresas de apoio domiciliário que pretendem aumentar a sua eficiência e produtividade. Registe-se gratuitamente em www.business.careplace.pt e transforme a maneira como gere a sua empresa de apoio domiciliário."
+      content="Careplace Admin é um software de gestão de operações para empresas de apoio domiciliário, lares de idosos e residências sénior. Através da Careplace Admin, as empresas de apoio domiciliário podem gerir os seus clientes, colaboradores, faturação, recrutamento, serviços e muito mais. A Careplace Admin é a solução ideal para empresas de apoio domiciliário que pretendem aumentar a sua eficiência e produtividade. Registe-se gratuitamente em www.business.careplace.pt e transforme a maneira como gere a sua empresa de apoio domiciliário."
     />
     <meta
       name="keywords"

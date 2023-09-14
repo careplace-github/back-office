@@ -75,7 +75,7 @@ export default function AuthLoginForm() {
 
       sessionStorage.setItem('name', fetchUser?.name || '');
       sessionStorage.setItem('email', fetchUser?.email || '');
-      sessionStorage.setItem('profile_picture', fetchUser?.profile_picture || '');
+      sessionStorage.setItem('picture', fetchUser?.picture || '');
       sessionStorage.setItem('role', fetchUser?.role || '');
       sessionStorage.setItem(
         'health_unit_logo',

@@ -15,7 +15,7 @@ export default function Page500() {
   return (
     <>
       <Head>
-        <title> 500 Erro de Servidor | Careplace Business </title>
+        <title> 500 Erro de Servidor | Careplace Admin </title>
       </Head>
 
       <Error500View />

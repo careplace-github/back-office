@@ -15,7 +15,7 @@ export default function Page403() {
   return (
     <>
       <Head>
-        <title> 403 Sem Permissão | Careplace Business </title>
+        <title> 403 Sem Permissão | Careplace Admin </title>
       </Head>
 
       <Error403View />

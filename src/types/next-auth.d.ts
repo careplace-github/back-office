@@ -14,36 +14,16 @@ declare module 'next-auth' {
   }
 
   interface User {
-    _id: string;
+    sub: string;
 
     name: string | null;
     email: string | null;
-    profile_picture?: string;
-
-    permissions: string[];
     phone?: string;
-    birthdate?: string;
-    gender?: string;
+    picture?: string;
     email_verified?: boolean;
     phone_verified?: boolean;
-    address: {
-      street: string;
-      city: string;
-      state: string;
-      postal_code: string;
-      country: string;
-    };
-    role: string;
-    // FIX: define health_unit type
-    health_unit?: any;
-    settings: {
-      theme: string;
-      notifications: {
-        email: boolean;
-        push: boolean;
-        sms: boolean;
-      };
-    };
+    Groups?: any[];
+    permissions?: string[];
 
     accessToken: string;
     refreshToken?: string;

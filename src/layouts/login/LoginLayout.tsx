@@ -27,7 +27,7 @@ export default function LoginLayout({ children, illustration, title }: Props) {
           sx={{
             [`& .${badgeClasses.badge}`]: {
               top: 8,
-              right: -16,
+              right: -30,
             },
             zIndex: 90,
             position: 'absolute',
@@ -37,7 +37,7 @@ export default function LoginLayout({ children, illustration, title }: Props) {
           badgeContent={
             <Link href="" target="_blank" rel="noopener" underline="none">
               <Label color="info" sx={{ textTransform: 'unset', height: 22, px: 0.5 }}>
-                beta
+                ADMIN
               </Label>
             </Link>
           }>

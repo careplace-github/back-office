@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   providers: [
-    // Custom Credentials Provider
+    // Custom Credentials Provsuber
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
       authorize: async (credentials: Record<'email' | 'password', string> | undefined, req) => {
         try {
           // Implement your custom authentication logic here
-          // Retrieve the user based on the provided credentials
+          // Retrieve the user based on the provsubed credentials
           const { email, password } = credentials || {};
           if (!email || !password) {
             // Return null if credentials are missing
@@ -60,31 +60,20 @@ export const authOptions: NextAuthOptions = {
             userDB = test.data;
           }
 
-          if (userDB._id) {
+          if (userDB.sub) {
             // Add the user object and access token to the session
             const user = {
-              _id: userDB._id,
-              id: userDB._id,
+              id: userDB.sub,
+              sub: userDB.sub,
 
               name: userDB.name,
               email: userDB.email,
-              profile_picture: userDB.profile_picture,
-
-              permissions: userDB.permissions,
               phone: userDB.phone,
-              birthdate: userDB.birthdate,
-              gender: userDB.gender,
+              picture: userDB.picture,
               email_verified: userDB.email_verified,
               phone_verified: userDB.phone_verified,
-              address: userDB.address,
-              role: userDB.role,
-              health_unit: {
-                _id: userDB.health_unit?._id,
-                business_profile: {
-                  logo: userDB.health_unit?.business_profile?.logo,
-                },
-              },
-              settings: userDB.settings,
+              Groups: userDB.Groups,
+              permissions: userDB.permissions,
 
               accessToken,
               refreshToken,
@@ -103,8 +92,8 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
-    // Other authentication providers can be added here
-    // For example: Providers.Google({ ... }),
+    // Other authentication provsubers can be added here
+    // For example: Provsubers.Google({ ... }),
   ],
   callbacks: {
     jwt({ token, account, user }: { token: any; account: any; user: any }) {
@@ -117,28 +106,17 @@ export const authOptions: NextAuthOptions = {
           exp: user?.exp,
 
           user: {
-            _id: user._id,
-            id: user._id,
+            id: user.sub,
+            sub: user.sub,
 
             name: user.name,
             email: user.email,
-            profile_picture: user.profile_picture,
-
-            permissions: user.permissions,
             phone: user.phone,
-            birthdate: user.birthdate,
-            gender: user.gender,
+            picture: user.picture,
             email_verified: user.email_verified,
             phone_verified: user.phone_verified,
-            address: user.address,
-            role: user.role,
-            health_unit: {
-              _id: user.health_unit?._id,
-              business_profile: {
-                logo: user.health_unit?.business_profile?.logo,
-              },
-            },
-            settings: user.settings,
+            Groups: user.Groups,
+            permissions: user.permissions,
           },
         };
 
@@ -152,29 +130,17 @@ export const authOptions: NextAuthOptions = {
           exp: token?.exp,
 
           user: {
-            _id: token.user._id,
-            id: token.user._id,
+            id: token.sub,
+            sub: token.sub,
 
-            name: token.user.name,
-            email: token.user.email,
-            profile_picture: token.user.profile_picture,
-
-            permissions: token.user.permissions,
-            phone: token.user.phone,
-            birthdate: token.user.birthdate,
-            gender: token.user.gender,
-            email_verified: token.user.email_verified,
-            phone_verified: token.user.phone_verified,
-            address: token.user.address,
-            role: token.user.role,
-
-            health_unit: {
-              _id: token.user.health_unit?._id,
-              business_profile: {
-                logo: token.user.health_unit?.business_profile?.logo,
-              },
-            },
-            settings: token.user.settings,
+            name: token.name,
+            email: token.email,
+            phone: token.phone,
+            picture: token.picture,
+            email_verified: token.email_verified,
+            phone_verified: token.phone_verified,
+            Groups: token.Groups,
+            permissions: token.permissions,
           },
         };
 
@@ -213,33 +179,22 @@ export const authOptions: NextAuthOptions = {
         return null;
       }
 
-      // Send properties to the client, like an access_token from a provider.
+      // Send properties to the client, like an access_token from a provsuber.
       sessionUser = {
-        _id: updateSession._id,
-        id: updateSession._id,
+        id: updateSession.sub,
+        sub: updateSession.sub,
 
         name: updateSession.name,
         email: updateSession.email,
-        profile_picture: updateSession.profile_picture,
-
-        permissions: updateSession.permissions,
         phone: updateSession.phone,
-        birthdate: updateSession.birthdate,
-        gender: updateSession.gender,
+        picture: updateSession.picture,
         email_verified: updateSession.email_verified,
         phone_verified: updateSession.phone_verified,
-        address: updateSession.address,
-        role: updateSession.role,
-        health_unit: {
-          _id: updateSession.health_unit?._id,
-          business_profile: {
-            logo: updateSession.health_unit?.business_profile?.logo,
-          },
-        },
-        settings: updateSession.settings,
+        Groups: updateSession.Groups,
+        permissions: updateSession.permissions,
       };
 
-      // Send properties to the client, like an access_token from a provider.
+      // Send properties to the client, like an access_token from a provsuber.
       const customSession = {
         ...session,
         user: sessionUser,
@@ -253,15 +208,15 @@ export const authOptions: NextAuthOptions = {
     async redirect({ url, baseUrl }) {
       // After signin, redirect to '/app'
       // After signout, redirect to '/'
-      return url.startsWith(baseUrl + '/app/auth/login')
-        ? Promise.resolve(baseUrl + '/app')
+      return url.startsWith(baseUrl + '/auth/login')
+        ? Promise.resolve(baseUrl + '/')
         : Promise.resolve(baseUrl + '/');
     },
   },
 
   pages: {
-    signIn: '/app/auth/login',
-    error: '/api/auth/error',
+    signIn: '/auth/login',
+    error: '/api/error',
   },
 };
 

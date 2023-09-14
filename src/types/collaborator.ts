@@ -15,14 +15,14 @@ export type ICollaboratorProps = {
   };
   role: string;
   permissions: string[];
-  profile_picture: string;
+  picture: string;
 };
 
 export type ISessionUser = {
   _id: string;
   name: string;
   email: string;
-  profile_picture: string;
+  picture: string;
   role: string;
   permissions: string[];
 };
