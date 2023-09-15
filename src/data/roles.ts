@@ -1,5 +1,3 @@
-const roles = [
-  { value: 'agency', label: 'Agency' },
-];
+const roles = [{ value: 'agency', label: 'Agency' }];
 
 export default roles;

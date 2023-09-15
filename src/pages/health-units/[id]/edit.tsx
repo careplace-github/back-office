@@ -3,7 +3,7 @@ import Head from 'next/head';
 // layouts
 import DashboardLayout from 'src/layouts/dashboard';
 // features
-import { EditUserView } from 'src/features/health-units';
+import { EditHealthUnitView } from 'src/features/health-units';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from 'src/pages/api/auth/[...nextauth]';
 import axios from 'src/lib/axios';
@@ -12,7 +12,7 @@ import { PATHS } from 'src/routes';
 
 // ----------------------------------------------------------------------
 
-export default function EditUserPage({ collaborator, services }) {
+export default function EditUserPage({ healthUnit, services }) {
   return (
     <>
       <Head>
@@ -20,7 +20,7 @@ export default function EditUserPage({ collaborator, services }) {
       </Head>
 
       <DashboardLayout>
-        <EditUserView collaborator={collaborator} services={services} />
+        <EditHealthUnitView healthUnit={healthUnit} services={services} />
       </DashboardLayout>
     </>
   );

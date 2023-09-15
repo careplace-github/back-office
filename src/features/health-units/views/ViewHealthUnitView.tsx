@@ -15,11 +15,11 @@ import Tab from '@mui/material/Tab';
 
 import Card from '@mui/material/Card';
 import { alpha } from '@mui/material/styles';
+import Iconify from 'src/components/iconify';
 
 //
 import HealthUnitNewViewEditForm from '../components/HealthUnitNewViewEditForm';
 import ProductDetailsReview from '../components/HealthUnitDetailReviews';
-import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -94,7 +94,9 @@ export default function EditUserView({ services, healthUnit }) {
               <HealthUnitNewViewEditForm isView editHealthUnit={healthUnit} services={services} />
             )}
 
-            {currentTab === 'reviews' && <ProductDetailsReview totalRatings={0} totalReviews={0} ratings={[]} reviews={[]} />}
+            {currentTab === 'reviews' && (
+              <ProductDetailsReview totalRatings={0} totalReviews={0} ratings={[]} reviews={[]} />
+            )}
           </Card>
         </Container>
       )}

@@ -49,8 +49,7 @@ function ControlPanel({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-        }}
-      >
+        }}>
         <Typography variant="subtitle2" sx={{ color: 'common.white' }}>
           All Days
         </Typography>
@@ -58,7 +57,7 @@ function ControlPanel({
         <Switch
           size="small"
           checked={allDays}
-          onChange={(event) => onChangeAllDays(event.target.checked)}
+          onChange={event => onChangeAllDays(event.target.checked)}
         />
       </Box>
 
@@ -67,9 +66,8 @@ function ControlPanel({
       <Typography
         gutterBottom
         variant="body2"
-        sx={{ color: allDays ? 'text.disabled' : 'common.white' }}
-      >
-        Each Day: 
+        sx={{ color: allDays ? 'text.disabled' : 'common.white' }}>
+        Each Day:
       </Typography>
 
       <Slider

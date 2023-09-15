@@ -16,11 +16,11 @@ function MapDraggableMarkers({ ...other }: MapBoxProps) {
   const [events, logEvents] = useState<Record<string, LngLat>>({});
 
   const onMarkerDragStart = useCallback((event: MarkerDragEvent) => {
-    logEvents((_events) => ({ ..._events, onDragStart: event.lngLat }));
+    // logEvents(_events => ({ ..._events, onDragStart: event.lngLat }));
   }, []);
 
   const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
-    logEvents((_events) => ({ ..._events, onDrag: event.lngLat }));
+    // logEvents(_events => ({ ..._events, onDrag: event.lngLat }));
 
     setMarker({
       longitude: event.lngLat.lng,
@@ -29,7 +29,7 @@ function MapDraggableMarkers({ ...other }: MapBoxProps) {
   }, []);
 
   const onMarkerDragEnd = useCallback((event: MarkerDragEvent) => {
-    logEvents((_events) => ({ ..._events, onDragEnd: event.lngLat }));
+    // logEvents(_events => ({ ..._events, onDragEnd: event.lngLat }));
   }, []);
 
   return (

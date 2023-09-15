@@ -64,8 +64,7 @@ function MapHighlightByFilter({ ...other }: MapBoxProps) {
       minZoom={2}
       onMouseMove={onHover}
       interactiveLayerIds={['counties']}
-      {...other}
-    >
+      {...other}>
       <MapControl />
 
       <Source type="vector" url="mapbox://mapbox.82pkq93d">

@@ -273,10 +273,6 @@ export default function AccountGeneral({ user }) {
                   </Typography>
                 )}
               </Box>
-
-             
-
-             
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
               <LoadingButton

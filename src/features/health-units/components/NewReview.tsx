@@ -50,9 +50,9 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
     formState: { errors, isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async data => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
       reset();
       onClose();
       console.info('DATA', data);

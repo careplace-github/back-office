@@ -1,6 +1,4 @@
 import { sub } from 'date-fns';
-
-const ASSETS_API = process.env.REACT_APP_ASSETS_PATH;
 // config
 //
 import {
@@ -29,6 +27,8 @@ import {
   _descriptions,
   _phoneNumbers,
 } from './assets';
+
+const ASSETS_API = process.env.REACT_APP_ASSETS_PATH;
 
 // ----------------------------------------------------------------------
 

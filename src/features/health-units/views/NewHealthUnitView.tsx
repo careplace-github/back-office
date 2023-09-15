@@ -40,7 +40,7 @@ export default function NewUserView({ services }) {
               { name: 'Add Health Unit' },
             ]}
           />
-          <HealthUnitNewViewEditForm isNew isEdit={false} editUser={null} services={services} />
+          <HealthUnitNewViewEditForm isNew isEdit={false} services={services} />
         </Container>
       )}
     </>
