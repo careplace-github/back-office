@@ -108,17 +108,6 @@ export default function UserTableRow({
           <Iconify icon="eva:eye-fill" />
           View
         </MenuItem>
-
-        {user?.permissions?.includes('admin') && (
-          <MenuItem
-            onClick={() => {
-              onEditRow();
-              handleClosePopover();
-            }}>
-            <Iconify icon="eva:edit-fill" />
-            Edit
-          </MenuItem>
-        )}
       </MenuPopover>
 
       <ConfirmDialog
