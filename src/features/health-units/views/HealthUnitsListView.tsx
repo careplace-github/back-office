@@ -61,8 +61,6 @@ const ROLES_OPTIONS = [{ value: 'all', label: 'All' }, ...roles];
 
 const COUNTRIES_OPTIONS = [{ value: 'all', label: 'All' }, ...countries];
 
-
-
 const TABLE_HEAD = [
   { id: 'name', label: 'Company', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
@@ -79,8 +77,6 @@ export default function healthUnitsListView({ healthUnits }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [tableData, setTableData] = useState<ICollaboratorProps[]>([]);
-
-
 
   useEffect(() => {
     setTableData(healthUnits);
@@ -234,8 +230,7 @@ export default function healthUnitsListView({ healthUnits }) {
       {isLoading ? (
         <LoadingScreen />
       ) : (
-        <>
-          <Container maxWidth={themeStretch ? false : 'lg'}>
+        <Container maxWidth={themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
               heading="Health Units"
               links={[{ name: 'Health Units' }]}
@@ -316,7 +311,6 @@ export default function healthUnitsListView({ healthUnits }) {
               />
             </Card>
           </Container>
-        </>
       )}
     </>
   );
@@ -337,7 +331,8 @@ function applyFilter({ inputData, comparator, filterName, filterCountry, filterT
 
   if (filterName) {
     inputData = inputData.filter(
-      healthUnit => healthUnit.business_profile.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      healthUnit =>
+        healthUnit.business_profile.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 

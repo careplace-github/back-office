@@ -34,7 +34,6 @@ export default function UserSettingstView({ user }) {
       component: <AccountGeneral user={user} />,
     },
 
-
     {
       value: 'change_password',
       label: 'Change Password',
@@ -51,8 +50,7 @@ export default function UserSettingstView({ user }) {
   ];
 
   return (
-    <>
-      <Container maxWidth={themeStretch ? false : 'lg'}>
+    <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Account Settings"
           links={[{ name: 'Account' }, { name: 'Settings' }]}
@@ -73,6 +71,5 @@ export default function UserSettingstView({ user }) {
             )
         )}
       </Container>
-    </>
   );
 }

@@ -22,7 +22,7 @@ type Props = {
 function ControlPanel({ events = {} }: Props) {
   return (
     <StyledControlPanel>
-      {EVENT_NAMES.map((event) => {
+      {EVENT_NAMES.map(event => {
         const lngLat = events[event];
 
         return (

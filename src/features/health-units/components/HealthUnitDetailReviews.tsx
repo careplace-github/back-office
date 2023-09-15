@@ -8,15 +8,15 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 // utils
-//import { fShortenNumber } from 'src/utils/format-number';
+// import { fShortenNumber } from 'src/utils/format-number';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import Iconify from 'src/components/iconify';
 // types
-//import { IProductReview } from 'src/types/product';
+// import { IProductReview } from 'src/types/product';
 //
-import ProductReviewList from './HealthUnitDetailReviews';
+import ProductReviewList from './HealthUnitReviewList';
 import ProductReviewNewForm from './ReviewItem';
 
 // ----------------------------------------------------------------------
@@ -135,9 +135,9 @@ export default function ProductDetailsReview({
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <ProductReviewList reviews={reviews} totalRatings={0} totalReviews={0} ratings={[]} />
+      <ProductReviewList reviews={reviews}  />
 
-      <ProductReviewNewForm  review={undefined}/>
+      <ProductReviewNewForm review={undefined} />
     </>
   );
 }

@@ -30,7 +30,8 @@
   },
   "exclude": [
     "node_modules",
-    "src/pages/api/auth/[...nextauth].ts"
+    "src/pages/api/auth/[...nextauth].ts",
+    "src/_mock"
   ],
   "include": [
     "src/types/next-auth.d.ts",

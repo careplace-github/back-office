@@ -32,7 +32,7 @@ import { HeaderShadow, LoginButton } from '../../components';
 export default function Header() {
   const { data: user } = useSession() || {};
 
-  const session = user?._id && user?.name && user?.email;
+  const session = user?.sub && user?.name && user?.email;
 
   const theme = useTheme();
 
@@ -81,24 +81,6 @@ export default function Header() {
           )}
 
           <Box sx={{ flexGrow: 1 }} />
-
-          {!session && (
-            <Stack alignItems="center" direction="row">
-              {isSmUp && (
-                <Button
-                  variant="contained"
-                  rel="noopener"
-                  href={PATHS.demo}
-                  sx={{
-                    mr: 1,
-                  }}>
-                  Registar
-                </Button>
-              )}
-
-              <LoginButton />
-            </Stack>
-          )}
 
           {session && (
             <Stack alignItems="center" direction={{ xs: 'row', md: 'row-reverse' }}>

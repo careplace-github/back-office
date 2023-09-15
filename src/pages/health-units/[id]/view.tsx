@@ -56,12 +56,10 @@ export async function getServerSideProps(context) {
     .get('/services', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        
       },
       params: {
         documentsPerPage: 100,
-      }
-
+      },
     })
     .then(response => response.data.data);
 
