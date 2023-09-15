@@ -49,16 +49,14 @@ function MapClusters({ ...other }: MapBoxProps) {
       interactiveLayerIds={[clusterLayer.id || '']}
       onClick={onClick}
       ref={mapRef}
-      {...other}
-    >
+      {...other}>
       <Source
         id="earthquakes"
         type="geojson"
         data="https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"
         cluster
         clusterMaxZoom={14}
-        clusterRadius={50}
-      >
+        clusterRadius={50}>
         <Layer {...clusterLayer} />
         <Layer {...clusterCountLayer} />
         <Layer {...unclusteredPointLayer} />

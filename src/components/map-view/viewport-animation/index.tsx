@@ -37,8 +37,7 @@ function MapViewportAnimation({ data, ...other }: Props) {
         pitch: 0,
       }}
       ref={mapRef}
-      {...other}
-    >
+      {...other}>
       <MapControl />
 
       <ControlPanel data={data} selectedCity={selectedCity} onSelectCity={onSelectCity} />

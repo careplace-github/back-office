@@ -117,7 +117,9 @@ export default function AccountChangePassword() {
             label="New Password"
             helperText={
               <Stack component="span" direction="row" alignItems="center">
-                <Iconify icon="eva:info-fill" width={16} sx={{ mr: 0.5 }} /> The new password must contain at least 8 characters, 1 number, 1 uppercase letter, 1 lowercase letter and 1 special character
+                <Iconify icon="eva:info-fill" width={16} sx={{ mr: 0.5 }} /> The new password must
+                contain at least 8 characters, 1 number, 1 uppercase letter, 1 lowercase letter and
+                1 special character
               </Stack>
             }
             InputProps={{

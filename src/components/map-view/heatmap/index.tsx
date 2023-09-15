@@ -19,8 +19,8 @@ function MapHeatmap({ ...other }: MapBoxProps) {
 
   useEffect(() => {
     fetch('https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson')
-      .then((resp) => resp.json())
-      .then((json) => {
+      .then(resp => resp.json())
+      .then(json => {
         const { features } = json;
 
         const endTime = features[0].properties.time;
@@ -33,7 +33,7 @@ function MapHeatmap({ ...other }: MapBoxProps) {
 
         selectTime(endTime);
       })
-      .catch((error) => console.error('Could not load data', error));
+      .catch(error => console.error('Could not load data', error));
   }, []);
 
   const data: any = useMemo(
@@ -49,8 +49,7 @@ function MapHeatmap({ ...other }: MapBoxProps) {
           longitude: -100,
           zoom: 3,
         }}
-        {...other}
-      >
+        {...other}>
         {data && (
           <Source type="geojson" data={data}>
             <Layer {...heatmapLayer} />
@@ -90,7 +89,7 @@ function filterFeaturesByDay(
 
   const day = date.getDate();
 
-  const features = featureCollection?.features.filter((feature) => {
+  const features = featureCollection?.features.filter(feature => {
     const featureDate = new Date(feature.properties?.time);
 
     return (

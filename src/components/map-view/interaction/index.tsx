@@ -27,7 +27,7 @@ function MapInteraction({ ...other }: MapBoxProps) {
 
   const updateSettings = useCallback(
     (name: string, value: boolean | number) =>
-      setSettings((prevSettings) => ({
+      setSettings(prevSettings => ({
         ...prevSettings,
         [name]: value,
       })),
@@ -44,8 +44,7 @@ function MapInteraction({ ...other }: MapBoxProps) {
         bearing: 0,
         pitch: 50,
       }}
-      {...other}
-    >
+      {...other}>
       <MapControl />
 
       <ControlPanel settings={settings} onChange={updateSettings} />

@@ -197,22 +197,6 @@ export default function Footer() {
               target="_blank">
               geral@careplace.pt
             </Link>
-
-            <Link
-              variant="caption"
-              sx={{ color: 'text.secondary' }}
-              href={PATHS.privacyPolicy}
-              target="_blank">
-              Política de Privacidade
-            </Link>
-
-            <Link
-              variant="caption"
-              sx={{ color: 'text.secondary' }}
-              href={PATHS.termsAndConditions}
-              target="_blank">
-              Termos e Condições
-            </Link>
           </Stack>
         </Stack>
       </Container>

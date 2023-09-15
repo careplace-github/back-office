@@ -10,21 +10,13 @@ export const footerLinksLoggedOut = [
     order: '1',
     type: 'Main',
     subheader: 'Careplace',
-    items: [
-      { title: 'Entrar', path: PATHS.auth.login },
-      { title: 'Registar', path: PATHS.demo },
-      { title: 'Suporte', path: PATHS.support },
-    ],
+    items: [{ title: 'Entrar', path: PATHS.auth.login }],
   },
   {
     order: '2',
     type: 'Main',
     subheader: 'Instituições de Saúde',
-    items: [
-      { title: 'Empresas SAD', path: PATHS.demo },
-      { title: 'Residências Sénior', path: PATHS.demo },
-      { title: 'Lares de Idosos', path: PATHS.demo },
-    ],
+    items: [],
   },
 ];
 

@@ -30,8 +30,7 @@ function MapMarkersPopups({ data, ...other }: Props) {
       initialViewState={{
         zoom: 2,
       }}
-      {...other}
-    >
+      {...other}>
       <MapControl />
 
       {data.map((city, index) => (
@@ -39,7 +38,7 @@ function MapMarkersPopups({ data, ...other }: Props) {
           key={`marker-${index}`}
           latitude={city.latlng[0]}
           longitude={city.latlng[1]}
-          onClick={(event) => {
+          onClick={event => {
             event.originalEvent.stopPropagation();
             setPopupInfo(city);
           }}
@@ -50,16 +49,14 @@ function MapMarkersPopups({ data, ...other }: Props) {
         <MapPopup
           latitude={popupInfo.latlng[0]}
           longitude={popupInfo.latlng[1]}
-          onClose={() => setPopupInfo(null)}
-        >
+          onClose={() => setPopupInfo(null)}>
           <Box sx={{ color: 'common.white' }}>
             <Box
               sx={{
                 mb: 1,
                 display: 'flex',
                 alignItems: 'center',
-              }}
-            >
+              }}>
               <Box
                 sx={{
                   height: '18px',

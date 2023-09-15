@@ -41,8 +41,6 @@ export async function getServerSideProps(context) {
 
   const user = session?.user;
 
-
-
   const accessToken = session?.accessToken;
 
   const healthUnits = await axios
@@ -53,13 +51,9 @@ export async function getServerSideProps(context) {
     })
     .then(response => response.data.data);
 
-
-
-
-
   return {
     props: {
-      healthUnits
+      healthUnits,
     },
   };
 }

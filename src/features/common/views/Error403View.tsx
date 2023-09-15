@@ -17,8 +17,7 @@ import { PATHS } from 'src/routes';
 
 export default function Error403View() {
   return (
-    <>
-      <MotionContainer>
+    <MotionContainer>
         <m.div variants={varBounce().in}>
           <Typography variant="h3" paragraph>
             403 - Sem Permissão
@@ -43,10 +42,9 @@ export default function Error403View() {
           <a href="mailto:suporte@careplace.pt"> suporte@careplace.pt </a>
         </Typography>
 
-        <Button component={NextLink} href={''} size="large" variant="contained">
+        <Button component={NextLink} href="" size="large" variant="contained">
           Home
         </Button>
       </MotionContainer>
-    </>
   );
 }

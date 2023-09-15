@@ -21,7 +21,6 @@ export default function LoginView() {
         </Stack>
       )}
 
-
       <AuthLoginForm />
     </>
   );
