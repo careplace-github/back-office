@@ -1,13 +1,3 @@
-const withTM = require('next-transpile-modules')([
-  '@fullcalendar/common',
-  '@fullcalendar/daygrid',
-  '@fullcalendar/interaction',
-  '@fullcalendar/list',
-  '@fullcalendar/react',
-  '@fullcalendar/timegrid',
-  '@fullcalendar/timeline',
-]);
-
 const dotenv = require('dotenv');
 
 if (process.env.ENV) {
@@ -15,10 +5,10 @@ if (process.env.ENV) {
   dotenv.config({ path: `.env.${process.env.ENV}` });
 }
 
-module.exports = withTM({
+module.exports = {
   swcMinify: false,
   trailingSlash: false,
- 
+
   async redirects() {
     // https://nextjs.org/docs/api-reference/next.config.js/redirects
     return [
@@ -30,4 +20,4 @@ module.exports = withTM({
       },
     ];
   },
-});
+};
