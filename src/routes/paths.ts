@@ -29,7 +29,7 @@ export const PATHS = {
   healthUnits: {
     root: '/health-units',
     new: '/health-units/new',
-    view: (id: string) => `/health-units/${id}/view`,
-    edit: (id: string) => `/health-units/${id}/edit`,
+    view: (id: string) => `/health-units/${id}`,
+    edit: (id: string) => `/health-units/${id}`,
   },
 };
