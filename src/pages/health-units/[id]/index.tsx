@@ -3,7 +3,7 @@ import Head from 'next/head';
 // layouts
 import DashboardLayout from 'src/layouts/dashboard';
 // features
-import { ViewHealthUnitView } from 'src/features/health-units';
+import { HealthUnitDetailView } from 'src/features/health-units';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from 'src/pages/api/auth/[...nextauth]';
 import axios from 'src/lib/axios';
@@ -12,15 +12,15 @@ import { PATHS } from 'src/routes';
 
 // ----------------------------------------------------------------------
 
-export default function ViewUserPage({ healthUnit, services }) {
+export default function EditUserPage({ healthUnit, reviews, services }) {
   return (
     <>
       <Head>
-        <title> View Health Unit | Careplace Admin </title>
+        <title> Edit Health Unit | Careplace Admin </title>
       </Head>
 
       <DashboardLayout>
-        <ViewHealthUnitView healthUnit={healthUnit} services={services} />
+        <HealthUnitDetailView healthUnit={healthUnit} services={services} reviews={reviews} />
       </DashboardLayout>
     </>
   );
@@ -52,6 +52,14 @@ export async function getServerSideProps(context) {
     })
     .then(response => response.data);
 
+  const reviews = await axios
+    .get(`/health-units/${healthUnitId}/reviews`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then(response => response.data || []);
+
   const services = await axios
     .get('/services', {
       headers: {
@@ -68,6 +76,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       healthUnit,
+      reviews,
       services,
     },
   };

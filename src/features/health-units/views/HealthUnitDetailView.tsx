@@ -3,6 +3,7 @@ import { useEffect, useCallback, useState } from 'react';
 
 // @mui
 import { Button, Container } from '@mui/material';
+import { Modal } from '@mui/material';
 import NextLink from 'next/link';
 // routes
 import { PATHS } from 'src/routes';
@@ -17,13 +18,18 @@ import Card from '@mui/material/Card';
 import { alpha } from '@mui/material/styles';
 
 //
+<<<<<<< Updated upstream:src/features/health-units/views/ViewHealthUnitView.tsx
 import HealthUnitNewViewEditForm from '../components/HealthUnitNewViewEditForm';
 import ProductDetailsReview from '../components/HealthUnitDetailReviews';
 import Iconify from 'src/components/iconify';
+=======
+import HealthUnitNewViewEditForm from '../components/HealthUnitDetailForm';
+import HealthUnitDetailsReview from '../components/HealthUnitDetailReviews';
+>>>>>>> Stashed changes:src/features/health-units/views/HealthUnitDetailView.tsx
 
 // ----------------------------------------------------------------------
 
-export default function EditUserView({ services, healthUnit }) {
+export default function EditUserView({ services, healthUnit, reviews }) {
   const { themeStretch } = useSettingsContext();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +39,12 @@ export default function EditUserView({ services, healthUnit }) {
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
   }, []);
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const handleOpenConfirm = () => {
+    setOpenConfirm(true);
+  };
 
   return (
     <>
@@ -45,19 +57,10 @@ export default function EditUserView({ services, healthUnit }) {
             links={[
               {
                 name: 'Health Units',
-                href: '',
+                href: PATHS.healthUnits.root,
               },
               { name: healthUnit?.business_profile.name },
             ]}
-            action={
-              <Button
-                variant="contained"
-                startIcon={<Iconify icon="mdi:pencil" />}
-                component={NextLink}
-                href={PATHS.healthUnits.edit(healthUnit?._id)}>
-                Edit
-              </Button>
-            }
           />
 
           <Card>
@@ -91,10 +94,16 @@ export default function EditUserView({ services, healthUnit }) {
             </Tabs>
 
             {currentTab === 'details' && (
-              <HealthUnitNewViewEditForm isView editHealthUnit={healthUnit} services={services} />
+              <HealthUnitNewViewEditForm isEdit editHealthUnit={healthUnit} services={services} />
             )}
 
+<<<<<<< Updated upstream:src/features/health-units/views/ViewHealthUnitView.tsx
             {currentTab === 'reviews' && <ProductDetailsReview totalRatings={0} totalReviews={0} ratings={[]} reviews={[]} />}
+=======
+            {currentTab === 'reviews' && (
+              <HealthUnitDetailsReview  totalReviews={healthUnit.rating.count} reviews={reviews} ratings={healthUnit.rating.count_stars} averageRating={healthUnit.rating.average} />
+            )}
+>>>>>>> Stashed changes:src/features/health-units/views/HealthUnitDetailView.tsx
           </Card>
         </Container>
       )}

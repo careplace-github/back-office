@@ -1,4 +1,5 @@
-import sumBy from 'lodash/sumBy';
+// react
+import { useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -16,42 +17,55 @@ import Iconify from 'src/components/iconify';
 // types
 //import { IProductReview } from 'src/types/product';
 //
+<<<<<<< Updated upstream
 import ProductReviewList from './HealthUnitDetailReviews';
 import ProductReviewNewForm from './ReviewItem';
+=======
+import HealthUnitReviewList from './HealthUnitReviewList';
+import HealthUniReviewNewForm from './ReviewItem';
+import NewReviewForm from './NewReview';
+>>>>>>> Stashed changes
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  totalRatings: number;
   totalReviews: number;
+  averageRating: number;
   ratings: {
-    name: string;
-    starCount: number;
-    reviewCount: number;
-  }[];
-  reviews: any[];
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+  };
+  reviews: {
+    data: any[];
+    page: number;
+    documentsPerPage: number;
+    totalDocuments: number;
+  };
 };
 
-export default function ProductDetailsReview({
-  totalRatings,
+export default function HealthUnitDetailsReview({
   totalReviews,
+  averageRating,
   ratings,
   reviews,
 }: Props) {
-  const review = useBoolean();
-
-  const total = sumBy(ratings, star => star.starCount);
+  const [newReview, setNewReview] = useState(false);
+  const total = totalReviews;
 
   const renderSummary = (
     <Stack spacing={1} alignItems="center" justifyContent="center">
-      <Typography variant="subtitle2">Average rating</Typography>
+      <Typography variant="subtitle2">Average Rating</Typography>
 
-      <Typography variant="h2">{totalRatings}/5</Typography>
+      <Typography variant="h2">{averageRating}/5</Typography>
 
-      <Rating readOnly value={totalRatings} precision={0.1} />
+      <Rating readOnly value={averageRating} precision={0.1} />
 
       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-        (totalReviews reviews)
+        {totalReviews > 1 && ` ${totalReviews} reviews`}
+        {totalReviews === 1 && ` ${totalReviews} review`}
       </Typography>
     </Stack>
   );
@@ -69,19 +83,19 @@ export default function ProductDetailsReview({
           md: `dashed 1px ${theme.palette.divider}`,
         }),
       }}>
-      {ratings
+      {Object.entries(ratings)
         .slice(0)
         .reverse()
-        .map(rating => (
-          <Stack key={rating.name} direction="row" alignItems="center">
+        .map(([star, reviewCount]) => (
+          <Stack key={star} direction="row" alignItems="center">
             <Typography variant="subtitle2" component="span" sx={{ width: 42 }}>
-              {rating.name}
+              {star}
             </Typography>
 
             <LinearProgress
               color="inherit"
               variant="determinate"
-              value={(rating.starCount / total) * 100}
+              value={(reviewCount / total) * 100}
               sx={{
                 mx: 2,
                 flexGrow: 1,
@@ -95,7 +109,7 @@ export default function ProductDetailsReview({
                 minWidth: 48,
                 color: 'text.secondary',
               }}>
-              {rating.reviewCount}
+              {reviewCount}
             </Typography>
           </Stack>
         ))}
@@ -108,9 +122,9 @@ export default function ProductDetailsReview({
         size="large"
         variant="soft"
         color="inherit"
-        onClick={review.onTrue}
-        startIcon={<Iconify icon="solar:pen-bold" />}>
-        Write your review
+        onClick={() => setNewReview(true)}
+        startIcon={<Iconify icon="mdi:plus-circle-outline" />}>
+        Add Review
       </Button>
     </Stack>
   );
@@ -135,9 +149,18 @@ export default function ProductDetailsReview({
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
+<<<<<<< Updated upstream
       <ProductReviewList reviews={reviews} totalRatings={0} totalReviews={0} ratings={[]} />
 
       <ProductReviewNewForm  review={undefined}/>
+=======
+      <HealthUnitReviewList reviews={reviews} />
+
+      {newReview && <NewReviewForm onClose={() => setNewReview(false)} open={newReview}  sx={{
+      }}/>}
+
+      
+>>>>>>> Stashed changes
     </>
   );
 }

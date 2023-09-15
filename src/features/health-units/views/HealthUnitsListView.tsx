@@ -147,7 +147,6 @@ export default function healthUnitsListView({ healthUnits }) {
 
   const handleFilterCountry = event => {
     setPage(0);
-    console.log(event.target);
     setFilterCountry(event.target.value);
   };
 
@@ -234,6 +233,7 @@ export default function healthUnitsListView({ healthUnits }) {
       {isLoading ? (
         <LoadingScreen />
       ) : (
+<<<<<<< Updated upstream
         <>
           <Container maxWidth={themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
@@ -248,51 +248,78 @@ export default function healthUnitsListView({ healthUnits }) {
                   )}
                 </NextLink>
               }
+=======
+        <Container maxWidth={themeStretch ? false : 'lg'}>
+          <CustomBreadcrumbs
+            heading="Health Units"
+            links={[{ name: 'Health Units' }]}
+            action={
+              <NextLink href={PATHS.healthUnits.new} passHref>
+                {healthUnit?.permissions?.includes('admin') && (
+                  <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+                    Add Health Unit
+                  </Button>
+                )}
+              </NextLink>
+            }
+          />
+
+          <Card>
+            <Divider />
+
+            <HealthUnitsTableToolbar
+              isFiltered={isFiltered}
+              filterName={filterName}
+              filterType={filterType}
+              filterCountry={filterCountry}
+              optionsRole={ROLES_OPTIONS}
+              optionsCountry={COUNTRIES_OPTIONS}
+              onFilterName={handleFilterName}
+              onFilterType={handleFilterType}
+              onFilterCountry={handleFilterCountry}
+              onResetFilter={handleResetFilter}
+>>>>>>> Stashed changes
             />
 
-            <Card>
-              <Divider />
+            <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+              <Scrollbar>
+                <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+                  <TableHeadCustom
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={tableData.length}
+                    numSelected={selected.length}
+                    onSort={onSort}
+                  />
 
-              <HealthUnitsTableToolbar
-                isFiltered={isFiltered}
-                filterName={filterName}
-                filterType={filterType}
-                filterCountry={filterCountry}
-                optionsRole={ROLES_OPTIONS}
-                optionsCountry={COUNTRIES_OPTIONS}
-                onFilterName={handleFilterName}
-                onFilterType={handleFilterType}
-                onFilterCountry={handleFilterCountry}
-                onResetFilter={handleResetFilter}
-              />
+                  <TableBody>
+                    {dataFiltered
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map(row => (
+                        <HealthUnitsTableRow
+                          key={row.id}
+                          row={row}
+                          selected={selected.includes(row._id)}
+                          onSelectRow={() => onSelectRow(row._id)}
+                          onViewRow={() => handleViewRow(row._id)}
+                          onEditRow={() => handleEditRow(row._id)}
+                          onDeleteRow={() => handleDeleteRow(row)}
+                        />
+                      ))}
 
-              <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-                <Scrollbar>
-                  <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
-                    <TableHeadCustom
-                      order={order}
-                      orderBy={orderBy}
-                      headLabel={TABLE_HEAD}
-                      rowCount={tableData.length}
-                      numSelected={selected.length}
-                      onSort={onSort}
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
                     />
 
-                    <TableBody>
-                      {dataFiltered
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map(row => (
-                          <HealthUnitsTableRow
-                            key={row.id}
-                            row={row}
-                            selected={selected.includes(row._id)}
-                            onSelectRow={() => onSelectRow(row._id)}
-                            onViewRow={() => handleViewRow(row._id)}
-                            onEditRow={() => handleEditRow(row._id)}
-                            onDeleteRow={() => handleDeleteRow(row)}
-                          />
-                        ))}
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </Scrollbar>
+            </TableContainer>
 
+<<<<<<< Updated upstream
                       <TableEmptyRows
                         height={denseHeight}
                         emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
@@ -317,6 +344,20 @@ export default function healthUnitsListView({ healthUnits }) {
             </Card>
           </Container>
         </>
+=======
+            <TablePaginationCustom
+              count={dataFiltered.length}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={onChangePage}
+              onRowsPerPageChange={onChangeRowsPerPage}
+              //
+              dense={dense}
+              onChangeDense={onChangeDense}
+            />
+          </Card>
+        </Container>
+>>>>>>> Stashed changes
       )}
     </>
   );

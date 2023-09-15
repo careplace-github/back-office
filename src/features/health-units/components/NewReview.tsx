@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
@@ -13,9 +13,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
+// utils
+import { fData } from 'src/utils/formatNumber';
 // types
 // components
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFTextField, RHFUploadAvatar } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +25,7 @@ interface Props extends DialogProps {
   onClose: VoidFunction;
 }
 
-export default function ProductReviewNewForm({ onClose, ...other }: Props) {
+export default function HealthUnitReviewNewForm({ onClose, ...other }: Props) {
   const ReviewSchema = Yup.object().shape({
     rating: Yup.number().min(1, 'Rating must be greater than or equal to 1'),
     review: Yup.string().required('Review is required'),
@@ -36,6 +38,8 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
     review: '',
     name: '',
     email: '',
+    fileChanged: '',
+    logo: '',
   };
 
   const methods = useForm({
@@ -47,10 +51,40 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
     reset,
     control,
     handleSubmit,
+    setValue,
+    register,
     formState: { errors, isSubmitting },
   } = methods;
 
+<<<<<<< Updated upstream
   const onSubmit = handleSubmit(async (data) => {
+=======
+  const [fileData, setFileData] = useState<FormData | null>(null);
+
+  const handleDrop = useCallback(
+    acceptedFiles => {
+      const file = acceptedFiles[0]; // eslint-disable-line
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      setFileData(formData);
+
+      const newFile = Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      });
+
+      if (file) {
+        setValue('fileChanged', Date.now().toString()); // update the hidden field
+
+        setValue('logo', newFile.preview, { shouldDirty: true });
+      }
+    },
+    [setValue]
+  );
+
+  const onSubmit = handleSubmit(async data => {
+>>>>>>> Stashed changes
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
@@ -67,28 +101,67 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
   }, [onClose, reset]);
 
   return (
-    <Dialog onClose={onClose} {...other}>
+    <Dialog onClose={onClose} {...other} maxWidth="md" fullWidth>
       <FormProvider methods={methods} onSubmit={onSubmit}>
         <DialogTitle> Add Review </DialogTitle>
 
         <DialogContent>
-          <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
-            <Typography variant="body2">Your review about this product:</Typography>
-
-            <Controller
-              name="rating"
-              control={control}
-              render={({ field }) => <Rating {...field} size="small" value={Number(field.value)} />}
-            />
-          </Stack>
-
+          <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}></Stack>
           {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
-
-          <RHFTextField name="review" label="Review *" multiline rows={3} sx={{ mt: 3 }} />
-
-          <RHFTextField name="name" label="Name *" sx={{ mt: 3 }} />
-
-          <RHFTextField name="email" label="Email *" sx={{ mt: 3 }} />
+          <RHFUploadAvatar
+            name="logo"
+            maxSize={3145728}
+            onDrop={handleDrop}
+            helperText={
+              <Typography
+                variant="caption"
+                sx={{
+                  mt: 2,
+                  mb: 5,
+                  mx: 'auto',
+                  display: 'block',
+                  textAlign: 'center',
+                  color: 'text.secondary',
+                }}>
+                Allowed *.jpeg, *.jpg, *.png, *.gif
+                <br /> Max size {fData(5045728)}
+              </Typography>
+            }
+          />
+          <input type="hidden" {...register('fileChanged')} /> {/* Add this line */}
+          <RHFTextField
+            name="name"
+            label="Name *"
+            sx={{ mt: 3 }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <RHFTextField
+            name="email"
+            label="Email *"
+            sx={{ mt: 3 }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field }) => (
+              <Rating sx={{ mt: 3 }} {...field} size="small" value={Number(field.value)} />
+            )}
+          />
+          <RHFTextField
+            name="review"
+            label="Comment *"
+            multiline
+            rows={3}
+            sx={{ mt: 3 }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
         </DialogContent>
 
         <DialogActions>
@@ -97,7 +170,7 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
           </Button>
 
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Post
+            Add
           </LoadingButton>
         </DialogActions>
       </FormProvider>

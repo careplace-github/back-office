@@ -1,3 +1,5 @@
+// react
+import { useState, useEffect } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -6,11 +8,18 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 // utils
+<<<<<<< Updated upstream
 //import { fDate } from 'src/utils/format-time';
+=======
+import { fDate } from 'src/utils/format-time';
+>>>>>>> Stashed changes
 // types
 //import { IProductReview } from 'src/types/product';
 // components
 import Iconify from 'src/components/iconify';
+import MenuPopover from 'src/components/menu-popover';
+import MenuItem from '@mui/material/MenuItem';
+import { IconButton } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -18,10 +27,8 @@ type Props = {
   review: any;
 };
 
-export default function ProductReviewItem({ review }: Props) {
-  const { name, rating, comment, postedAt, avatarUrl, attachments, isPurchased } = review;
-
-  const renderInfo = (
+export default function HealthUnitReviewItem({ review }: Props) {
+  const renderInfo = review && (
     <Stack
       spacing={2}
       alignItems="center"
@@ -34,7 +41,7 @@ export default function ProductReviewItem({ review }: Props) {
         textAlign: { md: 'center' },
       }}>
       <Avatar
-        src={avatarUrl}
+        src={review?.customer?.profile_picture}
         sx={{
           width: { xs: 48, md: 64 },
           height: { xs: 48, md: 64 },
@@ -42,58 +49,59 @@ export default function ProductReviewItem({ review }: Props) {
       />
 
       <ListItemText
-        primary={name}
-        secondary={postedAt}
+        primary={review?.name}
+        secondary={fDate(review?.createdAt)}
         primaryTypographyProps={{ noWrap: true, typography: 'subtitle2', mb: 0.5 }}
         secondaryTypographyProps={{ noWrap: true, typography: 'caption', component: 'span' }}
       />
     </Stack>
   );
 
-  const renderContent = (
+  const [openPopover, setOpenPopover] = useState(null);
+
+  const handleOpenPopover = event => {
+    setOpenPopover(event.currentTarget);
+  };
+
+  const renderContent = review && (
     <Stack spacing={1} flexGrow={1}>
-      <Rating size="small" value={rating} precision={0.1} readOnly />
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Rating size="small" value={review?.rating} precision={0.1} readOnly />
 
-      {isPurchased && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{
-            color: 'success.main',
-            typography: 'caption',
-          }}>
-          <Iconify icon="ic:round-verified" width={16} sx={{ mr: 0.5 }} />
-          Verified purchase
-        </Stack>
-      )}
+        <Stack direction="row" alignItems="center">
+          <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
+          <MenuPopover
+            open={openPopover}
+            onClose={() => setOpenPopover(null)}
+            arrow="right-top"
+            sx={{ width: 140 }}>
+            <>
+              <MenuItem
+                onClick={() => {
+                  onEditReview();
+                  setOpenPopover(null);
+                }}>
+                <Iconify icon="eva:edit-fill" />
+                Editar
+              </MenuItem>
 
-      <Typography variant="body2">{comment}</Typography>
+              <MenuItem
+                onClick={() => {
+                  onDeleteReview();
 
-      {!!attachments?.length && (
-        <Stack direction="row" flexWrap="wrap" spacing={1} sx={{ pt: 1 }}>
-          {attachments.map(attachment => (
-            <Box
-              component="img"
-              key={attachment}
-              alt={attachment}
-              src={attachment}
-              sx={{ width: 64, height: 64, borderRadius: 1.5 }}
-            />
-          ))}
-        </Stack>
-      )}
-
-      <Stack direction="row" spacing={2} sx={{ pt: 1.5 }}>
-        <Stack direction="row" alignItems="center" sx={{ typography: 'caption' }}>
-          <Iconify icon="solar:like-outline" width={16} sx={{ mr: 0.5 }} />
-          123
-        </Stack>
-
-        <Stack direction="row" alignItems="center" sx={{ typography: 'caption' }}>
-          <Iconify icon="solar:dislike-outline" width={16} sx={{ mr: 0.5 }} />
-          34
+                  setOpenPopover(null);
+                }}
+                sx={{ color: 'error.main' }}>
+                <Iconify icon="eva:trash-2-outline" />
+                Eliminar
+              </MenuItem>
+            </>
+          </MenuPopover>
         </Stack>
       </Stack>
+      <Typography variant="body2">{review?.comment}</Typography>
     </Stack>
   );
 
@@ -104,10 +112,13 @@ export default function ProductReviewItem({ review }: Props) {
         xs: 'column',
         md: 'row',
       }}
-      sx={{ mt: 5, px: { xs: 2.5, md: 0 } }}>
+      sx={{ mt: 5, px: { xs: 3.5, md: 5 } }}>
       {renderInfo}
 
       {renderContent}
     </Stack>
   );
 }
+function onEditReview() {}
+
+function onDeleteReview() {}

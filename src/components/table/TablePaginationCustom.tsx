@@ -29,7 +29,7 @@ export default function TablePaginationCustom({
     <Box sx={{ position: 'relative', ...sx }}>
       <TablePagination
         rowsPerPageOptions={rowsPerPageOptions}
-        labelRowsPerPage="Linhas por página"
+        labelRowsPerPage="Rows per page"
         labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
         component="div"
         {...other}

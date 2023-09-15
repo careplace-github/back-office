@@ -19,7 +19,11 @@ export default function NewUserPage({ services }) {
         <title> Add Health Unit | Careplace Admin </title>
       </Head>
       <DashboardLayout>
+<<<<<<< Updated upstream
         <NewUserView services={services} />
+=======
+        <NewHealthUnitView services={services} healthUnit={undefined} />
+>>>>>>> Stashed changes
       </DashboardLayout>
     </>
   );
@@ -39,21 +43,25 @@ export async function getServerSideProps(context) {
     };
   }
 
+<<<<<<< Updated upstream
   const user = session?.user;
 
 
 
+=======
+>>>>>>> Stashed changes
   const accessToken = session?.accessToken;
 
-  const users = await axios
-    .get('/collaborators', {
+  const services = await axios
+    .get('/services', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+      params: {
+        documentsPerPage: 100,
+      },
     })
-    .then(response => response.data);
-
-  const services = await axios.get('/services').then(response => response.data.data);
+    .then(response => response.data.data);
 
   return {
     props: {
