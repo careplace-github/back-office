@@ -14,8 +14,7 @@ import { PATHS } from 'src/routes';
 
 export default function Error404View() {
   return (
-    <>
-      <MotionContainer>
+    <MotionContainer>
         <m.div variants={varBounce().in}>
           <Typography variant="h3" paragraph>
             404 - Página Não Encontrada
@@ -44,10 +43,9 @@ export default function Error404View() {
           <a href="mailto:suporte@careplace.pt"> suporte@careplace.pt </a>
         </Typography>
 
-        <Button component={NextLink} href={''} size="large" variant="contained">
+        <Button component={NextLink} href="" size="large" variant="contained">
           Home
         </Button>
       </MotionContainer>
-    </>
   );
 }

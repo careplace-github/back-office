@@ -49,8 +49,7 @@ function MapGeoJSONAnimation({ ...other }: MapBoxProps) {
         zoom: 3,
       }}
       mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
-      {...other}
-    >
+      {...other}>
       <MapControl />
 
       {pointData && (

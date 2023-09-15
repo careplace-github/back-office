@@ -69,13 +69,6 @@ export default function Header({ isOffset }: Props) {
           ) : (
             <Logo />
           )}
-          {isSmUp && (
-            <Stack spacing={1} direction="row" alignItems="center">
-              <Link href={PATHS.support} component={NextLink} variant="subtitle2" color="inherit">
-                Precisa de Ajuda?
-              </Link>
-            </Stack>
-          )}
         </Container>
       </Toolbar>
 

@@ -43,7 +43,7 @@ function ControlPanel({ settings, onChange }: Props) {
             <Switch
               size="small"
               checked={value}
-              onChange={(event) => onChange(name, event.target.checked)}
+              onChange={event => onChange(name, event.target.checked)}
             />
           </StyledRow>
         );
@@ -53,7 +53,7 @@ function ControlPanel({ settings, onChange }: Props) {
             <Typography variant="body2">{formatSettingName(name)}</Typography>
             <InputBase
               value={value}
-              onChange={(event) => onChange(name, Number(event.target.value))}
+              onChange={event => onChange(name, Number(event.target.value))}
               inputProps={{ type: 'number' }}
               sx={{
                 '& input': {
@@ -63,7 +63,7 @@ function ControlPanel({ settings, onChange }: Props) {
                   borderRadius: 0.5,
                   textAlign: 'center',
                   color: 'common.white',
-                  bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+                  bgcolor: theme => alpha(theme.palette.grey[500], 0.12),
                 },
               }}
             />
@@ -76,7 +76,7 @@ function ControlPanel({ settings, onChange }: Props) {
 
   return (
     <StyledControlPanel>
-      {Object.keys(settings).map((name) =>
+      {Object.keys(settings).map(name =>
         renderSetting(name as MapSettingKeys, settings[name as MapSettingKeys])
       )}
     </StyledControlPanel>

@@ -29,8 +29,7 @@ function MapChangeTheme({ themes, ...other }: Props) {
           pitch: 0,
         }}
         mapStyle={themes?.[selectTheme]}
-        {...other}
-      >
+        {...other}>
         <MapControl />
       </Map>
 

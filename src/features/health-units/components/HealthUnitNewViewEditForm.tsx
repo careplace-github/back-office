@@ -86,7 +86,6 @@ export default function UserNewEditForm({
     setCurrentTab(newValue);
   }, []);
 
-
   const { data: user } = useSession();
 
   const [isCaregiver, setIsCaregiver] = useState(editHealthUnit?.role === 'caregiver');
@@ -292,7 +291,6 @@ export default function UserNewEditForm({
   );
 
   return (
-    
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
@@ -479,9 +477,7 @@ export default function UserNewEditForm({
                 }
               />
 
-              <MapView sx={{gridColumn: "span 2"}}/>
-
-            
+              <MapView sx={{ gridColumn: 'span 2' }} />
 
               <Typography
                 sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
@@ -490,8 +486,6 @@ export default function UserNewEditForm({
 
               <Typography variant="h4"></Typography>
             </Box>
-
-           
 
             {!isView && (
               <Stack alignItems="flex-end" sx={{ mt: 3 }}>

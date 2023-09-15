@@ -65,7 +65,7 @@ function MapSideBySide({ ...other }: MapBoxProps) {
         {...viewState}
         padding={leftMapPadding}
         onMoveStart={onLeftMoveStart}
-        onMove={(event) => {
+        onMove={event => {
           if (activeMap === 'left') {
             onMove(event);
           }
@@ -80,7 +80,7 @@ function MapSideBySide({ ...other }: MapBoxProps) {
         {...viewState}
         padding={rightMapPadding}
         onMoveStart={onRightMoveStart}
-        onMove={(event) => {
+        onMove={event => {
           if (activeMap === 'right') {
             onMove(event);
           }

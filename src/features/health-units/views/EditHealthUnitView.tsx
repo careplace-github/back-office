@@ -19,7 +19,7 @@ import HealthUnitNewViewEditForm from '../components/HealthUnitNewViewEditForm';
 
 // ----------------------------------------------------------------------
 
-export default function EditUserView({ services, collaborator }) {
+export default function EditUserView({ services, healthUnit }) {
   const { data: user } = useSession();
 
   const [permissions, setPermissions] = useSessionStorage('permissions', '');
@@ -45,7 +45,7 @@ export default function EditUserView({ services, collaborator }) {
   };
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleDeleteCollaborator = async _user => {
+  const handleDeletehealthUnit = async _user => {
     if (_user.role === 'caregiver') {
       try {
         const response = await fetch(`/api/caregivers/${_user._id}`, {
@@ -112,7 +112,7 @@ export default function EditUserView({ services, collaborator }) {
                 name: 'Health Units',
                 href: '',
               },
-              { name: collaborator?.name },
+              { name: healthUnit?.name },
             ]}
             action={
               permissions.includes('admin') && (
@@ -136,7 +136,7 @@ export default function EditUserView({ services, collaborator }) {
               <>
                 Tem a certeza que pretende eliminar o seguinte colaborador:
                 <br />
-                <strong> {collaborator?.name} </strong> ?
+                <strong> {healthUnit?.name} </strong> ?
               </>
             }
             action={
@@ -144,7 +144,7 @@ export default function EditUserView({ services, collaborator }) {
                 variant="contained"
                 color="error"
                 onClick={() => {
-                  handleDeleteCollaborator(collaborator);
+                  handleDeletehealthUnit(healthUnit);
                   handleCloseConfirm();
                 }}>
                 Eliminar
@@ -152,7 +152,7 @@ export default function EditUserView({ services, collaborator }) {
             }
           />
 
-          <HealthUnitNewViewEditForm isEdit editUser={collaborator} services={services} />
+          <HealthUnitNewViewEditForm isEdit editHealthUnit={healthUnit} services={services} />
         </Container>
       )}
     </>

@@ -25,7 +25,7 @@ function ControlPanel({ themes, selectTheme, onChangeTheme }: Props) {
       </Typography>
 
       <RadioGroup value={selectTheme} onChange={(event, newValue) => onChangeTheme(newValue)}>
-        {Object.keys(themes).map((item) => (
+        {Object.keys(themes).map(item => (
           <FormControlLabel
             key={item}
             value={item}

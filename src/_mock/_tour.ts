@@ -106,7 +106,7 @@ export const _tours = [...Array(12)].map((_, index) => {
 
   const publish = index % 3 ? 'published' : 'draft';
 
-  const destination = countries.map((option) => option.label)[index];
+  const destination = countries.map(option => option.label)[index];
 
   const services = (index % 2 && ['Audio guide', 'Food and drinks']) ||
     (index % 3 && ['Lunch', 'Private tour']) ||

@@ -50,10 +50,12 @@ const navConfig = [
   {
     subheader: ' ',
     items: [
-     
-      { title: 'Health Units', path: PATHS.healthUnits.root, icon: ICONS.healthUnits, permission: 'admin' },
-
-     
+      {
+        title: 'Health Units',
+        path: PATHS.healthUnits.root,
+        icon: ICONS.healthUnits,
+        permission: 'admin',
+      },
     ],
   },
 ];

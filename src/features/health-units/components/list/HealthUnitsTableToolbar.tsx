@@ -77,7 +77,7 @@ export default function UserTableToolbar({
         ))}
       </TextField>
 
-            <TextField
+      <TextField
         fullWidth
         select
         label="Country"
@@ -113,7 +113,6 @@ export default function UserTableToolbar({
           </MenuItem>
         ))}
       </TextField>
-
 
       <TextField
         fullWidth
