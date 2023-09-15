@@ -3,7 +3,7 @@ import Head from 'next/head';
 // layouts
 import DashboardLayout from 'src/layouts/dashboard';
 // features
-import { NewUserView } from 'src/features/health-units';
+import { NewHealthUnitView } from 'src/features/health-units';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from 'src/pages/api/auth/[...nextauth]';
 import axios from 'src/lib/axios';
@@ -19,11 +19,7 @@ export default function NewUserPage({ services }) {
         <title> Add Health Unit | Careplace Admin </title>
       </Head>
       <DashboardLayout>
-<<<<<<< Updated upstream
-        <NewUserView services={services} />
-=======
         <NewHealthUnitView services={services} healthUnit={undefined} />
->>>>>>> Stashed changes
       </DashboardLayout>
     </>
   );
@@ -43,13 +39,6 @@ export async function getServerSideProps(context) {
     };
   }
 
-<<<<<<< Updated upstream
-  const user = session?.user;
-
-
-
-=======
->>>>>>> Stashed changes
   const accessToken = session?.accessToken;
 
   const services = await axios

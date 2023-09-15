@@ -24,7 +24,7 @@ export const getWeekDayName = (week_day: number) => {
 
 export const getRecurrencyText = (order: IOrderProps) => {
   let text = '';
-  const {recurrency} = order.schedule_information;
+  const { recurrency } = order.schedule_information;
 
   if (recurrency === 0) text = 'Pedido Único';
   else if (recurrency === 1) {
@@ -76,7 +76,7 @@ export const getScheduleText = (order: IOrderProps) => {
 
 export const getStatusText = (order: IOrderProps) => {
   let text = '';
-  const {status} = order;
+  const { status } = order;
 
   if (status === 'new') {
     text = 'Novo';

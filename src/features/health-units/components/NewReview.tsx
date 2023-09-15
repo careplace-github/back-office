@@ -56,9 +56,6 @@ export default function HealthUnitReviewNewForm({ onClose, ...other }: Props) {
     formState: { errors, isSubmitting },
   } = methods;
 
-<<<<<<< Updated upstream
-  const onSubmit = handleSubmit(async (data) => {
-=======
   const [fileData, setFileData] = useState<FormData | null>(null);
 
   const handleDrop = useCallback(
@@ -84,9 +81,8 @@ export default function HealthUnitReviewNewForm({ onClose, ...other }: Props) {
   );
 
   const onSubmit = handleSubmit(async data => {
->>>>>>> Stashed changes
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
       reset();
       onClose();
       console.info('DATA', data);

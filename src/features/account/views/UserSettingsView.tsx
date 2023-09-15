@@ -51,25 +51,25 @@ export default function UserSettingstView({ user }) {
 
   return (
     <Container maxWidth={themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading="Account Settings"
-          links={[{ name: 'Account' }, { name: 'Settings' }]}
-        />
+      <CustomBreadcrumbs
+        heading="Account Settings"
+        links={[{ name: 'Account' }, { name: 'Settings' }]}
+      />
 
-        <Tabs value={currentTab} onChange={(event, newValue) => setCurrentTab(newValue)}>
-          {TABS.map(tab => (
-            <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
-          ))}
-        </Tabs>
+      <Tabs value={currentTab} onChange={(event, newValue) => setCurrentTab(newValue)}>
+        {TABS.map(tab => (
+          <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
+        ))}
+      </Tabs>
 
-        {TABS.map(
-          tab =>
-            tab.value === currentTab && (
-              <Box key={tab.value} sx={{ mt: 5 }}>
-                {tab.component}
-              </Box>
-            )
-        )}
-      </Container>
+      {TABS.map(
+        tab =>
+          tab.value === currentTab && (
+            <Box key={tab.value} sx={{ mt: 5 }}>
+              {tab.component}
+            </Box>
+          )
+      )}
+    </Container>
   );
 }

@@ -1,4 +1,4 @@
-import { createSlice, Dispatch , AnyAction } from '@reduxjs/toolkit';
+import { createSlice, Dispatch, AnyAction } from '@reduxjs/toolkit';
 
 //
 import { parseISO } from 'date-fns';
