@@ -60,6 +60,7 @@ const StyledMapContainer = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 type props = {
+<<<<<<< Updated upstream
   sx?: any
 }
 
@@ -163,4 +164,109 @@ export default function MapView({sx}: props) {
         </Stack>
       </Container>
     );
+=======
+  sx?: any;
+};
+
+export default function MapView({ sx }: props) {
+  return (
+    <Container sx={{ ...sx, my: 0 }}>
+      <Stack spacing={5}>
+        <Card>
+          <CardHeader title="Change Theme" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapChangeTheme {...baseSettings} themes={THEMES} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Markers & Popups" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapMarkersPopups {...baseSettings} data={COUNTRIES} mapStyle={THEMES.light} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Draggable Markers" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapDraggableMarkers {...baseSettings} mapStyle={THEMES.light} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Geojson Animation" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapGeoJSONAnimation {...baseSettings} mapStyle={THEMES.satelliteStreets} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Clusters" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapClusters {...baseSettings} mapStyle={THEMES.light} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Interaction" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapInteraction {...baseSettings} mapStyle={THEMES.light} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Viewport Animation" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapViewportAnimation
+                {...baseSettings}
+                data={CITIES.filter(city => city.state === 'Texas')}
+                mapStyle={THEMES.light}
+              />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Highlight By Filter" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapHighlightByFilter {...baseSettings} mapStyle={THEMES.light} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Heatmap" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapHeatmap {...baseSettings} mapStyle={THEMES.light} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Side By Side" />
+          <CardContent>
+            <StyledMapContainer>
+              <MapSideBySide {...baseSettings} />
+            </StyledMapContainer>
+          </CardContent>
+        </Card>
+      </Stack>
+    </Container>
+  );
+>>>>>>> Stashed changes
 }

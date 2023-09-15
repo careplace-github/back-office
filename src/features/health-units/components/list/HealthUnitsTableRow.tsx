@@ -44,8 +44,11 @@ export default function UserTableRow({
   onDeleteRow,
 }) {
   const { data: user } = useSession();
+<<<<<<< Updated upstream
   console.log("ROW " , JSON.stringify(row, null, 2))
 
+=======
+>>>>>>> Stashed changes
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -112,6 +115,7 @@ export default function UserTableRow({
         </MenuItem>
 
         {user?.permissions?.includes('admin') && (
+<<<<<<< Updated upstream
           <>
             <MenuItem
               onClick={() => {
@@ -125,6 +129,16 @@ export default function UserTableRow({
 
             
           </>
+=======
+          <MenuItem
+            onClick={() => {
+              onEditRow();
+              handleClosePopover();
+            }}>
+            <Iconify icon="eva:edit-fill" />
+            Edit
+          </MenuItem>
+>>>>>>> Stashed changes
         )}
       </MenuPopover>
 
