@@ -44,11 +44,6 @@ export default function UserTableRow({
   onDeleteRow,
 }) {
   const { data: user } = useSession();
-<<<<<<< Updated upstream
-  console.log("ROW " , JSON.stringify(row, null, 2))
-
-=======
->>>>>>> Stashed changes
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -75,7 +70,11 @@ export default function UserTableRow({
       <TableRow hover selected={selected}>
         <TableCell>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <CustomAvatar type="custom" name={row.business_profile.name} src={row.business_profile.logo} />
+            <CustomAvatar
+              type="custom"
+              name={row.business_profile.name}
+              src={row.business_profile.logo}
+            />
 
             <Typography variant="subtitle2" noWrap>
               {row.business_profile.name}
@@ -88,10 +87,6 @@ export default function UserTableRow({
         <TableCell align="left">{row.business_profile.phone}</TableCell>
 
         <TableCell align="left">{row.addresses[0].country}</TableCell>
-
-
-
-
 
         <TableCell align="right">
           <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
@@ -115,21 +110,6 @@ export default function UserTableRow({
         </MenuItem>
 
         {user?.permissions?.includes('admin') && (
-<<<<<<< Updated upstream
-          <>
-            <MenuItem
-              onClick={() => {
-                onEditRow();
-                handleClosePopover();
-              }}>
-              <Iconify icon="eva:edit-fill" />
-              Edit
-            </MenuItem>
-
-
-            
-          </>
-=======
           <MenuItem
             onClick={() => {
               onEditRow();
@@ -138,7 +118,6 @@ export default function UserTableRow({
             <Iconify icon="eva:edit-fill" />
             Edit
           </MenuItem>
->>>>>>> Stashed changes
         )}
       </MenuPopover>
 

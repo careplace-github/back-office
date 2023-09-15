@@ -57,9 +57,6 @@ export default function EditUserView({ services, healthUnit }) {
               { name: 'New' },
             ]}
           />
-<<<<<<< Updated upstream
-          <HealthUnitNewViewEditForm isNew isEdit={false} editUser={null} services={services} />
-=======
 
           <Card>
             <Tabs
@@ -95,7 +92,6 @@ export default function EditUserView({ services, healthUnit }) {
               <HealthUnitNewViewEditForm isNew editHealthUnit={healthUnit} services={services} />
             )}
           </Card>
->>>>>>> Stashed changes
         </Container>
       )}
     </>

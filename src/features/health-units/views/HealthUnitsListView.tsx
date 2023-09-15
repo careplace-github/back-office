@@ -61,8 +61,6 @@ const ROLES_OPTIONS = [{ value: 'all', label: 'All' }, ...roles];
 
 const COUNTRIES_OPTIONS = [{ value: 'all', label: 'All' }, ...countries];
 
-
-
 const TABLE_HEAD = [
   { id: 'name', label: 'Company', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
@@ -79,8 +77,6 @@ export default function healthUnitsListView({ healthUnits }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [tableData, setTableData] = useState<ICollaboratorProps[]>([]);
-
-
 
   useEffect(() => {
     setTableData(healthUnits);
@@ -233,22 +229,6 @@ export default function healthUnitsListView({ healthUnits }) {
       {isLoading ? (
         <LoadingScreen />
       ) : (
-<<<<<<< Updated upstream
-        <>
-          <Container maxWidth={themeStretch ? false : 'lg'}>
-            <CustomBreadcrumbs
-              heading="Health Units"
-              links={[{ name: 'Health Units' }]}
-              action={
-                <NextLink href={PATHS.healthUnits.new} passHref>
-                  {healthUnit?.permissions?.includes('admin') && (
-                    <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                      Add Health Unit
-                    </Button>
-                  )}
-                </NextLink>
-              }
-=======
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <CustomBreadcrumbs
             heading="Health Units"
@@ -278,7 +258,6 @@ export default function healthUnitsListView({ healthUnits }) {
               onFilterType={handleFilterType}
               onFilterCountry={handleFilterCountry}
               onResetFilter={handleResetFilter}
->>>>>>> Stashed changes
             />
 
             <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
@@ -319,32 +298,6 @@ export default function healthUnitsListView({ healthUnits }) {
               </Scrollbar>
             </TableContainer>
 
-<<<<<<< Updated upstream
-                      <TableEmptyRows
-                        height={denseHeight}
-                        emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-                      />
-
-                      <TableNoData isNotFound={isNotFound} />
-                    </TableBody>
-                  </Table>
-                </Scrollbar>
-              </TableContainer>
-
-              <TablePaginationCustom
-                count={dataFiltered.length}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={onChangePage}
-                onRowsPerPageChange={onChangeRowsPerPage}
-                //
-                dense={dense}
-                onChangeDense={onChangeDense}
-              />
-            </Card>
-          </Container>
-        </>
-=======
             <TablePaginationCustom
               count={dataFiltered.length}
               page={page}
@@ -357,7 +310,6 @@ export default function healthUnitsListView({ healthUnits }) {
             />
           </Card>
         </Container>
->>>>>>> Stashed changes
       )}
     </>
   );
@@ -378,7 +330,8 @@ function applyFilter({ inputData, comparator, filterName, filterCountry, filterT
 
   if (filterName) {
     inputData = inputData.filter(
-      healthUnit => healthUnit.business_profile.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      healthUnit =>
+        healthUnit.business_profile.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 

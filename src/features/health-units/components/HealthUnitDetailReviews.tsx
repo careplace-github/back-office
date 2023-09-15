@@ -9,22 +9,17 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 // utils
-//import { fShortenNumber } from 'src/utils/format-number';
+// import { fShortenNumber } from 'src/utils/format-number';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import Iconify from 'src/components/iconify';
 // types
-//import { IProductReview } from 'src/types/product';
+// import { IProductReview } from 'src/types/product';
 //
-<<<<<<< Updated upstream
-import ProductReviewList from './HealthUnitDetailReviews';
-import ProductReviewNewForm from './ReviewItem';
-=======
 import HealthUnitReviewList from './HealthUnitReviewList';
 import HealthUniReviewNewForm from './ReviewItem';
 import NewReviewForm from './NewReview';
->>>>>>> Stashed changes
 
 // ----------------------------------------------------------------------
 
@@ -149,18 +144,9 @@ export default function HealthUnitDetailsReview({
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-<<<<<<< Updated upstream
-      <ProductReviewList reviews={reviews} totalRatings={0} totalReviews={0} ratings={[]} />
-
-      <ProductReviewNewForm  review={undefined}/>
-=======
       <HealthUnitReviewList reviews={reviews} />
 
-      {newReview && <NewReviewForm onClose={() => setNewReview(false)} open={newReview}  sx={{
-      }}/>}
-
-      
->>>>>>> Stashed changes
+      {newReview && <NewReviewForm onClose={() => setNewReview(false)} open={newReview} sx={{}} />}
     </>
   );
 }
