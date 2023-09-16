@@ -79,6 +79,10 @@ export default function EditUserView({ services, healthUnit, reviews }) {
                   label: 'Users',
                 },
                 {
+                  value: 'patients',
+                  label: 'Patients',
+                },
+                {
                   value: 'reviews',
                   label: `Reviews`,
                 },
@@ -88,7 +92,7 @@ export default function EditUserView({ services, healthUnit, reviews }) {
             </Tabs>
 
             {currentTab === 'details' && (
-              <HealthUnitNewViewEditForm isEdit editHealthUnit={healthUnit} services={services} />
+              <HealthUnitNewViewEditForm isEdit currentHealthUnit={healthUnit} services={services} />
             )}
 
             {currentTab === 'reviews' && (

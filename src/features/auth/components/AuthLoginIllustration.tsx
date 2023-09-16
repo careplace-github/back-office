@@ -31,36 +31,11 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 export default function HomeColorPresets() {
   return (
-    <StyledRoot>
-      <Container component={MotionViewport} sx={{ position: 'relative' }}>
-        <Content />
-      </Container>
-    </StyledRoot>
-  );
-}
-
-// ----------------------------------------------------------------------
-
-// ----------------------------------------------------------------------
-
-function Content() {
-  return (
-    <Box sx={{ position: 'relative' }}>
-      <Image disabledEffect alt="grid" src="/assets/images/home/presets_grid.png" />
-
-      <Box sx={{ position: 'absolute', width: '110%', top: -45 }}>
-        <m.div variants={varFade().inUp}>
-          <Image disabledEffect alt="screen" src="/assets/images/home/presets_screen.png" />
-        </m.div>
-      </Box>
-
-      <Box sx={{ position: 'absolute', width: '110%', top: -45 }}>
-        <m.div variants={varFade().inDown}>
-          <m.div animate={{ y: [-5, 10, -5] }} transition={{ duration: 8, repeat: Infinity }}>
-            <Image disabledEffect alt="sidebar" src="/assets/images/home/presets_chart.png" />
-          </m.div>
-        </m.div>
-      </Box>
-    </Box>
+    <Box
+      component="img"
+      alt="auth"
+      src="/assets/illustrations/illustration_dashboard.png"
+      sx={{ maxWidth: 720 }}
+    />
   );
 }
