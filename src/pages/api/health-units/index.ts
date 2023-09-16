@@ -18,7 +18,7 @@ export default async function ordersRoute(
 
     if (req.method === 'POST') {
       try {
-        const response = await axios.post(`/health-units/search`, healthUnit, {
+        const response = await axios.post(`/health-units`, healthUnit, {
           // Set authorization header bearer token
           headers: {
             'Content-Type': 'application/json',

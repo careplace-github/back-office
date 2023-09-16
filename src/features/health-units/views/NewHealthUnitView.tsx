@@ -24,16 +24,10 @@ import HealthUnitDetailsReview from '../components/HealthUnitDetailReviews';
 
 // ----------------------------------------------------------------------
 
-export default function EditUserView({ services, healthUnit }) {
+export default function EditUserView({ services }) {
   const { themeStretch } = useSettingsContext();
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const [currentTab, setCurrentTab] = useState('details');
-
-  const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue);
-  }, []);
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -59,38 +53,7 @@ export default function EditUserView({ services, healthUnit }) {
           />
 
           <Card>
-            <Tabs
-              value={currentTab}
-              onChange={handleChangeTab}
-              sx={{
-                px: 3,
-                boxShadow: theme => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-              }}>
-              {[
-                {
-                  value: 'details',
-                  label: 'Details',
-                },
-                {
-                  value: 'orders',
-                  label: 'Orders',
-                },
-                {
-                  value: 'users',
-                  label: 'Users',
-                },
-                {
-                  value: 'reviews',
-                  label: `Reviews`,
-                },
-              ].map(tab => (
-                <Tab key={tab.value} value={tab.value} label={tab.label} />
-              ))}
-            </Tabs>
-
-            {currentTab === 'details' && (
-              <HealthUnitNewViewEditForm isNew editHealthUnit={healthUnit} services={services} />
-            )}
+            <HealthUnitNewViewEditForm isNew services={services} />
           </Card>
         </Container>
       )}
