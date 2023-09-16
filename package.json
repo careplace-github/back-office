@@ -11,7 +11,7 @@
     "build": "ENV=prod next build",
     "build:development": "ENV=dev next build",
     "build:staging": "ENV=stag next build",
-    "dev": "ENV=dev next dev -p 5000",
+    "dev": "ENV=dev next dev -p 5001",
     "dev:staging": "ENV=stag next dev -p 5000",
     "lint": "next lint",
     "lint:es": "eslint --ext .js,.jsx .",
