@@ -28,11 +28,12 @@ import {
   Chip,
   CardContent,
   styled,
+  InputAdornment,
 } from '@mui/material';
 // utils
 import { fData } from 'src/utils/formatNumber';
 // assets
-import { countries, roles, genders } from 'src/data';
+import { countries, healthUnitTypes, roles, genders } from 'src/data';
 // routes
 import { PATHS } from 'src/routes';
 // components
@@ -53,9 +54,10 @@ import { useSession } from 'next-auth/react';
 
 // ----------------------------------------------------------------------
 
-UserNewEditForm.propTypes = {
+HealthUnitDetailForm.propTypes = {
   isEdit: PropTypes.bool,
-  editHealthUnit: PropTypes.object,
+  isNew: PropTypes.bool,
+  currentHealthUnit: PropTypes.object,
   services: PropTypes.array,
   user: PropTypes.object,
 };
@@ -71,27 +73,11 @@ const StyledMapContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function UserNewEditForm({
-  isNew = false,
-  isEdit = false,
-  isView = false,
-  editHealthUnit,
-  services,
-}) {
+export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit, services }) {
   const { push } = useRouter();
 
-  const [currentTab, setCurrentTab] = useState('details');
+  const [serviceArea, setServiceArea] = useState(currentHealthUnit?.service_area || []);
 
-  const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue);
-  }, []);
-
-  const { data: user } = useSession();
-
-  const [isCaregiver, setIsCaregiver] = useState(editHealthUnit?.role === 'caregiver');
-  const [showPermissions, setShowPermissions] = useState(
-    editHealthUnit?.permissions?.includes('app_user') || false
-  );
   const [fileData, setFileData] = useState<FormData | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -104,64 +90,52 @@ export default function UserNewEditForm({
     birthdate: Yup.date().required('A data de nascimento é obrigatória.'),
     gender: Yup.string().required('O gênero é obrigatório.'),
     role: Yup.string().required('O cargo é obrigatório.'),
-
-    /**
-     *     street: Yup.string().required('A rua é obrigatória.'),
-    postal_code: Yup.string().required('O código postal é obrigatório.'),
-    city: Yup.string().required('A cidade é obrigatória.'),
-    country: Yup.string().required('O país é obrigatório.'),
-     */
-
-    // if the role is caregiver, then the services are required
-    services: Yup.array().when('role', {
-      is: 'caregiver',
-      then: Yup.array().required('Os serviços são obrigatórios.'),
-    }),
   });
 
   const defaultValues = useMemo(
     () => ({
-      logo: editHealthUnit?.business_profile.logo || '',
+      logo: currentHealthUnit?.business_profile.logo || '',
       fileChanged: '',
 
-      name: editHealthUnit?.business_profile.name || '',
-      website: editHealthUnit?.business_profile.website || '',
-      about: editHealthUnit?.business_profile.about || '',
-      email: editHealthUnit?.business_profile.email || '',
-      phoneNumber: editHealthUnit?.business_profile.phone || '',
-      services: editHealthUnit?.services || [],
-      facebook: editHealthUnit?.business_profile.social_links.facebook || '',
-      linkedin: editHealthUnit?.business_profile.social_links.linkedin || '',
-      instagram: editHealthUnit?.business_profile.social_links.instagram || '',
-      twitter: editHealthUnit?.business_profile.social_links.twitter || '',
+      name: currentHealthUnit?.business_profile.name || '',
+      website: currentHealthUnit?.business_profile.website || '',
+      about: currentHealthUnit?.business_profile.about || '',
+      email: currentHealthUnit?.business_profile.email || '',
+      phoneNumber: currentHealthUnit?.business_profile.phone || '',
+      services: currentHealthUnit?.services || [],
+      facebook: currentHealthUnit?.business_profile.social_links.facebook || '',
+      linkedin: currentHealthUnit?.business_profile.social_links.linkedin || '',
+      instagram: currentHealthUnit?.business_profile.social_links.instagram || '',
+      twitter: currentHealthUnit?.business_profile.social_links.twitter || '',
+      type: currentHealthUnit?.business_profile.type || '',
 
-      service_area: editHealthUnit?.service_area || '',
+      service_area: currentHealthUnit?.service_area || '',
 
-      minimumHourlyPrice: editHealthUnit?.pricing?.minimum_hourly_rate || '',
-      averageHourlyPrice: editHealthUnit?.pricing?.average_hourly_rate || '',
-      minimumMonthlyPrice: editHealthUnit?.pricing?.minimum_monthly_rate || '',
-      averageMonthlyPrice: editHealthUnit?.pricing?.average_monthly_rate || '',
+      minimumHourlyPrice: currentHealthUnit?.pricing?.minimum_hourly_rate || '',
+      averageHourlyPrice: currentHealthUnit?.pricing?.average_hourly_rate || '',
+      minimumMonthlyPrice: currentHealthUnit?.pricing?.minimum_monthly_rate || '',
+      averageMonthlyPrice: currentHealthUnit?.pricing?.average_monthly_rate || '',
 
-      directorName: editHealthUnit?.legal_information.director?.name.split(' ')[0] || '',
-      directorSurname: editHealthUnit?.legal_information.director?.name.split(' ')[1] || '',
-      directorEmail: editHealthUnit?.legal_information.director?.email || '',
-      directorPhone: editHealthUnit?.legal_information.director?.phone || '',
-      directorStreet: editHealthUnit?.legal_information.director?.address?.street || '',
-      directorPostalCode: editHealthUnit?.legal_information.director?.address?.postal_code || '',
-      directorCity: editHealthUnit?.legal_information.director?.address?.city || '',
-      directorCountry: editHealthUnit?.legal_information.director?.address?.country || '',
+      directorName: currentHealthUnit?.legal_information.director?.name.split(' ')[0] || '',
+      directorSurname: currentHealthUnit?.legal_information.director?.name.split(' ')[1] || '',
+      directorEmail: currentHealthUnit?.legal_information.director?.email || '',
+      directorPhone: currentHealthUnit?.legal_information.director?.phone || '',
+      directorStreet: currentHealthUnit?.legal_information.director?.address?.street || '',
+      directorPostalCode: currentHealthUnit?.legal_information.director?.address?.postal_code || '',
+      directorCity: currentHealthUnit?.legal_information.director?.address?.city || '',
+      directorCountry: currentHealthUnit?.legal_information.director?.address?.country || '',
 
-      companyLegalName: editHealthUnit?.legal_information.name || '',
-      taxNumber: editHealthUnit?.legal_information.tax_number || '',
-      businessStructure: editHealthUnit?.legal_information.business_structure || '',
-      street: editHealthUnit?.legal_information?.street || '',
-      postal_code: editHealthUnit?.legal_information?.postal_code || '',
-      city: editHealthUnit?.legal_information?.city || '',
-      state: editHealthUnit?.legal_information?.state || '',
-      country: editHealthUnit?.legal_information?.country || '',
+      companyLegalName: currentHealthUnit?.legal_information.name || '',
+      taxNumber: currentHealthUnit?.legal_information.tax_number || '',
+      businessStructure: currentHealthUnit?.legal_information.business_structure || '',
+      street: currentHealthUnit?.legal_information?.street || '',
+      postal_code: currentHealthUnit?.legal_information?.postal_code || '',
+      city: currentHealthUnit?.legal_information?.city || '',
+      state: currentHealthUnit?.legal_information?.state || '',
+      country: currentHealthUnit?.legal_information?.country || '',
     }),
 
-    [editHealthUnit]
+    [currentHealthUnit]
   );
 
   const methods = useForm({
@@ -202,32 +176,67 @@ export default function UserNewEditForm({
 
     // ------------------------------ //
 
-    const _user = {
-      name: `${data.firstName} ${data.lastName}`,
-      email: data.email,
-      phone: data.phoneNumber,
-      birthdate: data.birthdate,
-      gender: data.gender,
-      logo: data.fileChanged ? fileURL : data.logo,
-      address: {
-        street: data.street,
-        postal_code: data.postal_code,
-        city: data.city,
-        state: data.state,
-        country: data.country,
+    const _healthUnit = {
+      business_profile: {
+        name: data.name,
+        about: data.about,
+        email: data.email,
+        phone: data.phoneNumber,
+        website: data.website,
+        logo: fileURL || data.logo,
+        social_links: {
+          facebook: data.facebook,
+          linkedin: data.linkedin,
+          instagram: data.instagram,
+          twitter: data.twitter,
+        },
       },
-      role: data.role,
-      company: data.company,
-      ...(data.role === 'caregiver' && { services: data.services }),
+      type: data.type,
+      service_area: {
+        type: 'Polygon',
+        coordinates: serviceArea,
+      },
+      pricing: {
+        minimum_hourly_rate: data.minimumHourlyPrice,
+        average_hourly_rate: data.averageHourlyPrice,
+        minimum_monthly_rate: data.minimumMonthlyPrice,
+        average_monthly_rate: data.averageMonthlyPrice,
+      },
+      legal_information: {
+        name: data.companyLegalName,
+        tax_number: data.taxNumber,
+        business_structure: data.businessStructure,
+        director: {
+          name: `${data.directorName} ${data.directorSurname}`,
+          email: data.directorEmail,
+          phone: data.directorPhone,
+          address: {
+            street: data.directorStreet,
+            postal_code: data.directorPostalCode,
+            city: data.directorCity,
+            country: data.directorCountry,
+          },
+        },
+        address: {
+          street: data.street,
+          postal_code: data.postal_code,
+          city: data.city,
+          country: data.country,
+        },
+      },
+      services: data.services,
     };
+
+    console.log("isEdit", isEdit),
+    console.log("isNew, ", isNew)
 
     if (isEdit) {
       let response;
 
       try {
-        response = await fetch(`/api/health-units/${editHealthUnit._id}`, {
+        response = await fetch(`/api/health-units/${currentHealthUnit._id}`, {
           method: 'PUT',
-          body: JSON.stringify(_user),
+          body: JSON.stringify(_healthUnit),
         });
 
         if (response.error) {
@@ -254,7 +263,7 @@ export default function UserNewEditForm({
       try {
         response = await fetch('/api/health-units', {
           method: 'POST',
-          body: JSON.stringify(_user),
+          body: JSON.stringify(_healthUnit),
         });
 
         if (response.error) {
@@ -301,431 +310,397 @@ export default function UserNewEditForm({
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={3}>
-        <Card sx={{ p: 3, mt: 3, ml: 3, mr: 3 }}>
-          <RHFUploadAvatar
-            disabled={isView}
-            name="logo"
-            maxSize={3145728}
-            onDrop={handleDrop}
-            helperText={
-              <Typography
-                variant="caption"
-                sx={{
-                  mt: 2,
-                  mb: 5,
-                  mx: 'auto',
-                  display: 'block',
-                  textAlign: 'center',
-                  color: 'text.secondary',
-                }}>
-                Permitido *.jpeg, *.jpg, *.png, *.gif
-                <br /> tamanho máximo de {fData(5045728)}
-              </Typography>
+      <RHFUploadAvatar
+        sx={{
+          mt: 7,
+        }}
+        name="logo"
+        maxSize={3145728}
+        onDrop={handleDrop}
+        helperText={
+          <Typography
+            variant="caption"
+            sx={{
+              mt: 2,
+              mb: 3,
+              mx: 'auto',
+              display: 'block',
+              textAlign: 'center',
+              color: 'text.secondary',
+            }}>
+            Permitido *.jpeg, *.jpg, *.png, *.gif
+            <br /> tamanho máximo de {fData(5045728)}
+          </Typography>
+        }
+      />
+      <Grid
+        container
+        spacing={0}
+        sx={{
+          px: 5,
+        }}>
+        <input type="hidden" {...register('fileChanged')} /> {/* Add this line */}
+        <Box
+          rowGap={3}
+          columnGap={2}
+          display="grid"
+          gridTemplateColumns={{
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(2, 1fr)',
+          }}>
+          <Typography variant="h4">Details</Typography>
+          <Typography variant="h4"></Typography>
+
+          <RHFTextField name="name" label="Nome *" InputLabelProps={{ shrink: true }} />
+
+          <RHFTextField name="website" label="Website *" InputLabelProps={{ shrink: true }} />
+
+          <RHFTextField name="email" label="Email *" InputLabelProps={{ shrink: true }} />
+
+          <RHFPhoneField
+            name="phoneNumber"
+            label="Telefone *"
+            defaultCountry="PT"
+            forceCallingCode
+            onChange={value => {
+              /**
+               * Portuguese Number Validation
+               */
+
+              // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
+              if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
+                // (eg: +351 9123456780 -> +351 912 345 678)
+                const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
+                  11,
+                  14
+                )}`;
+                setValue('phoneNumber', newValue);
+                return;
+              }
+
+              // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
+              if (value.length > 16) {
+                return;
+              }
+
+              setValue('phoneNumber', value);
+            }}
+          />
+
+          <RHFAutocomplete
+            name="services"
+            label="Services *"
+            InputLabelProps={{ shrink: true }}
+            aria-multiline="false"
+            multiple
+            freeSolo
+            sx={{ width: '100%' }}
+            options={services.map(option => option._id)}
+            getOptionLabel={_id => services.find(option => option._id === _id)?.name || ''}
+            onChange={(event, newValue) => {
+              setValue('services', newValue);
+
+              if (newValue.length === 0) {
+                setValue('services', []);
+              }
+            }}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip
+                  {...getTagProps({ index })}
+                  size="small"
+                  label={services.find(item => item._id === option)?.name || ''}
+                />
+              ))
             }
           />
-          <input type="hidden" {...register('fileChanged')} /> {/* Add this line */}
-          <Box
-            rowGap={3}
-            columnGap={2}
-            display="grid"
-            gridTemplateColumns={{
-              xs: 'repeat(1, 1fr)',
-              sm: 'repeat(2, 1fr)',
-            }}>
-            <Typography variant="h4">Details</Typography>
-            <Typography variant="h4"></Typography>
 
-            <RHFTextField
-              name="name"
-              label="Nome *"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+          <RHFTextField
+            name="about"
+            label="About *"
+            multiline
+            minRows={6}
+            InputLabelProps={{ shrink: true }}
+          />
 
-            <RHFTextField
-              name="website"
-              label="Website *"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+          <RHFTextField label="Facebook" name="facebook" InputLabelProps={{ shrink: true }} />
 
-            <RHFTextField
-              name="email"
-              label="Email *"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+          <RHFTextField label="LinkedIn" name="linkedin" InputLabelProps={{ shrink: true }} />
 
-            <RHFPhoneField
-              disabled={isView}
-              name="phoneNumber"
-              label="Telefone *"
-              defaultCountry="PT"
-              forceCallingCode
-              onChange={value => {
-                /**
-                 * Portuguese Number Validation
-                 */
+          <RHFTextField label="Instagram" name="instagram" InputLabelProps={{ shrink: true }} />
 
-                // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
-                if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
-                  // (eg: +351 9123456780 -> +351 912 345 678)
-                  const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
-                    11,
-                    14
-                  )}`;
-                  setValue('phoneNumber', newValue);
-                  return;
-                }
+          <RHFTextField label="Twitter" name="twitter" InputLabelProps={{ shrink: true }} />
 
-                // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
-                if (value.length > 16) {
-                  return;
-                }
+          <RHFSelect native name="type" label="Type" InputLabelProps={{ shrink: true }}>
+            <option value="" />
+            {healthUnitTypes.map(type => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </RHFSelect>
 
-                setValue('phoneNumber', value);
-              }}
-            />
+          <Typography variant="h4"></Typography>
 
-            <RHFAutocomplete
-              name="services"
-              label="Services *"
-              InputLabelProps={{ shrink: true }}
-              aria-multiline="false"
-              multiple
-              disabled={isView}
-              freeSolo
-              sx={{ width: '100%' }}
-              options={services.map(option => option._id)}
-              getOptionLabel={_id => services.find(option => option._id === _id)?.name || ''}
-              onChange={(event, newValue) => {
-                setValue('services', newValue);
+          <Typography variant="h4" sx={{ mt: 10 }}>
+            Service Area
+          </Typography>
+          <Typography variant="h4"></Typography>
 
-                if (newValue.length === 0) {
-                  setValue('services', []);
-                }
-              }}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    size="small"
-                    label={services.find(item => item._id === option)?.name || ''}
-                  />
-                ))
+          <MapView sx={{ gridColumn: 'span 2' }} />
+
+          <Typography variant="h4">Pricing</Typography>
+          <Typography variant="h4"></Typography>
+
+          <RHFTextField
+            label="Minimum Hourly Price"
+            name="minimumHourlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/hour
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
+
+          <RHFTextField
+            label="Minimum Monthly Price"
+            name="minimumMonthlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/month
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
+
+          <RHFTextField
+            label="Average Hourly Price"
+            name="averageHourlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/hour
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
+
+          <RHFTextField
+            label="Average Monthly Price"
+            name="averageMonthlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/month
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
+
+          <Typography variant="h4" sx={{ pt: 5 }}>
+            Director
+          </Typography>
+          <Typography variant="h4"></Typography>
+
+          <RHFTextField name="directorName" label="Name *" InputLabelProps={{ shrink: true }} />
+
+          <RHFTextField
+            name="directorSurname"
+            label="Surname *"
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <RHFTextField name="directorEmail" label="Email *" InputLabelProps={{ shrink: true }} />
+
+          <RHFPhoneField
+            name="directorPhone"
+            label="Telefone *"
+            defaultCountry="PT"
+            forceCallingCode
+            onChange={value => {
+              /**
+               * Portuguese Number Validation
+               */
+
+              // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
+              if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
+                // (eg: +351 9123456780 -> +351 912 345 678)
+                const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
+                  11,
+                  14
+                )}`;
+                setValue('phoneNumber', newValue);
+                return;
               }
-            />
 
-            <RHFTextField
-              name="about"
-              label="About *"
-              multiline
-              minRows={6}
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+              // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
+              if (value.length > 16) {
+                return;
+              }
 
-            <RHFTextField
-              label="Facebook"
-              name="facebook"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+              setValue('phoneNumber', value);
+            }}
+          />
 
-            <RHFTextField
-              label="LinkedIn"
-              name="linkedin"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+          <RHFTextField name="directorStreet" label="Street" InputLabelProps={{ shrink: true }} />
+          <RHFTextField
+            InputLabelProps={{ shrink: true }}
+            name="directorPostalCode"
+            label="Postal Code"
+            onChange={e => {
+              const { value } = e.target;
 
-            <RHFTextField
-              label="Instagram"
-              name="instagram"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+              /**
+               * Only allow numbers and dashes
+               */
+              if (!/^[0-9-]*$/.test(value)) {
+                return;
+              }
 
-            <RHFTextField
-              label="Twitter"
-              name="twitter"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <Typography variant="h4" sx={{ mt: 10 }}>
-              Service Area
-            </Typography>
-            <Typography variant="h4"></Typography>
-
-            <MapView sx={{ gridColumn: 'span 2' }} />
-
-            <Typography variant="h4">Pricing</Typography>
-            <Typography variant="h4"></Typography>
-
-            <RHFTextField
-              label="Minimum Hourly Price"
-              name="minimumHourlyPrice"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              label="Average Hourly Price"
-              name="averageHourlyPrice"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              label="Minimum Monthly Price"
-              name="minimumMonthlyPrice"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              label="Average Monthly Price"
-              name="averageMonthlyPrice"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <Typography variant="h4" sx={{ pt: 5 }}>
-              Director
-            </Typography>
-            <Typography variant="h4"></Typography>
-
-            <RHFTextField
-              name="directorName"
-              label="Name *"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              name="directorSurname"
-              label="Surname *"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              name="directorEmail"
-              label="Email *"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFPhoneField
-              disabled={isView}
-              name="directorPhone"
-              label="Telefone *"
-              defaultCountry="PT"
-              forceCallingCode
-              onChange={value => {
-                /**
-                 * Portuguese Number Validation
-                 */
-
-                // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
-                if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
-                  // (eg: +351 9123456780 -> +351 912 345 678)
-                  const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
-                    11,
-                    14
-                  )}`;
-                  setValue('phoneNumber', newValue);
+              /**
+               * Portugal Zip Code Validation
+               */
+              if (getValues('country') === 'PT' || getValues('country') === '') {
+                // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
+                if (value.length === 5 && value[4] !== '-') {
+                  setValue(
+                    'postal_code',
+                    `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
+                  );
                   return;
                 }
 
-                // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
-                if (value.length > 16) {
+                // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
+                if (value.length > 8) {
+                  return;
+                }
+              }
+
+              setValue('postal_code', value);
+            }}
+          />
+
+          <RHFTextField name="directorCity" label="City" InputLabelProps={{ shrink: true }} />
+
+          <RHFSelect
+            native
+            name="directorCountry"
+            label="Country"
+            InputLabelProps={{ shrink: true }}>
+            <option value="" />
+            {countries.map(country => (
+              <option key={country.code} value={country.code}>
+                {country.label}
+              </option>
+            ))}
+          </RHFSelect>
+
+          <Typography variant="h4" sx={{ pt: 5 }}>
+            Legal Information
+          </Typography>
+          <Typography variant="h4"></Typography>
+
+          <RHFTextField
+            name="companyLegalName"
+            label="Legal Name *"
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <RHFTextField name="taxNumber" label="Tax Number *" InputLabelProps={{ shrink: true }} />
+
+          <RHFTextField
+            name="businessStructure"
+            label="Business Structure *"
+            InputLabelProps={{ shrink: true }}
+          />
+          <RHFTextField name="street" label="Street *" InputLabelProps={{ shrink: true }} />
+          <RHFTextField
+            InputLabelProps={{ shrink: true }}
+            name="postal_code"
+            label="Postal Code *"
+            onChange={e => {
+              const { value } = e.target;
+
+              /**
+               * Only allow numbers and dashes
+               */
+              if (!/^[0-9-]*$/.test(value)) {
+                return;
+              }
+
+              /**
+               * Portugal Zip Code Validation
+               */
+              if (getValues('country') === 'PT' || getValues('country') === '') {
+                // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
+                if (value.length === 5 && value[4] !== '-') {
+                  setValue(
+                    'postal_code',
+                    `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
+                  );
                   return;
                 }
 
-                setValue('phoneNumber', value);
-              }}
-            />
-
-            <RHFTextField
-              name="directorStreet"
-              label="Street"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-            <RHFTextField
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-              name="directorPostalCode"
-              label="Postal Code"
-              onChange={e => {
-                const { value } = e.target;
-
-                /**
-                 * Only allow numbers and dashes
-                 */
-                if (!/^[0-9-]*$/.test(value)) {
+                // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
+                if (value.length > 8) {
                   return;
                 }
+              }
 
-                /**
-                 * Portugal Zip Code Validation
-                 */
-                if (getValues('country') === 'PT' || getValues('country') === '') {
-                  // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
-                  if (value.length === 5 && value[4] !== '-') {
-                    setValue(
-                      'postal_code',
-                      `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
-                    );
-                    return;
-                  }
+              setValue('postal_code', value);
+            }}
+          />
 
-                  // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
-                  if (value.length > 8) {
-                    return;
-                  }
-                }
+          <RHFTextField name="city" label="City *" InputLabelProps={{ shrink: true }} />
 
-                setValue('postal_code', value);
-              }}
-            />
+          <RHFSelect native name="country" label="Country *" InputLabelProps={{ shrink: true }}>
+            <option value="" />
+            {countries.map(country => (
+              <option key={country.code} value={country.code}>
+                {country.label}
+              </option>
+            ))}
+          </RHFSelect>
+          <Typography variant="h4"></Typography>
 
-            <RHFTextField
-              name="directorCity"
-              label="City"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
+          <Typography
+            sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
+            * Mandatory field
+          </Typography>
 
-            <RHFSelect
-              native
-              name="directorCountry"
-              label="Country"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}>
-              <option value="" />
-              {countries.map(country => (
-                <option key={country.code} value={country.code}>
-                  {country.label}
-                </option>
-              ))}
-            </RHFSelect>
-
-            <Typography variant="h4" sx={{ pt: 5 }}>
-              Legal Information
-            </Typography>
-            <Typography variant="h4"></Typography>
-
-            <RHFTextField
-              name="companyLegalName"
-              label="Company Legal Name"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              name="taxNumber"
-              label="Tax Number"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              name="businessStructure"
-              label="Business Structure"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-            <RHFTextField
-              name="street"
-              label="Rua"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-            <RHFTextField
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-              name="postal_code"
-              label="Código Postal"
-              onChange={e => {
-                const { value } = e.target;
-
-                /**
-                 * Only allow numbers and dashes
-                 */
-                if (!/^[0-9-]*$/.test(value)) {
-                  return;
-                }
-
-                /**
-                 * Portugal Zip Code Validation
-                 */
-                if (getValues('country') === 'PT' || getValues('country') === '') {
-                  // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
-                  if (value.length === 5 && value[4] !== '-') {
-                    setValue(
-                      'postal_code',
-                      `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
-                    );
-                    return;
-                  }
-
-                  // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
-                  if (value.length > 8) {
-                    return;
-                  }
-                }
-
-                setValue('postal_code', value);
-              }}
-            />
-
-            <RHFTextField
-              name="city"
-              label="Cidade"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFSelect
-              native
-              name="country"
-              label="País"
-              disabled={isView}
-              InputLabelProps={{ shrink: true }}>
-              <option value="" />
-              {countries.map(country => (
-                <option key={country.code} value={country.code}>
-                  {country.label}
-                </option>
-              ))}
-            </RHFSelect>
-            <Typography variant="h4"></Typography>
-
-            <Typography
-              sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
-              * Mandatory field
-            </Typography>
-
-            <Typography variant="h4"></Typography>
-          </Box>
-          {!isView && (
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                disabled={!isDirty}
-                onClick={handleSubmit(onSubmit)}>
-                {!isEdit ? 'Adicionar' : 'Guardar'}
-              </LoadingButton>
-            </Stack>
-          )}
-        </Card>
+          <Typography variant="h4"></Typography>
+        </Box>
       </Grid>
+
+      <Stack alignItems="flex-end" sx={{ mt: 2, mb: 5, mr: 5 }}>
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          loading={isSubmitting}
+          disabled={!isDirty}
+          onClick={handleSubmit(onSubmit)}>
+          {isNew ? 'Add' : 'Save'}
+        </LoadingButton>
+      </Stack>
     </FormProvider>
   );
 }
