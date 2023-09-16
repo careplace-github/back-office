@@ -19,7 +19,7 @@ export default function NewUserPage({ services }) {
         <title> Add Health Unit | Careplace Admin </title>
       </Head>
       <DashboardLayout>
-        <NewHealthUnitView services={services} healthUnit={undefined} />
+        <NewHealthUnitView services={services} />
       </DashboardLayout>
     </>
   );
