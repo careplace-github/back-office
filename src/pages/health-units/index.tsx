@@ -11,8 +11,11 @@ import axios from 'src/lib/axios';
 import { PATHS } from 'src/routes';
 
 // ----------------------------------------------------------------------
+type props = {
+  healthUnits: any;
+};
 
-export default function UsersListPage({ healthUnits }) {
+export default function UsersListPage({ healthUnits }: props) {
   return (
     <>
       <Head>
@@ -53,6 +56,8 @@ export async function getServerSideProps(context) {
       },
     })
     .then(response => response.data.data);
+
+  console.log('Health Units', healthUnits);
 
   return {
     props: {

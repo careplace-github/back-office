@@ -25,8 +25,7 @@ type HealthUnitReviewListProps = {
 };
 
 export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListProps) {
-  //console.log('Reviews: ', reviews);
-
+  // eslint-disable-next-line react/destructuring-assignment
   const _healthUnitId = healthUnitId.healthUnitId;
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -37,7 +36,6 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  console.log('healthUnitId: ', _healthUnitId);
   const fetchData = async () => {
     setIsLoading(true);
     try {

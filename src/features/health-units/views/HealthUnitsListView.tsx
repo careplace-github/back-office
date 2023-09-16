@@ -12,11 +12,13 @@ import {
   Table,
   Button,
   Tooltip,
+  Box,
   Divider,
   TableBody,
   Container,
   IconButton,
   TableContainer,
+  CircularProgress,
 } from '@mui/material';
 // auth
 import { useSettingsContext } from 'src/contexts';
@@ -78,7 +80,11 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export default function healthUnitsListView({}) {
+type props = {
+  healthUnits?: any;
+};
+
+export default function healthUnitsListView({ healthUnits }: props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -121,8 +127,6 @@ export default function healthUnitsListView({}) {
         }
       );
 
-      console.log('response.data: ', response.data);
-
       setTotalPages(response.totalPages);
       setTotalDocuments(response.totalDocuments);
       setPage(response.page - 1);
@@ -135,8 +139,6 @@ export default function healthUnitsListView({}) {
         filterType,
         filterStatus,
       });
-
-      console.log('filteredData: ', filteredData);
 
       setDataFiltered(filteredData);
     } catch (error) {
@@ -178,7 +180,6 @@ export default function healthUnitsListView({}) {
   };
 
   const handleFilterCountry = event => {
-    console.log('event.target: ', event.target);
     setPage(0);
     setFilterCountry(event.target.value);
   };
@@ -235,94 +236,99 @@ export default function healthUnitsListView({}) {
   };
 
   return (
-    <>
-      {isLoading ? (
-        <LoadingScreen />
-      ) : (
-        <Container maxWidth={themeStretch ? false : 'lg'}>
-          <CustomBreadcrumbs
-            heading="Health Units"
-            links={[{ name: 'Health Units' }]}
-            action={
-              <NextLink href={PATHS.healthUnits.new} passHref>
-                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                  Add Health Unit
-                </Button>
-              </NextLink>
-            }
-          />
+    <Container maxWidth={themeStretch ? false : 'lg'}>
+      <CustomBreadcrumbs
+        heading="Health Units"
+        links={[{ name: 'Health Units' }]}
+        action={
+          <NextLink href={PATHS.healthUnits.new} passHref>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              Add Health Unit
+            </Button>
+          </NextLink>
+        }
+      />
 
-          <Card>
-            <Divider />
+      <Card>
+        <Divider />
 
-            <HealthUnitsTableToolbar
-              isFiltered={isFiltered}
-              filterName={filterName}
-              filterType={filterType}
-              filterCountry={filterCountry}
-              filterStatus={filterStatus}
-              optionsRole={ROLES_OPTIONS}
-              optionsCountry={COUNTRIES_OPTIONS}
-              optionsStatus={STATUS_OPTIONS}
-              onFilterName={handleFilterName}
-              onFilterType={handleFilterType}
-              onFilterCountry={handleFilterCountry}
-              onFilterStatus={handleFilterStatus}
-              onResetFilter={handleResetFilter}
-            />
+        <HealthUnitsTableToolbar
+          isFiltered={isFiltered}
+          filterName={filterName}
+          filterType={filterType}
+          filterCountry={filterCountry}
+          filterStatus={filterStatus}
+          optionsRole={ROLES_OPTIONS}
+          optionsCountry={COUNTRIES_OPTIONS}
+          optionsStatus={STATUS_OPTIONS}
+          onFilterName={handleFilterName}
+          onFilterType={handleFilterType}
+          onFilterCountry={handleFilterCountry}
+          onFilterStatus={handleFilterStatus}
+          onResetFilter={handleResetFilter}
+        />
 
-            <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-              <Scrollbar>
-                <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
-                  <TableHeadCustom
-                    order={order}
-                    orderBy={orderBy}
-                    headLabel={TABLE_HEAD}
-                    rowCount={totalDocuments}
-                    numSelected={selected.length}
-                    onSort={onSort}
+        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          {isLoading && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '400px',
+              }}>
+              <CircularProgress sx={{ color: 'prmary.main' }} />
+            </Box>
+          )}
+          {!isLoading && (
+            <Scrollbar>
+              <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+                <TableHeadCustom
+                  order={order}
+                  orderBy={orderBy}
+                  headLabel={TABLE_HEAD}
+                  rowCount={totalDocuments}
+                  numSelected={selected.length}
+                  onSort={onSort}
+                />
+
+                <TableBody>
+                  {dataFiltered?.map(row => (
+                    <HealthUnitsTableRow
+                      key={row._id}
+                      row={row}
+                      selected={selected.includes(row._id)}
+                      onSelectRow={() => onSelectRow(row._id)}
+                      onViewRow={() => handleViewRow(row._id)}
+                      onEditRow={() => handleEditRow(row._id)}
+                      onDeleteRow={() => handleDeleteRow(row)}
+                    />
+                  ))}
+
+                  <TableEmptyRows
+                    height={denseHeight}
+                    emptyRows={emptyRows(page, rowsPerPage, totalDocuments)}
                   />
 
-                  <TableBody>
-                    {dataFiltered
-                      ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map(row => (
-                        <HealthUnitsTableRow
-                          key={row._id}
-                          row={row}
-                          selected={selected.includes(row._id)}
-                          onSelectRow={() => onSelectRow(row._id)}
-                          onViewRow={() => handleViewRow(row._id)}
-                          onEditRow={() => handleEditRow(row._id)}
-                          onDeleteRow={() => handleDeleteRow(row)}
-                        />
-                      ))}
+                  <TableNoData isNotFound={isNotFound} />
+                </TableBody>
+              </Table>
+            </Scrollbar>
+          )}
+        </TableContainer>
 
-                    <TableEmptyRows
-                      height={denseHeight}
-                      emptyRows={emptyRows(page, rowsPerPage, totalDocuments)}
-                    />
-
-                    <TableNoData isNotFound={isNotFound} />
-                  </TableBody>
-                </Table>
-              </Scrollbar>
-            </TableContainer>
-
-            <TablePaginationCustom
-              count={totalDocuments}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-              //
-              dense={dense}
-              onChangeDense={onChangeDense}
-            />
-          </Card>
-        </Container>
-      )}
-    </>
+        <TablePaginationCustom
+          count={totalDocuments}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={onChangePage}
+          onRowsPerPageChange={onChangeRowsPerPage}
+          //
+          dense={dense}
+          onChangeDense={onChangeDense}
+        />
+      </Card>
+    </Container>
   );
 }
 
@@ -354,7 +360,6 @@ function applyFilter({
   }
 
   if (filterCountry !== 'all') {
-    console.log('filterCountry: ', filterCountry);
     inputData = inputData.filter(
       healthUnit => healthUnit?.legal_information?.address?.country === filterCountry
     );
@@ -378,6 +383,11 @@ function applyFilter({
           healthUnit => healthUnit.stripe_account?.requirements?.currently_due?.length > 0
         );
 
+        break;
+      default:
+        inputData = inputData.filter(
+          healthUnit => healthUnit.stripe_account?.requirements?.currently_due?.length === 0
+        );
         break;
     }
   }
