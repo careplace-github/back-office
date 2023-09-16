@@ -1,13 +1,15 @@
 // react
 import { useState, useEffect } from 'react';
 // @mui
-import { Modal, Box, Typography, useTheme, Button } from '@mui/material';
+import { Modal, Box, Typography, useTheme, Button, IconButton } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Rating from '@mui/material/Rating';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
 // utils
 import { fDate } from 'src/utils/format-time';
+import { useResponsive } from 'src/hooks';
+
 // types
 // import { IProductReview } from 'src/types/product';
 // components
@@ -15,10 +17,6 @@ import Iconify from 'src/components/iconify';
 import MenuPopover from 'src/components/menu-popover';
 import MenuItem from '@mui/material/MenuItem';
 import ReviewForm from './ReviewForm';
-
-import { IconButton } from '@mui/material';
-import { set } from 'cypress/types/lodash';
-import { useResponsive } from 'src/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -139,7 +137,7 @@ export default function HealthUnitReviewItem({ review }: Props) {
           sx={{
             width: isMdUp ? 'auto' : '100vw',
             height: isMdUp ? 'auto' : '100vh',
-              minWidth: isMdUp ? '500px' : undefined,
+            minWidth: isMdUp ? '500px' : undefined,
             maxHeight: isMdUp ? '90vh' : '100vh',
             p: isMdUp ? '50px' : '20px',
             pt: isMdUp ? '50px' : '75px',
@@ -162,7 +160,6 @@ export default function HealthUnitReviewItem({ review }: Props) {
             icon="material-symbols:close-rounded"
             sx={{
               position: 'absolute',
-              //top: isMdUp ? '50px' : '72px',
               right: isMdUp ? '50px' : '20px',
               cursor: 'pointer',
               '&:hover': {
@@ -178,7 +175,7 @@ export default function HealthUnitReviewItem({ review }: Props) {
           <Typography
             variant="body2"
             sx={{ mt: 5, mb: 2, color: 'text.secondary', textAlign: 'center' }}>
-            Are you sure you want to delete this review?  <br />
+            Are you sure you want to delete this review? <br />
             This action cannot be undone.
           </Typography>
 
