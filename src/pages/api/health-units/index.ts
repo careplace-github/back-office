@@ -40,6 +40,31 @@ export default async function ordersRoute(
       }
     }
 
+    if (req.method === 'GET') {
+      try {
+        const response = await axios.get(`/health-units/search`, {
+          // Set authorization header bearer token
+          headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': accessToken,
+
+            Authorization: `Bearer ${accessToken}`,
+          },
+          params: req.query,
+          withCredentials: true,
+        });
+        return res.status(200).json(response.data);
+      } catch (error) {
+        switch (error.response.data.error) {
+          case 'EMAIL_ALREADY_EXISTS':
+            return res.status(400).json({ error: 'EMAIL_ALREADY_EXISTS' });
+
+          default:
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+      }
+    }
+
     // This will be returned if the method doesn't match the ones above
     return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error) {

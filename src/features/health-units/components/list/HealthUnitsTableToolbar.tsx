@@ -11,12 +11,15 @@ UserTableToolbar.propTypes = {
   filterName: PropTypes.string,
   filterType: PropTypes.string,
   filterCountry: PropTypes.string,
+  filterStatus: PropTypes.string,
   onFilterName: PropTypes.func,
   onFilterType: PropTypes.func,
   onFilterCountry: PropTypes.func,
+  onFilterStatus: PropTypes.func,
   onResetFilter: PropTypes.func,
   optionsRole: PropTypes.arrayOf(PropTypes.object),
   optionsCountry: PropTypes.arrayOf(PropTypes.object),
+  optionsStatus: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default function UserTableToolbar({
@@ -24,11 +27,14 @@ export default function UserTableToolbar({
   filterName,
   filterType,
   filterCountry,
+  filterStatus,
   optionsRole,
   optionsCountry,
+  optionsStatus,
   onFilterName,
   onFilterType,
   onFilterCountry,
+  onFilterStatus,
   onResetFilter,
 }) {
   return (
@@ -82,7 +88,10 @@ export default function UserTableToolbar({
         select
         label="Country"
         value={filterCountry}
-        onChange={onFilterCountry}
+        onChange={event => {
+          onFilterCountry(event);
+          console.log(filterCountry);
+        }}
         SelectProps={{
           MenuProps: {
             PaperProps: {
@@ -97,6 +106,43 @@ export default function UserTableToolbar({
           textTransform: 'capitalize',
         }}>
         {optionsCountry.map(option => (
+          <MenuItem
+            key={option.code}
+            value={option.code}
+            sx={{
+              mx: 1,
+              my: 0.5,
+              borderRadius: 0.75,
+              typography: 'body2',
+              textTransform: 'capitalize',
+              '&:first-of-type': { mt: 0 },
+              '&:last-of-type': { mb: 0 },
+            }}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      <TextField
+        fullWidth
+        select
+        label="Status"
+        value={filterStatus}
+        onChange={onFilterStatus}
+        SelectProps={{
+          MenuProps: {
+            PaperProps: {
+              sx: {
+                maxHeight: 260,
+              },
+            },
+          },
+        }}
+        sx={{
+          maxWidth: { sm: 240 },
+          textTransform: 'capitalize',
+        }}>
+        {optionsStatus.map(option => (
           <MenuItem
             key={option.value}
             value={option.value}
