@@ -32,6 +32,8 @@ import {
 } from '@mui/material';
 // utils
 import { fData } from 'src/utils/formatNumber';
+import { Tooltip as MuiTooltip } from '@mui/material';
+
 // assets
 import { countries, healthUnitTypes, roles, genders } from 'src/data';
 // routes
@@ -51,6 +53,8 @@ import Tooltip from 'src/components/tooltip';
 // lib
 import fetch from 'src/lib/fetch';
 import { useSession } from 'next-auth/react';
+import Label from 'src/components/label';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -82,15 +86,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const NewUserSchema = Yup.object().shape({
-    firstName: Yup.string().required('O nome é obrigatório.'),
-    lastName: Yup.string().required('O apelido é obrigatório.'),
-    email: Yup.string().required('O email é obrigatório.'),
-    phoneNumber: Yup.string().required('O número de telefone é obrigatório.'),
-    birthdate: Yup.date().required('A data de nascimento é obrigatória.'),
-    gender: Yup.string().required('O gênero é obrigatório.'),
-    role: Yup.string().required('O cargo é obrigatório.'),
-  });
+  const NewUserSchema = Yup.object().shape({});
 
   const defaultValues = useMemo(
     () => ({
@@ -107,7 +103,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
       linkedin: currentHealthUnit?.business_profile.social_links.linkedin || '',
       instagram: currentHealthUnit?.business_profile.social_links.instagram || '',
       twitter: currentHealthUnit?.business_profile.social_links.twitter || '',
-      type: currentHealthUnit?.business_profile.type || '',
+      type: currentHealthUnit?.type || '',
 
       service_area: currentHealthUnit?.service_area || '',
 
@@ -227,8 +223,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
       services: data.services,
     };
 
-    console.log("isEdit", isEdit),
-    console.log("isNew, ", isNew)
+    console.log('isEdit', isEdit), console.log('isNew, ', isNew);
 
     if (isEdit) {
       let response;
@@ -310,6 +305,45 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      <div style={{ position: 'relative' }}>
+        <MuiTooltip
+          title={
+            currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0
+              ? "Stripe account is restricted. Health Unit can't receive payments. Click here to go to Stripe's account page and provide the missing information."
+              : "Stripe account is enabled. Health Unit can receive payments. Click here to go to Stripe's account page."
+          }
+          placement="top"
+          sx={{
+            cursor: 'pointer',
+          }}
+          onClick={() =>
+            // send to stripe account page
+            window.open(
+              `https://dashboard.stripe.com/test/connect/accounts/${currentHealthUnit.stripe_information.account_id}`,
+              '_blank'
+            )
+          }>
+          <Label
+            color={
+              currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0
+                ? 'error'
+                : 'info'
+            }
+            endIcon={
+              currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0 ? (
+                <Iconify icon="fluent:prohibited-28-filled" color="main" />
+              ) : (
+                <Iconify icon="fluent:checkmark-12-filled" color="main" />
+              )
+            }
+            sx={{ position: 'absolute', top: 0, right: 25, cursor: 'pointer' }}>
+            {currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0
+              ? 'Restricted'
+              : 'Enabled'}
+          </Label>
+        </MuiTooltip>
+      </div>
+
       <RHFUploadAvatar
         sx={{
           mt: 7,
@@ -333,6 +367,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
           </Typography>
         }
       />
+
       <Grid
         container
         spacing={0}
