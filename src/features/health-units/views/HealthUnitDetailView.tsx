@@ -43,6 +43,10 @@ export default function EditUserView({ services, healthUnit, reviews }) {
     setOpenConfirm(true);
   };
 
+  useEffect(() => {
+    console.log('healthUnit', healthUnit);
+  }, [healthUnit]);
+
   return (
     <>
       {isLoading ? (
