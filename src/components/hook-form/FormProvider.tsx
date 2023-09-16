@@ -1,4 +1,5 @@
 // form
+import { Box } from '@mui/system';
 import { FormProvider as Form, UseFormReturn } from 'react-hook-form';
 
 // ----------------------------------------------------------------------
@@ -11,7 +12,7 @@ type Props = {
 
 export default function FormProvider({ children, onSubmit, methods }: Props) {
   return (
-    <Form {...methods}>
+    <Form sx={{ width: '100%' }} {...methods}>
       <form onSubmit={onSubmit}>{children}</form>
     </Form>
   );

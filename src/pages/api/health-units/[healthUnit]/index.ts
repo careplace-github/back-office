@@ -15,7 +15,6 @@ export default async function ordersRoute(
     const accessToken = session?.accessToken;
 
     const healthUnitId = req.query.healthUnit as string;
-
     const healthUnit = req.body;
 
     if (req.method === 'PUT') {
