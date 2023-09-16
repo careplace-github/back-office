@@ -2,7 +2,7 @@
 import { useEffect, useCallback, useState } from 'react';
 
 // @mui
-import { Button, Container } from '@mui/material';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { Modal } from '@mui/material';
 import NextLink from 'next/link';
 // routes
@@ -20,11 +20,14 @@ import { alpha } from '@mui/material/styles';
 //
 import HealthUnitNewViewEditForm from '../components/HealthUnitDetailForm';
 import HealthUnitDetailsReview from '../components/HealthUnitDetailReviews';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function EditUserView({ services, healthUnit, reviews }) {
   const { themeStretch } = useSettingsContext();
+
+  console.log('healthUnit', healthUnit);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -59,6 +62,19 @@ export default function EditUserView({ services, healthUnit, reviews }) {
               },
               { name: healthUnit?.business_profile.name },
             ]}
+            action={
+              <Stack
+                direction="row"
+                gap="3px"
+                alignItems="center"
+                sx={{ cursor: 'pointer', pt: 5 }}
+                onClick={() => {
+                  window.history.back();
+                }}>
+                <Iconify icon="material-symbols:arrow-back-rounded" color="#212B36" />
+                <Typography>Back</Typography>
+              </Stack>
+            }
           />
 
           <Card>
@@ -105,6 +121,7 @@ export default function EditUserView({ services, healthUnit, reviews }) {
 
             {currentTab === 'reviews' && (
               <HealthUnitDetailsReview
+                healthUnitId={healthUnit._id}
                 totalReviews={healthUnit.rating.count}
                 reviews={reviews}
                 ratings={healthUnit.rating.count_stars}
