@@ -382,384 +382,370 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
         <Box
           rowGap={3}
           columnGap={2}
+          sx={{ width: '100%' }}
           display="grid"
           gridTemplateColumns={{
             xs: 'repeat(1, 1fr)',
             sm: 'repeat(2, 1fr)',
           }}>
-          <input type="hidden" {...register('fileChanged')} /> {/* Add this line */}
-          <Box
-            rowGap={3}
-            columnGap={2}
-            sx={{ width: '100%' }}
-            display="grid"
-            gridTemplateColumns={{
-              xs: 'repeat(1, 1fr)',
-              sm: 'repeat(2, 1fr)',
-            }}>
-            <Typography variant="h4">Details</Typography>
-            <Typography variant="h4"></Typography>
+          <Typography variant="h4">Details</Typography>
+          <Typography variant="h4"></Typography>
 
-            <RHFTextField name="name" label="Nome *" InputLabelProps={{ shrink: true }} />
+          <RHFTextField name="name" label="Nome *" InputLabelProps={{ shrink: true }} />
 
-            <RHFTextField name="website" label="Website *" InputLabelProps={{ shrink: true }} />
+          <RHFTextField name="website" label="Website *" InputLabelProps={{ shrink: true }} />
 
-            <RHFTextField name="email" label="Email *" InputLabelProps={{ shrink: true }} />
+          <RHFTextField name="email" label="Email *" InputLabelProps={{ shrink: true }} />
 
-            <RHFPhoneField
-              name="phoneNumber"
-              label="Telefone *"
-              defaultCountry="PT"
-              forceCallingCode
-              onChange={value => {
-                /**
-                 * Portuguese Number Validation
-                 */
+          <RHFPhoneField
+            name="phoneNumber"
+            label="Telefone *"
+            defaultCountry="PT"
+            forceCallingCode
+            onChange={value => {
+              /**
+               * Portuguese Number Validation
+               */
 
-                // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
-                if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
-                  // (eg: +351 9123456780 -> +351 912 345 678)
-                  const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
-                    11,
-                    14
-                  )}`;
-                  setValue('phoneNumber', newValue);
-                  return;
-                }
-
-                // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
-                if (value.length > 16) {
-                  return;
-                }
-
-                setValue('phoneNumber', value);
-              }}
-            />
-
-            <RHFAutocomplete
-              name="services"
-              label="Services *"
-              InputLabelProps={{ shrink: true }}
-              aria-multiline="false"
-              multiple
-              freeSolo
-              sx={{ width: '100%' }}
-              options={services.map(option => option._id)}
-              getOptionLabel={_id => services.find(option => option._id === _id)?.name || ''}
-              onChange={(event, newValue) => {
-                setValue('services', newValue);
-
-                if (newValue.length === 0) {
-                  setValue('services', []);
-                }
-              }}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    size="small"
-                    label={services.find(item => item._id === option)?.name || ''}
-                  />
-                ))
+              // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
+              if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
+                // (eg: +351 9123456780 -> +351 912 345 678)
+                const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
+                  11,
+                  14
+                )}`;
+                setValue('phoneNumber', newValue);
+                return;
               }
-            />
 
-            <RHFTextField
-              name="about"
-              label="About *"
-              multiline
-              minRows={6}
-              InputLabelProps={{ shrink: true }}
-            />
+              // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
+              if (value.length > 16) {
+                return;
+              }
 
-            <RHFTextField label="Facebook" name="facebook" InputLabelProps={{ shrink: true }} />
+              setValue('phoneNumber', value);
+            }}
+          />
 
-            <RHFTextField label="LinkedIn" name="linkedin" InputLabelProps={{ shrink: true }} />
+          <RHFAutocomplete
+            name="services"
+            label="Services *"
+            InputLabelProps={{ shrink: true }}
+            aria-multiline="false"
+            multiple
+            freeSolo
+            sx={{ width: '100%' }}
+            options={services.map(option => option._id)}
+            getOptionLabel={_id => services.find(option => option._id === _id)?.name || ''}
+            onChange={(event, newValue) => {
+              setValue('services', newValue);
 
-            <RHFTextField label="Instagram" name="instagram" InputLabelProps={{ shrink: true }} />
+              if (newValue.length === 0) {
+                setValue('services', []);
+              }
+            }}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip
+                  {...getTagProps({ index })}
+                  size="small"
+                  label={services.find(item => item._id === option)?.name || ''}
+                />
+              ))
+            }
+          />
 
-            <RHFTextField label="Twitter" name="twitter" InputLabelProps={{ shrink: true }} />
+          <RHFTextField
+            name="about"
+            label="About *"
+            multiline
+            minRows={6}
+            InputLabelProps={{ shrink: true }}
+          />
 
-            <RHFSelect native name="type" label="Type" InputLabelProps={{ shrink: true }}>
-              <option value="" />
-              {healthUnitTypes.map(type => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </RHFSelect>
+          <RHFTextField label="Facebook" name="facebook" InputLabelProps={{ shrink: true }} />
 
-            <Typography variant="h4"></Typography>
+          <RHFTextField label="LinkedIn" name="linkedin" InputLabelProps={{ shrink: true }} />
 
-            <Typography variant="h4" sx={{ mt: 10 }}>
-              Service Area
-            </Typography>
-            <Typography variant="h4"></Typography>
+          <RHFTextField label="Instagram" name="instagram" InputLabelProps={{ shrink: true }} />
 
-            <DrawableMap
-              setServiceArea={value => {
-                setServiceArea(value);
-                setCustomIsDirty(true);
-              }}
-              serviceArea={serviceArea}
-            />
+          <RHFTextField label="Twitter" name="twitter" InputLabelProps={{ shrink: true }} />
 
-            <Typography variant="h4">Pricing</Typography>
-            <Typography variant="h4"></Typography>
+          <RHFSelect native name="type" label="Type" InputLabelProps={{ shrink: true }}>
+            <option value="" />
+            {healthUnitTypes.map(type => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </RHFSelect>
 
-            <RHFTextField
-              label="Minimum Hourly Price"
-              name="minimumHourlyPrice"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                      €/hour
-                    </Box>
-                  </InputAdornment>
-                ),
-                type: 'number',
-              }}
-            />
+          <Typography variant="h4"></Typography>
 
-            <RHFTextField
-              label="Minimum Monthly Price"
-              name="minimumMonthlyPrice"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                      €/month
-                    </Box>
-                  </InputAdornment>
-                ),
-                type: 'number',
-              }}
-            />
+          <Typography variant="h4" sx={{ mt: 10 }}>
+            Service Area
+          </Typography>
+          <Typography variant="h4"></Typography>
 
-            <RHFTextField
-              label="Average Hourly Price"
-              name="averageHourlyPrice"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                      €/hour
-                    </Box>
-                  </InputAdornment>
-                ),
-                type: 'number',
-              }}
-            />
+          <DrawableMap
+            setServiceArea={value => {
+              setServiceArea(value);
+              setCustomIsDirty(true);
+            }}
+            serviceArea={serviceArea}
+          />
 
-            <RHFTextField
-              label="Average Monthly Price"
-              name="averageMonthlyPrice"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                      €/month
-                    </Box>
-                  </InputAdornment>
-                ),
-                type: 'number',
-              }}
-            />
+          <Typography variant="h4">Pricing</Typography>
+          <Typography variant="h4"></Typography>
 
-            <Typography variant="h4" sx={{ pt: 5 }}>
-              Director
-            </Typography>
-            <Typography variant="h4"></Typography>
+          <RHFTextField
+            label="Minimum Hourly Price"
+            name="minimumHourlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/hour
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
 
-            <RHFTextField name="directorName" label="Name *" InputLabelProps={{ shrink: true }} />
+          <RHFTextField
+            label="Minimum Monthly Price"
+            name="minimumMonthlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/month
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
 
-            <RHFTextField
-              name="directorSurname"
-              label="Surname *"
-              InputLabelProps={{ shrink: true }}
-            />
+          <RHFTextField
+            label="Average Hourly Price"
+            name="averageHourlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/hour
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
 
-            <RHFTextField name="directorEmail" label="Email *" InputLabelProps={{ shrink: true }} />
+          <RHFTextField
+            label="Average Monthly Price"
+            name="averageMonthlyPrice"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                    €/month
+                  </Box>
+                </InputAdornment>
+              ),
+              type: 'number',
+            }}
+          />
 
-            <RHFPhoneField
-              name="directorPhone"
-              label="Telefone *"
-              defaultCountry="PT"
-              forceCallingCode
-              onChange={value => {
-                /**
-                 * Portuguese Number Validation
-                 */
+          <Typography variant="h4" sx={{ pt: 5 }}>
+            Director
+          </Typography>
+          <Typography variant="h4"></Typography>
 
-                // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
-                if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
-                  // (eg: +351 9123456780 -> +351 912 345 678)
-                  const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
-                    11,
-                    14
-                  )}`;
-                  setValue('directorPhone', newValue);
+          <RHFTextField name="directorName" label="Name *" InputLabelProps={{ shrink: true }} />
+
+          <RHFTextField
+            name="directorSurname"
+            label="Surname *"
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <RHFTextField name="directorEmail" label="Email *" InputLabelProps={{ shrink: true }} />
+
+          <RHFPhoneField
+            name="directorPhone"
+            label="Telefone *"
+            defaultCountry="PT"
+            forceCallingCode
+            onChange={value => {
+              /**
+               * Portuguese Number Validation
+               */
+
+              // If the value is +351 9123456780 -> 15 digits and has no spaces, add the spaces. (eg: +351 9123456780 -> +351 912 345 678)
+              if (value.length === 15 && value[8] !== ' ' && value[12] !== ' ') {
+                // (eg: +351 9123456780 -> +351 912 345 678)
+                const newValue = `${value.slice(0, 8)} ${value.slice(8, 11)} ${value.slice(
+                  11,
+                  14
+                )}`;
+                setValue('directorPhone', newValue);
+                return;
+              }
+
+              // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
+              if (value.length > 16) {
+                return;
+              }
+
+              setValue('directorPhone', value);
+            }}
+          />
+
+          <RHFTextField name="directorStreet" label="Street" InputLabelProps={{ shrink: true }} />
+          <RHFTextField
+            InputLabelProps={{ shrink: true }}
+            name="directorPostalCode"
+            label="Postal Code"
+            onChange={e => {
+              const { value } = e.target;
+
+              /**
+               * Only allow numbers and dashes
+               */
+              if (!/^[0-9-]*$/.test(value)) {
+                return;
+              }
+
+              /**
+               * Portugal Zip Code Validation
+               */
+              if (getValues('country') === 'PT' || getValues('country') === '') {
+                // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
+                if (value.length === 5 && value[4] !== '-') {
+                  setValue(
+                    'directorPostalCode',
+                    `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
+                  );
                   return;
                 }
 
-                // Limit the phone to 16 digits. (eg: +351 912 345 678 -> 16 digits)
-                if (value.length > 16) {
+                // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
+                if (value.length > 8) {
+                  return;
+                }
+              }
+
+              setValue('directorPostalCode', value);
+            }}
+          />
+
+          <RHFTextField name="directorCity" label="City" InputLabelProps={{ shrink: true }} />
+
+          <RHFSelect
+            native
+            name="directorCountry"
+            label="Country"
+            InputLabelProps={{ shrink: true }}>
+            <option value="" />
+            {countries.map(country => (
+              <option key={country.code} value={country.code}>
+                {country.label}
+              </option>
+            ))}
+          </RHFSelect>
+
+          <Typography variant="h4" sx={{ pt: 5 }}>
+            Legal Information
+          </Typography>
+          <Typography variant="h4"></Typography>
+
+          <RHFTextField
+            name="companyLegalName"
+            label="Legal Name *"
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <RHFTextField name="taxNumber" label="Tax Number *" InputLabelProps={{ shrink: true }} />
+
+          <RHFTextField
+            name="businessStructure"
+            label="Business Structure *"
+            InputLabelProps={{ shrink: true }}
+          />
+          <RHFTextField name="street" label="Street *" InputLabelProps={{ shrink: true }} />
+          <RHFTextField
+            InputLabelProps={{ shrink: true }}
+            name="postal_code"
+            label="Postal Code *"
+            onChange={e => {
+              const { value } = e.target;
+
+              /**
+               * Only allow numbers and dashes
+               */
+              if (!/^[0-9-]*$/.test(value)) {
+                return;
+              }
+
+              /**
+               * Portugal Zip Code Validation
+               */
+              if (getValues('country') === 'PT' || getValues('country') === '') {
+                // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
+                if (value.length === 5 && value[4] !== '-') {
+                  setValue(
+                    'postal_code',
+                    `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
+                  );
                   return;
                 }
 
-                setValue('directorPhone', value);
-              }}
-            />
-
-            <RHFTextField name="directorStreet" label="Street" InputLabelProps={{ shrink: true }} />
-            <RHFTextField
-              InputLabelProps={{ shrink: true }}
-              name="directorPostalCode"
-              label="Postal Code"
-              onChange={e => {
-                const { value } = e.target;
-
-                /**
-                 * Only allow numbers and dashes
-                 */
-                if (!/^[0-9-]*$/.test(value)) {
+                // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
+                if (value.length > 8) {
                   return;
                 }
+              }
 
-                /**
-                 * Portugal Zip Code Validation
-                 */
-                if (getValues('country') === 'PT' || getValues('country') === '') {
-                  // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
-                  if (value.length === 5 && value[4] !== '-') {
-                    setValue(
-                      'directorPostalCode',
-                      `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
-                    );
-                    return;
-                  }
+              setValue('postal_code', value);
+            }}
+          />
 
-                  // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
-                  if (value.length > 8) {
-                    return;
-                  }
-                }
+          <RHFTextField name="city" label="City *" InputLabelProps={{ shrink: true }} />
 
-                setValue('directorPostalCode', value);
-              }}
-            />
+          <RHFSelect native name="country" label="Country *" InputLabelProps={{ shrink: true }}>
+            <option value="" />
+            {countries.map(country => (
+              <option key={country.code} value={country.code}>
+                {country.label}
+              </option>
+            ))}
+          </RHFSelect>
+          <Typography variant="h4"></Typography>
 
-            <RHFTextField name="directorCity" label="City" InputLabelProps={{ shrink: true }} />
+          <Typography
+            sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
+            * Mandatory field
+          </Typography>
 
-            <RHFSelect
-              native
-              name="directorCountry"
-              label="Country"
-              InputLabelProps={{ shrink: true }}>
-              <option value="" />
-              {countries.map(country => (
-                <option key={country.code} value={country.code}>
-                  {country.label}
-                </option>
-              ))}
-            </RHFSelect>
+          <Typography variant="h4"></Typography>
+        </Box>
+      </Grid>
 
-            <Typography variant="h4" sx={{ pt: 5 }}>
-              Legal Information
-            </Typography>
-            <Typography variant="h4"></Typography>
-
-            <RHFTextField
-              name="companyLegalName"
-              label="Legal Name *"
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              name="taxNumber"
-              label="Tax Number *"
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <RHFTextField
-              name="businessStructure"
-              label="Business Structure *"
-              InputLabelProps={{ shrink: true }}
-            />
-            <RHFTextField name="street" label="Street *" InputLabelProps={{ shrink: true }} />
-            <RHFTextField
-              InputLabelProps={{ shrink: true }}
-              name="postal_code"
-              label="Postal Code *"
-              onChange={e => {
-                const { value } = e.target;
-
-                /**
-                 * Only allow numbers and dashes
-                 */
-                if (!/^[0-9-]*$/.test(value)) {
-                  return;
-                }
-
-                /**
-                 * Portugal Zip Code Validation
-                 */
-                if (getValues('country') === 'PT' || getValues('country') === '') {
-                  // Add a dash to the zip code if it doesn't have one. Format example: XXXX-XXX
-                  if (value.length === 5 && value[4] !== '-') {
-                    setValue(
-                      'postal_code',
-                      `${value[0]}${value[1]}${value[2]}${value[3]}-${value[4]}`
-                    );
-                    return;
-                  }
-
-                  // Do not allow the zip code to have more than 8 digits (XXXX-XXX -> 8 digits)
-                  if (value.length > 8) {
-                    return;
-                  }
-                }
-
-                setValue('postal_code', value);
-              }}
-            />
-
-            <RHFTextField name="city" label="City *" InputLabelProps={{ shrink: true }} />
-
-            <RHFSelect native name="country" label="Country *" InputLabelProps={{ shrink: true }}>
-              <option value="" />
-              {countries.map(country => (
-                <option key={country.code} value={country.code}>
-                  {country.label}
-                </option>
-              ))}
-            </RHFSelect>
-            <Typography variant="h4"></Typography>
-
-            <Typography
-              sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
-              * Mandatory field
-            </Typography>
-
-            <Typography variant="h4"></Typography>
-          </Box>
-        </Grid>
-
-        <Stack alignItems="flex-end" sx={{ mt: 2, mb: 5, mr: 5 }}>
-          <LoadingButton
-            variant="contained"
-            loading={isSubmitting}
-            disabled={!isDirty && !customIsDirty}
-            onClick={handleSubmit(onSubmit)}>
-            {isNew ? 'Add' : 'Save'}
-          </LoadingButton>
-        </Stack>
-      </FormProvider>
-    </Box>
+      <Stack alignItems="flex-end" sx={{ mt: 2, mb: 5, mr: 5 }}>
+        <LoadingButton
+          variant="contained"
+          loading={isSubmitting}
+          disabled={!isDirty && !customIsDirty}
+          onClick={handleSubmit(onSubmit)}>
+          {isNew ? 'Add' : 'Save'}
+        </LoadingButton>
+      </Stack>
+    </FormProvider>
   );
 }
