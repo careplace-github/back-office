@@ -1,11 +1,10 @@
 // react
 import { useState, useEffect } from 'react';
 // @mui
-import Box from '@mui/material/Box';
+import { Modal, Box, Typography, useTheme, Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Rating from '@mui/material/Rating';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 // utils
 import { fDate } from 'src/utils/format-time';
@@ -15,7 +14,11 @@ import { fDate } from 'src/utils/format-time';
 import Iconify from 'src/components/iconify';
 import MenuPopover from 'src/components/menu-popover';
 import MenuItem from '@mui/material/MenuItem';
+import ReviewForm from './ReviewForm';
+
 import { IconButton } from '@mui/material';
+import { set } from 'cypress/types/lodash';
+import { useResponsive } from 'src/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +27,8 @@ type Props = {
 };
 
 export default function HealthUnitReviewItem({ review }: Props) {
+  const [editReview, setEditReview] = useState(false);
+
   const renderInfo = review && (
     <Stack
       spacing={2}
@@ -76,22 +81,21 @@ export default function HealthUnitReviewItem({ review }: Props) {
             <>
               <MenuItem
                 onClick={() => {
-                  onEditReview();
+                  setEditReview(true);
                   setOpenPopover(null);
                 }}>
                 <Iconify icon="eva:edit-fill" />
-                Editar
+                Edit
               </MenuItem>
 
               <MenuItem
                 onClick={() => {
-                  onDeleteReview();
-
                   setOpenPopover(null);
+                  setOpen(true);
                 }}
                 sx={{ color: 'error.main' }}>
                 <Iconify icon="eva:trash-2-outline" />
-                Eliminar
+                Delete
               </MenuItem>
             </>
           </MenuPopover>
@@ -100,6 +104,11 @@ export default function HealthUnitReviewItem({ review }: Props) {
       <Typography variant="body2">{review?.comment}</Typography>
     </Stack>
   );
+
+  const isMdUp = useResponsive('up', 'md');
+  const theme = useTheme();
+
+  const [open, setOpen] = useState(false);
 
   return (
     <Stack
@@ -112,9 +121,95 @@ export default function HealthUnitReviewItem({ review }: Props) {
       {renderInfo}
 
       {renderContent}
+      {editReview && (
+        <ReviewForm
+          review={review}
+          onClose={() => setEditReview(false)}
+          open={editReview}
+          sx={{}}
+        />
+      )}
+
+      <Modal
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}>
+        <Box
+          sx={{
+            width: isMdUp ? 'auto' : '100vw',
+            height: isMdUp ? 'auto' : '100vh',
+              minWidth: isMdUp ? '500px' : undefined,
+            maxHeight: isMdUp ? '90vh' : '100vh',
+            p: isMdUp ? '50px' : '20px',
+            pt: isMdUp ? '50px' : '75px',
+            pb: isMdUp ? '50px' : '75px',
+            backgroundColor: 'white',
+            borderRadius: isMdUp ? '16px' : '0',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translateY(-50%) translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            overflowY: 'auto',
+          }}>
+          <Iconify
+            width={30}
+            height={30}
+            icon="material-symbols:close-rounded"
+            sx={{
+              position: 'absolute',
+              //top: isMdUp ? '50px' : '72px',
+              right: isMdUp ? '50px' : '20px',
+              cursor: 'pointer',
+              '&:hover': {
+                cursor: 'pointer',
+                color: theme.palette.mode === 'light' ? 'grey.400' : 'white',
+              },
+            }}
+            onClick={() => {
+              setOpen(false);
+            }}
+          />
+
+          <Typography
+            variant="body2"
+            sx={{ mt: 5, mb: 2, color: 'text.secondary', textAlign: 'center' }}>
+            Are you sure you want to delete this review?  <br />
+            This action cannot be undone.
+          </Typography>
+
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              mt: 2,
+              width: '100%',
+            }}>
+            <Button
+              variant="outlined"
+              color="inherit"
+              sx={{ mr: 1 }}
+              onClick={() => {
+                setOpen(false);
+              }}>
+              Cancel
+            </Button>
+
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                setOpen(false);
+              }}>
+              Delete
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Stack>
   );
 }
-function onEditReview() {}
-
-function onDeleteReview() {}

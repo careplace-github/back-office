@@ -153,15 +153,31 @@ export default function UserTableRow({
           <Iconify icon="eva:eye-fill" />
           View
         </MenuItem>
+        {user?.permissions?.includes('super_admin') && (
+          <>
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                handleClosePopover();
+                setOpenConfirm(true);
+              }}
+              sx={{ color: 'error.main' }}>
+              <Iconify icon="eva:trash-2-outline" />
+              Delete
+            </MenuItem>
+          </>
+        )}
       </MenuPopover>
 
       <ConfirmDialog
         open={openConfirm}
         onClose={handleCloseConfirm}
-        title="Eliminar Colaborador"
+        title="Delete Health Unit"
         content={
           <Typography component="div">
-            Tem a certeza que pretende eliminar o seguinte colaborador: <b>{row.name}</b> ?
+            Are you sure you want to delete the following health unit:{' '}
+            <b>{row.business_profile.name}</b> ? <br />
+            This action cannot be undone.
           </Typography>
         }
         action={
@@ -172,7 +188,7 @@ export default function UserTableRow({
               onDeleteRow();
               handleCloseConfirm();
             }}>
-            Eliminar
+            Delete
           </Button>
         }
       />

@@ -117,6 +117,7 @@ export default function EditUserView({ services, healthUnit, reviews }) {
 
             {currentTab === 'reviews' && (
               <HealthUnitDetailsReview
+                healthUnitId={healthUnit._id}
                 totalReviews={healthUnit.rating.count}
                 reviews={reviews}
                 ratings={healthUnit.rating.count_stars}
