@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 // auth
 import { useSession } from 'next-auth/react';
+import { Tooltip as MuiTooltip } from '@mui/material';
 
 // components
 import Label from 'src/components/label';
@@ -88,6 +89,50 @@ export default function UserTableRow({
 
         <TableCell align="left">{row.addresses[0].country}</TableCell>
 
+        <TableCell align="center">
+          <MuiTooltip
+            title={
+              row?.stripe_account?.requirements?.currently_due?.length > 0
+                ? "Stripe account is restricted. Health Unit can't receive payments. Click here to go to Stripe's account page and provide the missing information."
+                : "Stripe account is enabled. Health Unit can receive payments. Click here to go to Stripe's account page."
+            }
+            placement="top"
+            sx={{
+              cursor: 'pointer',
+            }}
+            onClick={() =>
+              // send to stripe account page
+              window.open(
+                `https://dashboard.stripe.com/test/connect/accounts/${row?.stripe_information?.account_id}`,
+                '_blank'
+              )
+            }>
+            {row?.stripe_account?.requirements?.currently_due?.length > 0 ? (
+              <Iconify
+                icon="fluent:prohibited-28-filled"
+                color="error"
+                width={24}
+                height={24}
+                sx={{
+                  cursor: 'pointer',
+                  color: 'error.main',
+                }}
+              />
+            ) : (
+              <Iconify
+                icon="fluent:checkmark-12-filled"
+                color="success"
+                width={24}
+                height={24}
+                sx={{
+                  cursor: 'pointer',
+                  color: 'success.main',
+                }}
+              />
+            )}
+          </MuiTooltip>
+        </TableCell>
+
         <TableCell align="right">
           <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -108,15 +153,31 @@ export default function UserTableRow({
           <Iconify icon="eva:eye-fill" />
           View
         </MenuItem>
+        {user?.permissions?.includes('super_admin') && (
+          <>
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                handleClosePopover();
+                setOpenConfirm(true);
+              }}
+              sx={{ color: 'error.main' }}>
+              <Iconify icon="eva:trash-2-outline" />
+              Delete
+            </MenuItem>
+          </>
+        )}
       </MenuPopover>
 
       <ConfirmDialog
         open={openConfirm}
         onClose={handleCloseConfirm}
-        title="Eliminar Colaborador"
+        title="Delete Health Unit"
         content={
           <Typography component="div">
-            Tem a certeza que pretende eliminar o seguinte colaborador: <b>{row.name}</b> ?
+            Are you sure you want to delete the following health unit:{' '}
+            <b>{row.business_profile.name}</b> ? <br />
+            This action cannot be undone.
           </Typography>
         }
         action={
@@ -127,7 +188,7 @@ export default function UserTableRow({
               onDeleteRow();
               handleCloseConfirm();
             }}>
-            Eliminar
+            Delete
           </Button>
         }
       />

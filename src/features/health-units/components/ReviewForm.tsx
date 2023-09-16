@@ -23,9 +23,10 @@ import FormProvider, { RHFTextField, RHFUploadAvatar } from 'src/components/hook
 
 interface Props extends DialogProps {
   onClose: VoidFunction;
+  review?: any;
 }
 
-export default function HealthUnitReviewNewForm({ onClose, ...other }: Props) {
+export default function HealthUnitReviewNewForm({ onClose, review, ...other }: Props) {
   const ReviewSchema = Yup.object().shape({
     rating: Yup.number().min(1, 'Rating must be greater than or equal to 1'),
     review: Yup.string().required('Review is required'),
@@ -33,13 +34,15 @@ export default function HealthUnitReviewNewForm({ onClose, ...other }: Props) {
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
   });
 
+  console.log("Review: ", review)
+
   const defaultValues = {
-    rating: 0,
-    review: '',
-    name: '',
-    email: '',
+    rating: review?.rating || 0,
+    comment: review?.comment || '',
+    name: review?.customer?.name || '',
+    email: review?.customer?.email || '',
     fileChanged: '',
-    logo: '',
+    logo: review?.customer?.profile_picture || '',
   };
 
   const methods = useForm({
@@ -103,7 +106,7 @@ export default function HealthUnitReviewNewForm({ onClose, ...other }: Props) {
 
         <DialogContent>
           <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}></Stack>
-          {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
+          {!!errors.rating && <FormHelperText error> ERROR </FormHelperText>}
           <RHFUploadAvatar
             name="logo"
             maxSize={3145728}
@@ -149,10 +152,10 @@ export default function HealthUnitReviewNewForm({ onClose, ...other }: Props) {
             )}
           />
           <RHFTextField
-            name="review"
+            name="comment"
             label="Comment *"
             multiline
-            rows={3}
+            minRows={5}
             sx={{ mt: 3 }}
             InputLabelProps={{
               shrink: true,

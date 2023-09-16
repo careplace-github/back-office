@@ -14,11 +14,13 @@ export default async function ordersRoute(
 
     const accessToken = session?.accessToken;
 
-    const healthUnit = req.body;
+    const healthUnitId = req.query.id;
+
+    const review = req.body;
 
     if (req.method === 'POST') {
       try {
-        const response = await axios.post(`/health-units`, healthUnit, {
+        const response = await axios.post(`/health-units/${healthUnitId}/reviews`, review, {
           // Set authorization header bearer token
           headers: {
             'Content-Type': 'application/json',
@@ -28,7 +30,7 @@ export default async function ordersRoute(
           },
           withCredentials: true,
         });
-        return res.status(200).json('Success');
+        return res.status(200).json(response.data);
       } catch (error) {
         switch (error.response.data.error) {
           case 'EMAIL_ALREADY_EXISTS':
@@ -42,7 +44,7 @@ export default async function ordersRoute(
 
     if (req.method === 'GET') {
       try {
-        const response = await axios.get(`/health-units/search`, {
+        const response = await axios.get(`/health-units/${healthUnitId}/reviews`, {
           // Set authorization header bearer token
           headers: {
             'Content-Type': 'application/json',

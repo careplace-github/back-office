@@ -19,7 +19,7 @@ import Iconify from 'src/components/iconify';
 //
 import HealthUnitReviewList from './HealthUnitReviewList';
 import HealthUniReviewNewForm from './ReviewItem';
-import NewReviewForm from './NewReview';
+import NewReviewForm from './ReviewForm';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +33,7 @@ type Props = {
     4: number;
     5: number;
   };
+  healthUnitId: string;
   reviews: {
     data: any[];
     page: number;
@@ -44,6 +45,7 @@ type Props = {
 export default function HealthUnitDetailsReview({
   totalReviews,
   averageRating,
+  healthUnitId,
   ratings,
   reviews,
 }: Props) {
@@ -144,7 +146,7 @@ export default function HealthUnitDetailsReview({
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <HealthUnitReviewList reviews={reviews} />
+      <HealthUnitReviewList healthUnitId={healthUnitId} />
 
       {newReview && <NewReviewForm onClose={() => setNewReview(false)} open={newReview} sx={{}} />}
     </>
