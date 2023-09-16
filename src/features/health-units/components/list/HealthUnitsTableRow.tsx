@@ -100,13 +100,20 @@ export default function UserTableRow({
             sx={{
               cursor: 'pointer',
             }}
-            onClick={() =>
+            onClick={() => {
               // send to stripe account page
-              window.open(
-                `https://dashboard.stripe.com/test/connect/accounts/${row?.stripe_information?.account_id}`,
-                '_blank'
-              )
-            }>
+              if (process.env.NEXT_PUBLIC_ENV === 'dev' || process.env.NEXT_PUBLIC_ENV === 'stag') {
+                window.open(
+                  `https://dashboard.stripe.com/test/connect/accounts/${row?.stripe_information?.account_id}`,
+                  '_blank'
+                );
+              } else {
+                window.open(
+                  `https://dashboard.stripe.com/connect/accounts/${row?.stripe_information?.account_id}`,
+                  '_blank'
+                );
+              }
+            }}>
             {row?.stripe_account?.requirements?.currently_due?.length > 0 ? (
               <Iconify
                 icon="fluent:prohibited-28-filled"

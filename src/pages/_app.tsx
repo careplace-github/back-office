@@ -10,7 +10,7 @@ import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 
 // map
-import 'mapbox-gl/dist/mapbox-gl.css';
+// import 'mapbox-gl/dist/mapbox-gl.css';
 
 // editor
 import 'react-quill/dist/quill.snow.css';
