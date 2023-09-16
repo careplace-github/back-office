@@ -112,43 +112,42 @@ export default function healthUnitsListView({}) {
   const [filterStatus, setFilterStatus] = useState('all');
 
   const [dataFiltered, setDataFiltered] = useState<ICollaboratorProps[]>([]);
+  const fetchHealthUnits = async () => {
+    try {
+      const response = await fetch(
+        `/api/health-units?page=${page <= 0 ? 1 : page + 1}&documentsPerPage=${rowsPerPage}`,
+        {
+          method: 'GET',
+        }
+      );
+
+      console.log('response.data: ', response.data);
+
+      setTotalPages(response.totalPages);
+      setTotalDocuments(response.totalDocuments);
+      setPage(response.page - 1);
+
+      const filteredData = applyFilter({
+        inputData: response.data,
+        comparator: getComparator(order, orderBy),
+        filterName,
+        filterCountry,
+        filterType,
+        filterStatus,
+      });
+
+      console.log('filteredData: ', filteredData);
+
+      setDataFiltered(filteredData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
-
-    const fetchHealthUnits = async () => {
-      try {
-        const response = await fetch(
-          `/api/health-units?page=${page <= 0 ? 1 : page + 1}&documentsPerPage=${rowsPerPage}`,
-          {
-            method: 'GET',
-          }
-        );
-
-        console.log('response.data: ', response.data);
-
-        setTotalPages(response.totalPages);
-        setTotalDocuments(response.totalDocuments);
-        setPage(response.page - 1);
-
-        const filteredData = applyFilter({
-          inputData: response.data,
-          comparator: getComparator(order, orderBy),
-          filterName,
-          filterCountry,
-          filterType,
-          filterStatus,
-        });
-
-        console.log('filteredData: ', filteredData);
-
-        setDataFiltered(filteredData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
     fetchHealthUnits();
   }, [page, rowsPerPage, order, orderBy, filterName, filterCountry, filterType, filterStatus]);
@@ -200,55 +199,21 @@ export default function healthUnitsListView({}) {
   };
 
   const handleDeleteRow = async _healthUnit => {
-    if (_healthUnit.role === 'caregiver') {
-      try {
-        const response = await fetch(`/api/health-units/${_healthUnit._id}`, {
-          method: 'DELETE',
-        }).then(res => res.json());
+    try {
+      const response = await fetch(`/api/health-units/${_healthUnit._id}`, {
+        method: 'DELETE',
+      });
 
-        enqueueSnackbar('Colaborador eliminado com sucesso!', { variant: 'success' });
+      enqueueSnackbar('Health unit deleted successfully!', { variant: 'success' });
 
-        window.location.href = '';
-      } catch (error) {
-        console.error(error);
-
-        switch (error.code) {
-          case 'CaregiverIsAssociatedWithOrder':
-            enqueueSnackbar('O cuidador está associado a um pedido e não pode ser eliminado.', {
-              variant: 'error',
-            });
-            break;
-
-          default:
-            enqueueSnackbar('Erro ao eliminar cuidador. Por favor tente novamente.', {
-              variant: 'error',
-            });
-            break;
-        }
-      }
-    } else {
-      try {
-        const response = await fetch(`/api/health-units/${_healthUnit._id}`, {
-          method: 'DELETE',
-        }).then(res => res.json());
-
-        enqueueSnackbar('Colaborador eliminado com sucesso!', { variant: 'success' });
-
-        window.location.href = '';
-      } catch (error) {
-        switch (error.code) {
-          case 'CaregiverIsAssociatedWithOrder':
-            enqueueSnackbar('O Cuidador está associado a um pedido e não pode ser eliminado.', {
-              variant: 'error',
-            });
-            break;
-
-          default:
-            enqueueSnackbar('Erro ao eliminar colaborador. Por favor tente novamente.', {
-              variant: 'error',
-            });
-            break;
-        }
+      fetchHealthUnits();
+    } catch (error) {
+      switch (error.code) {
+        default:
+          enqueueSnackbar('Error deleting health unit. Please try again.', {
+            variant: 'error',
+          });
+          break;
       }
     }
   };

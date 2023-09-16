@@ -1,26 +1,69 @@
 // react
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
 // types
 // import { IProductReview } from 'src/types/product';
 //
 import ReviewItem from './ReviewItem';
-
 // ----------------------------------------------------------------------
 
-type Props = {
-  reviews: {
-    data: any[];
-    page: number;
-    documentsPerPage: number;
-    totalDocuments: number;
+type Review = {
+  _id: string;
+  rating: number;
+  comment: string;
+  customer: {
+    name: string;
+    email: string;
+    profile_picture: string;
   };
 };
 
-export default function HealthUnitReviewList({ reviews }: Props) {
-  console.log('Reviews: ', reviews);
-  const [page, setPage] = useState(1);
+type HealthUnitReviewListProps = {
+  healthUnitId: string;
+};
+
+export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListProps) {
+  //console.log('Reviews: ', reviews);
+
+  const _healthUnitId = healthUnitId.healthUnitId;
+
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  const [page, setPage] = useState(0);
+  const [documentsPerPage, setDocumentsPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalDocuments, setTotalDocuments] = useState(0);
+
+  console.log('healthUnitId: ', _healthUnitId);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `/api/reviews/health-units/${_healthUnitId}?page=${page}&documentsPerPage=${documentsPerPage}`,
+        {
+          method: 'GET',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const responseData = await response.json();
+
+      setReviews(responseData.data);
+      setDocumentsPerPage(responseData.documentsPerPage);
+      setTotalPages(responseData.totalPages);
+      setTotalDocuments(responseData.totalDocuments);
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchData();
+  }, [page, documentsPerPage]);
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -28,12 +71,12 @@ export default function HealthUnitReviewList({ reviews }: Props) {
 
   return (
     <>
-      {reviews.data.map(review => (
+      {reviews.map(review => (
         <ReviewItem key={review._id} review={review} />
       ))}
 
       <Pagination
-        count={reviews.totalDocuments}
+        count={totalPages}
         color="primary"
         onChange={handleChangePage}
         sx={{
