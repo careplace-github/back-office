@@ -457,8 +457,6 @@ export default function UserNewEditForm({
             <Typography variant="h4" sx={{ mt: 10 }}>
               Service Area
             </Typography>
-            <Typography variant="h4"></Typography>
-
             <MapView sx={{ gridColumn: 'span 2' }} />
 
             <Typography variant="h4">Pricing</Typography>
