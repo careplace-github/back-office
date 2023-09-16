@@ -16,7 +16,8 @@ import { useResponsive } from 'src/hooks';
 import Iconify from 'src/components/iconify';
 import MenuPopover from 'src/components/menu-popover';
 import MenuItem from '@mui/material/MenuItem';
-import ReviewForm from './ReviewForm';
+
+import ReviewForm from './HealthUnitDetailReviewForm';
 
 // ----------------------------------------------------------------------
 

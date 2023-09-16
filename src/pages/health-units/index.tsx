@@ -11,11 +11,8 @@ import axios from 'src/lib/axios';
 import { PATHS } from 'src/routes';
 
 // ----------------------------------------------------------------------
-type props = {
-  healthUnits: any;
-};
 
-export default function UsersListPage({ healthUnits }: props) {
+export default function UsersListPage() {
   return (
     <>
       <Head>
@@ -23,7 +20,7 @@ export default function UsersListPage({ healthUnits }: props) {
       </Head>
 
       <DashboardLayout>
-        <HealthUnitsListView healthUnits={healthUnits} />
+        <HealthUnitsListView />
       </DashboardLayout>
     </>
   );
@@ -42,26 +39,9 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const user = session?.user;
-
   const accessToken = session?.accessToken;
 
-  const healthUnits = await axios
-    .get('/health-units/search', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      params: {
-        documentsPerPage: 100,
-      },
-    })
-    .then(response => response.data.data);
-
-  console.log('Health Units', healthUnits);
-
   return {
-    props: {
-      healthUnits,
-    },
+    props: {},
   };
 }

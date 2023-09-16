@@ -19,8 +19,8 @@ import { alpha } from '@mui/material/styles';
 import Iconify from 'src/components/iconify';
 
 //
-import HealthUnitNewViewEditForm from '../components/HealthUnitDetailForm';
-import HealthUnitDetailsReview from '../components/HealthUnitDetailReviews';
+import HealthUnitNewViewEditForm from '../components/detail/HealthUnitDetailForm';
+import HealthUnitDetailsReview from '../components/detail/reviews/HealthUnitDetailReviewsSummary';
 
 // ----------------------------------------------------------------------
 

@@ -18,8 +18,7 @@ import Iconify from 'src/components/iconify';
 // import { IProductReview } from 'src/types/product';
 //
 import HealthUnitReviewList from './HealthUnitReviewList';
-import HealthUniReviewNewForm from './ReviewItem';
-import NewReviewForm from './ReviewForm';
+import NewReviewForm from './HealthUnitDetailReviewForm';
 
 // ----------------------------------------------------------------------
 

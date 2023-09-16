@@ -80,11 +80,7 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-type props = {
-  healthUnits?: any;
-};
-
-export default function healthUnitsListView({ healthUnits }: props) {
+export default function healthUnitsListView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const [isLoading, setIsLoading] = useState(false);

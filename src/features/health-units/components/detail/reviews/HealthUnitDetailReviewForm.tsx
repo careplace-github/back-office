@@ -34,7 +34,7 @@ export default function HealthUnitReviewNewForm({ onClose, review, ...other }: P
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
   });
 
-  console.log("Review: ", review)
+  console.log('Review: ', review);
 
   const defaultValues = {
     rating: review?.rating || 0,

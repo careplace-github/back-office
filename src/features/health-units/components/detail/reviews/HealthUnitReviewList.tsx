@@ -2,11 +2,10 @@
 import { useEffect, useState } from 'react';
 // @mui
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
-import { Box, CircularProgress } from '@mui/material';
 // types
 // import { IProductReview } from 'src/types/product';
 //
-import ReviewItem from './detail/reviews/HealthUnitDetailReviewItem';
+import ReviewItem from './HealthUnitDetailReviewItem';
 // ----------------------------------------------------------------------
 
 type Review = {
@@ -33,11 +32,9 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
   const [documentsPerPage, setDocumentsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   console.log('healthUnitId: ', _healthUnitId);
   const fetchData = async () => {
-    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/reviews/health-units/${_healthUnitId}?page=${page}&documentsPerPage=${documentsPerPage}`,
@@ -59,7 +56,6 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error.message);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -72,19 +68,7 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
 
   return (
     <>
-      {isLoading ? (
-        <Box
-          sx={{
-            minHeight: '400px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <CircularProgress sx={{ color: 'primary.main' }} />
-        </Box>
-      ) : (
-        reviews.map(review => <ReviewItem key={review._id} review={review} />)
-      )}
+      {reviews && reviews.map(review => <ReviewItem key={review._id} review={review} />)}
 
       <Pagination
         count={totalPages}

@@ -13,14 +13,14 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import LoadingScreen from 'src/components/loading-screen/LoadingScreen';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Iconify from 'src/components/iconify';
 
 import Card from '@mui/material/Card';
 import { alpha } from '@mui/material/styles';
 
 //
-import Iconify from 'src/components/iconify';
-import HealthUnitNewViewEditForm from '../components/HealthUnitDetailForm';
-import HealthUnitDetailsReview from '../components/HealthUnitDetailReviews';
+import HealthUnitNewViewEditForm from '../components/detail/HealthUnitDetailForm';
+import HealthUnitDetailsReview from '../components/detail/reviews/HealthUnitDetailReviewsSummary';
 
 // ----------------------------------------------------------------------
 
@@ -105,6 +105,10 @@ export default function EditUserView({ services, healthUnit, reviews }) {
                 {
                   value: 'reviews',
                   label: `Reviews`,
+                },
+                {
+                  value: 'dashboard',
+                  label: 'Dashboard',
                 },
               ].map(tab => (
                 <Tab key={tab.value} value={tab.value} label={tab.label} />
