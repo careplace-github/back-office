@@ -40,6 +40,10 @@ export default function EditUserView({ services, healthUnit, reviews }) {
     setOpenConfirm(true);
   };
 
+  useEffect(() => {
+    console.log('healthUnit', healthUnit);
+  }, [healthUnit]);
+
   return (
     <>
       {isLoading ? (
@@ -92,7 +96,11 @@ export default function EditUserView({ services, healthUnit, reviews }) {
             </Tabs>
 
             {currentTab === 'details' && (
-              <HealthUnitNewViewEditForm isEdit currentHealthUnit={healthUnit} services={services} />
+              <HealthUnitNewViewEditForm
+                isEdit
+                currentHealthUnit={healthUnit}
+                services={services}
+              />
             )}
 
             {currentTab === 'reviews' && (

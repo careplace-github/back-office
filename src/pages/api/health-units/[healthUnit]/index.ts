@@ -14,8 +14,8 @@ export default async function ordersRoute(
 
     const accessToken = session?.accessToken;
 
-    const healthUnitId = req.query.id as string;
-
+    const healthUnitId = req.query.healthUnit as string;
+    console.log('health unit', healthUnitId);
     const healthUnit = req.body;
 
     if (req.method === 'PUT') {
@@ -40,10 +40,6 @@ export default async function ordersRoute(
 
       return res.status(200).json(response);
     }
-
-   
-
-    
 
     // This will be returned if the method doesn't match the ones above
     return res.status(405).json({ error: 'Method Not Allowed' });
