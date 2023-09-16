@@ -35,10 +35,9 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  console.log('healthUnitId: ', _healthUnitId);
   const fetchData = async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const response = await fetch(
         `/api/reviews/health-units/${_healthUnitId}?page=${page}&documentsPerPage=${documentsPerPage}`,
         {
@@ -47,6 +46,7 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
       );
 
       if (!response.ok) {
+        setIsLoading(false);
         throw new Error('Network response was not ok');
       }
 
@@ -56,10 +56,10 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
       setDocumentsPerPage(responseData.documentsPerPage);
       setTotalPages(responseData.totalPages);
       setTotalDocuments(responseData.totalDocuments);
+      setIsLoading(false);
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error.message);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {

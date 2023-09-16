@@ -5,7 +5,9 @@ import Pagination, { paginationClasses } from '@mui/material/Pagination';
 // types
 // import { IProductReview } from 'src/types/product';
 //
+import { CircularProgress, Box } from '@mui/material';
 import ReviewItem from './HealthUnitDetailReviewItem';
+
 // ----------------------------------------------------------------------
 
 type Review = {
@@ -27,14 +29,14 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
   const { healthUnitId: _healthUnitId } = healthUnitId;
 
   const [reviews, setReviews] = useState<Review[]>([]);
-
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState(0);
   const [documentsPerPage, setDocumentsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
   const [totalDocuments, setTotalDocuments] = useState(0);
 
-  console.log('healthUnitId: ', _healthUnitId);
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/reviews/health-units/${_healthUnitId}?page=${page}&documentsPerPage=${documentsPerPage}`,
@@ -44,6 +46,7 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
       );
 
       if (!response.ok) {
+        setIsLoading(false);
         throw new Error('Network response was not ok');
       }
 
@@ -56,6 +59,7 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error.message);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -68,7 +72,19 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
 
   return (
     <>
-      {reviews && reviews.map(review => <ReviewItem key={review._id} review={review} />)}
+      {isLoading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '400px',
+          }}>
+          <CircularProgress sx={{ color: 'primary.main' }} />
+        </Box>
+      ) : (
+        reviews.map(review => <ReviewItem key={review._id} review={review} />)
+      )}
 
       <Pagination
         count={totalPages}
