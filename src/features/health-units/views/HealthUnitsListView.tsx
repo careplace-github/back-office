@@ -59,28 +59,29 @@ import HealthUnitsTableRow from '../components/list/HealthUnitsTableRow';
 // Add the object { value: 'all', label: 'Todos' } to the array
 const ROLES_OPTIONS = [{ value: 'all', label: 'All' }, ...roles];
 
-const COUNTRIES_OPTIONS = [{ value: 'all', label: 'All' }, ...countries];
+const COUNTRIES_OPTIONS = [{ code: 'all', label: 'All' }, ...countries];
+
+const STATUS_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'enabled', label: 'Enabled' },
+  { value: 'restricted', label: 'Restricted' },
+];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Company', align: 'left' },
+  { id: 'company', label: 'Company', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
-  { id: 'role', label: 'Phone', align: 'left' },
-  { id: 'status', label: 'Country', align: 'left' },
+  { id: 'phone', label: 'Phone', align: 'left' },
+  { id: 'country', label: 'Country', align: 'left' },
+  { id: 'status', label: 'Status', align: 'center' },
   { id: 'actions', label: '', align: 'right' },
 ];
 
 // ----------------------------------------------------------------------
 
-export default function healthUnitsListView({ healthUnits }) {
-  const { data: healthUnit } = useSession();
+export default function healthUnitsListView({}) {
+  const { enqueueSnackbar } = useSnackbar();
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const [tableData, setTableData] = useState<ICollaboratorProps[]>([]);
-
-  useEffect(() => {
-    setTableData(healthUnits);
-  }, [healthUnits]);
 
   const {
     dense,
@@ -101,26 +102,62 @@ export default function healthUnitsListView({ healthUnits }) {
     onChangeRowsPerPage,
   } = useTable();
 
-  const { themeStretch } = useSettingsContext();
-
-  const { push } = useRouter();
-
-  const [openConfirm, setOpenConfirm] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalDocuments, setTotalDocuments] = useState(0);
 
   const [filterName, setFilterName] = useState('');
 
   const [filterType, setFilterType] = useState('all');
   const [filterCountry, setFilterCountry] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
 
-  const { enqueueSnackbar } = useSnackbar();
+  const [dataFiltered, setDataFiltered] = useState<ICollaboratorProps[]>([]);
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(order, orderBy),
-    filterName,
-    filterType,
-    filterCountry,
-  });
+  useEffect(() => {
+    setIsLoading(true);
+
+    const fetchHealthUnits = async () => {
+      try {
+        const response = await fetch(
+          `/api/health-units?page=${page <= 0 ? 1 : page + 1}&documentsPerPage=${rowsPerPage}`,
+          {
+            method: 'GET',
+          }
+        );
+
+        console.log('response.data: ', response.data);
+
+        setTotalPages(response.totalPages);
+        setTotalDocuments(response.totalDocuments);
+        setPage(response.page - 1);
+
+        const filteredData = applyFilter({
+          inputData: response.data,
+          comparator: getComparator(order, orderBy),
+          filterName,
+          filterCountry,
+          filterType,
+          filterStatus,
+        });
+
+        console.log('filteredData: ', filteredData);
+
+        setDataFiltered(filteredData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHealthUnits();
+  }, [page, rowsPerPage, order, orderBy, filterName, filterCountry, filterType, filterStatus]);
+
+  const { themeStretch } = useSettingsContext();
+
+  const { push } = useRouter();
+
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   const dataInPage = dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -142,8 +179,14 @@ export default function healthUnitsListView({ healthUnits }) {
   };
 
   const handleFilterCountry = event => {
+    console.log('event.target: ', event.target);
     setPage(0);
     setFilterCountry(event.target.value);
+  };
+
+  const handleFilterStatus = event => {
+    setPage(0);
+    setFilterStatus(event.target.value);
   };
 
   const handleFilterName = event => {
@@ -222,6 +265,8 @@ export default function healthUnitsListView({ healthUnits }) {
     setFilterName('');
     setFilterType('all');
     setFilterCountry('all');
+    setFilterStatus('all');
+    setPage(0);
   };
 
   return (
@@ -235,11 +280,9 @@ export default function healthUnitsListView({ healthUnits }) {
             links={[{ name: 'Health Units' }]}
             action={
               <NextLink href={PATHS.healthUnits.new} passHref>
-                {healthUnit?.permissions?.includes('admin') && (
-                  <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                    Add Health Unit
-                  </Button>
-                )}
+                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+                  Add Health Unit
+                </Button>
               </NextLink>
             }
           />
@@ -252,11 +295,14 @@ export default function healthUnitsListView({ healthUnits }) {
               filterName={filterName}
               filterType={filterType}
               filterCountry={filterCountry}
+              filterStatus={filterStatus}
               optionsRole={ROLES_OPTIONS}
               optionsCountry={COUNTRIES_OPTIONS}
+              optionsStatus={STATUS_OPTIONS}
               onFilterName={handleFilterName}
               onFilterType={handleFilterType}
               onFilterCountry={handleFilterCountry}
+              onFilterStatus={handleFilterStatus}
               onResetFilter={handleResetFilter}
             />
 
@@ -267,17 +313,17 @@ export default function healthUnitsListView({ healthUnits }) {
                     order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
-                    rowCount={tableData.length}
+                    rowCount={totalDocuments}
                     numSelected={selected.length}
                     onSort={onSort}
                   />
 
                   <TableBody>
                     {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map(row => (
                         <HealthUnitsTableRow
-                          key={row.id}
+                          key={row._id}
                           row={row}
                           selected={selected.includes(row._id)}
                           onSelectRow={() => onSelectRow(row._id)}
@@ -289,7 +335,7 @@ export default function healthUnitsListView({ healthUnits }) {
 
                     <TableEmptyRows
                       height={denseHeight}
-                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                      emptyRows={emptyRows(page, rowsPerPage, totalDocuments)}
                     />
 
                     <TableNoData isNotFound={isNotFound} />
@@ -299,7 +345,7 @@ export default function healthUnitsListView({ healthUnits }) {
             </TableContainer>
 
             <TablePaginationCustom
-              count={dataFiltered.length}
+              count={totalDocuments}
               page={page}
               rowsPerPage={rowsPerPage}
               onPageChange={onChangePage}
@@ -317,7 +363,14 @@ export default function healthUnitsListView({ healthUnits }) {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filterName, filterCountry, filterType }) {
+function applyFilter({
+  inputData,
+  comparator,
+  filterName,
+  filterCountry,
+  filterType,
+  filterStatus,
+}) {
   const stabilizedThis = inputData?.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -336,12 +389,32 @@ function applyFilter({ inputData, comparator, filterName, filterCountry, filterT
   }
 
   if (filterCountry !== 'all') {
-    inputData = inputData.filter(healthUnit => healthUnit.addresses[0].country === filterCountry);
+    console.log('filterCountry: ', filterCountry);
+    inputData = inputData.filter(
+      healthUnit => healthUnit?.legal_information?.address?.country === filterCountry
+    );
   }
 
   if (filterType !== 'all') {
     inputData = inputData.filter(healthUnit => healthUnit.role === filterType);
   }
 
+  if (filterStatus !== 'all') {
+    switch (filterStatus) {
+      case 'enabled':
+        inputData = inputData.filter(
+          healthUnit => healthUnit.stripe_account?.requirements?.currently_due?.length === 0
+        );
+
+        break;
+
+      case 'restricted':
+        inputData = inputData.filter(
+          healthUnit => healthUnit.stripe_account?.requirements?.currently_due?.length > 0
+        );
+
+        break;
+    }
+  }
   return inputData;
 }
