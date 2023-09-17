@@ -55,7 +55,7 @@ export default function NavAccount({ sx, ...other }: StackProps) {
             </Typography>
 
             <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-              Admin
+              {user?.permissions?.includes('super_admin') ? 'Super Admin' : 'Admin'}
             </Typography>
           </Box>
         </StyledRoot>

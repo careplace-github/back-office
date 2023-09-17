@@ -50,7 +50,6 @@ export default function DrawableMap({ setServiceArea, serviceArea }: props) {
       .map(c => {
         return [c.lat(), c.lng()];
       });
-    console.log(coordinatesToAdd);
     setServiceArea(prev => {
       return { type: prev.type, coordinates: [...prev.coordinates, [coordinatesToAdd]] };
     });

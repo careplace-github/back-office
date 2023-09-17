@@ -97,11 +97,9 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
 
   const NewUserSchema = Yup.object().shape({});
 
-  console.log('current helath unit 1', currentHealthUnit);
-
   const defaultValues = useMemo(
     () => ({
-      isActive: currentHealthUnit?.is_Active || false,
+      isActive: currentHealthUnit?.is_active || false,
 
       logo: currentHealthUnit?.business_profile.logo || '',
       fileChanged: '',
@@ -143,20 +141,11 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
       postal_code: currentHealthUnit?.legal_information?.address.postal_code || '',
       city: currentHealthUnit?.legal_information?.address.city || '',
       state: currentHealthUnit?.legal_information?.address.state || '',
-      country: currentHealthUnit?.legal_information?.address.country || '',
-
-      stripeAccountId: currentHealthUnit?.stripe_information?.account_id || '',
-      stripeCustomerId: currentHealthUnit?.stripe_information?.customer_id || '',
+      country: currentHealthUnit?.legal_information?.address.country || 'PT',
     }),
 
     [currentHealthUnit]
   );
-
-  const [isAccountIdDisabled, setIsAccountIdDisabled] = useState(true);
-  const [isCustomerIdDisabled, setIsCustomerIdDisabled] = useState(true);
-
-  const [generateAccountIdPopup, setGenerateAccountIdPopup] = useState(false);
-  const [generateCustomerIdPopup, setGenerateCustomerIdPopup] = useState(false);
 
   const methods = useForm({
     mode: 'onChange',
@@ -244,6 +233,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
         },
       },
       services: data.services,
+      is_active: data.isActive,
     };
 
     if (isEdit) {
@@ -259,16 +249,13 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
           throw new Error(response.statusText);
         }
 
-        enqueueSnackbar('Colaborador atualizado com sucesso!');
+        enqueueSnackbar('Health unit updated successfully!');
       } catch (err) {
         switch (err.message) {
           default:
-            enqueueSnackbar(
-              'Ocorreu um erro ao atualizar o colaborador. Por favor tente novamente.',
-              {
-                variant: 'error',
-              }
-            );
+            enqueueSnackbar('An error occurred while updating the health unit. Please try again.', {
+              variant: 'error',
+            });
         }
       }
     }
@@ -285,18 +272,17 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
         if (response.error) {
           throw new Error(response.statusText);
         }
-        enqueueSnackbar('Colaborador adicionado com sucesso!');
 
-        window.location.href = '';
+        enqueueSnackbar('Health unit created with success!');
+
+        // send to the health unit page
+        push(PATHS.healthUnits.view(response._id));
       } catch (err) {
         switch (err.message) {
           default:
-            enqueueSnackbar(
-              'Ocorreu um erro ao adicionar o colaborador. Por favor tente novamente.',
-              {
-                variant: 'error',
-              }
-            );
+            enqueueSnackbar('An error occurred while creating the health unit. Please try again.', {
+              variant: 'error',
+            });
         }
       }
     }
@@ -330,7 +316,8 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
         {!isNew && (
           <MuiTooltip
             title={
-              currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0
+              currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0 ||
+              !currentHealthUnit?.stripe_information?.account_id
                 ? "Stripe account is restricted. Health Unit can't receive payments. Click here to go to Stripe's account page and provide the missing information."
                 : "Stripe account is enabled. Health Unit can receive payments. Click here to go to Stripe's account page."
             }
@@ -339,35 +326,37 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
               cursor: 'pointer',
             }}
             onClick={() => {
-              console.log('ENV', process.env.NEXT_PUBLIC_ENV);
               // send to stripe account page
               if (process.env.NEXT_PUBLIC_ENV === 'dev' || process.env.NEXT_PUBLIC_ENV === 'stag') {
                 window.open(
-                  `https://dashboard.stripe.com/test/connect/accounts/${currentHealthUnit.stripe_information.account_id}`,
+                  `https://dashboard.stripe.com/test/connect/accounts/${currentHealthUnit?.stripe_information?.account_id}`,
                   '_blank'
                 );
               } else {
                 window.open(
-                  `https://dashboard.stripe.com/connect/accounts/${currentHealthUnit.stripe_information.account_id}`,
+                  `https://dashboard.stripe.com/connect/accounts/${currentHealthUnit?.stripe_information?.account_id}`,
                   '_blank'
                 );
               }
             }}>
             <Label
               color={
-                currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0
+                currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0 ||
+                !currentHealthUnit?.stripe_information?.account_id
                   ? 'error'
                   : 'info'
               }
               endIcon={
-                currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0 ? (
+                currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0 ||
+                !currentHealthUnit?.stripe_information?.account_id ? (
                   <Iconify icon="fluent:prohibited-28-filled" color="main" />
                 ) : (
                   <Iconify icon="fluent:checkmark-12-filled" color="main" />
                 )
               }
               sx={{ position: 'absolute', top: 0, right: 25, cursor: 'pointer' }}>
-              {currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0
+              {currentHealthUnit?.stripe_account?.requirements?.currently_due?.length > 0 ||
+              !currentHealthUnit?.stripe_information?.account_id
                 ? 'Restricted'
                 : 'Enabled'}
             </Label>
@@ -508,18 +497,21 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
             ))}
           </RHFSelect>
           <Typography variant="h4"></Typography>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            sx={{ gridColumn: 'span 2' }}>
-            <RHFCheckbox name="isActive" label="Active" />
-            <Tooltip
-              placement="right"
-              text="If you mark this health unit as active, it will be visible to the public. If you mark it as inactive, it will not be visible to the public. Please make sure you know what you are doing."
-              sx={{ position: 'flex', left: '-20px' }}
-            />
-          </Stack>
+
+          {!isNew && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="flex-start"
+              sx={{ gridColumn: 'span 2' }}>
+              <RHFCheckbox name="isActive" label="Active" />
+              <Tooltip
+                placement="right"
+                text="If you mark this health unit as active, it will be visible to the public. If you mark it as inactive, it will not be visible to the public. Please make sure you know what you are doing."
+                sx={{ position: 'flex', left: '-20px' }}
+              />
+            </Stack>
+          )}
 
           <Typography variant="h4" sx={{ mt: 10 }}>
             Service Area ***
@@ -794,178 +786,6 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
             ))}
           </RHFSelect>
           <Typography variant="h4"></Typography>
-
-          <Typography variant="h4" sx={{ pt: 5 }}>
-            Stripe Information
-          </Typography>
-
-          <Typography variant="h4"></Typography>
-
-          <Box>
-            <RHFTextField
-              label="Account ID ***"
-              name="stripeAccountId"
-              disabled={isAccountIdDisabled}
-              InputLabelProps={{ shrink: true }}
-              // view only
-
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    sx={{
-                      cursor: getValues('stripeAccountId') ? 'default' : 'pointer',
-                    }}
-                    onClick={() => {
-                      if (getValues('stripeAccountId')) return;
-
-                      setIsAccountIdDisabled(!isAccountIdDisabled);
-                    }}>
-                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                      {isAccountIdDisabled ? (
-                        // show open lock
-                        <Iconify icon="ooui:lock" color="main" />
-                      ) : (
-                        <Iconify icon="ooui:un-lock" color="main" />
-                      )}
-                    </Box>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {!isAccountIdDisabled && (
-              <Typography
-                onClick={() => {
-                  setGenerateAccountIdPopup(true);
-                }}
-                sx={{
-                  color: 'text.disabled',
-                  width: 'fit-content',
-                  fontSize: '12px',
-                  pl: '5px',
-                  pt: '5px',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}>
-                Generate Account ID
-              </Typography>
-            )}
-          </Box>
-
-          <ConfirmDialog
-            open={generateAccountIdPopup}
-            onClose={() => {
-              setGenerateAccountIdPopup(false);
-            }}
-            title="Generate Account ID"
-            content={
-              <Typography component="div">
-                Are you sure you want to generate the following field:
-                <br /> <b>Stripe Account ID</b> ? <br />
-                If you confirm the API will generate a new Account ID for the health unit with the
-                information provided on this page. <br />
-                <br />
-                <br />
-                Please make sure you know what you are doing.
-              </Typography>
-            }
-            action={
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  setIsAccountIdDisabled(false);
-                  setGenerateAccountIdPopup(false);
-                }}>
-                Generate
-              </Button>
-            }
-          />
-
-          <Box>
-            <RHFTextField
-              label="Customer ID"
-              name="stripeCustomerId"
-              disabled={isCustomerIdDisabled}
-              InputLabelProps={{ shrink: true }}
-              // view only
-
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    sx={{
-                      cursor: getValues('stripeCustomerId') ? 'default' : 'pointer',
-                    }}
-                    onClick={() => {
-                      if (getValues('stripeCustomerId')) return;
-
-                      setIsCustomerIdDisabled(!isCustomerIdDisabled);
-                    }}>
-                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                      {isCustomerIdDisabled ? (
-                        // show open lock
-                        <Iconify icon="ooui:lock" color="main" />
-                      ) : (
-                        <Iconify icon="ooui:un-lock" color="main" />
-                      )}
-                    </Box>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {!isCustomerIdDisabled && (
-              <Typography
-                onClick={() => setGenerateCustomerIdPopup(true)}
-                sx={{
-                  color: 'text.disabled',
-                  width: 'fit-content',
-                  fontSize: '12px',
-                  pl: '5px',
-                  pt: '5px',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}>
-                Generate Customer ID
-              </Typography>
-            )}
-          </Box>
-
-          <ConfirmDialog
-            open={generateCustomerIdPopup}
-            onClose={() => {
-              setGenerateCustomerIdPopup(false);
-            }}
-            title="Generate Customer ID"
-            content={
-              <Typography component="div">
-                Are you sure you want to generate the following field:
-                <br /> <b>Stripe Customer ID</b> ? <br />
-                If you confirm the API will generate a new Customer ID for the health unit with the
-                information provided on this page. <br />
-                <br />
-                <br />
-                Please make sure you know what you are doing.
-              </Typography>
-            }
-            action={
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  setIsAccountIdDisabled(false);
-                  setGenerateAccountIdPopup(false);
-                }}>
-                Generate
-              </Button>
-            }
-          />
 
           <Box sx={{ pt: 5 }}>
             <Typography

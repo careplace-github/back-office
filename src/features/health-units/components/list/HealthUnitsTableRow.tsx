@@ -87,12 +87,13 @@ export default function UserTableRow({
 
         <TableCell align="left">{row.business_profile.phone}</TableCell>
 
-        <TableCell align="left">{row.addresses[0].country}</TableCell>
+        <TableCell align="left">{row?.legal_information?.address?.country}</TableCell>
 
         <TableCell align="center">
           <MuiTooltip
             title={
-              row?.stripe_account?.requirements?.currently_due?.length > 0
+              row?.stripe_account?.requirements?.currently_due?.length > 0 ||
+              !row?.stripe_information?.account_id
                 ? "Stripe account is restricted. Health Unit can't receive payments. Click here to go to Stripe's account page and provide the missing information."
                 : "Stripe account is enabled. Health Unit can receive payments. Click here to go to Stripe's account page."
             }
@@ -114,7 +115,8 @@ export default function UserTableRow({
                 );
               }
             }}>
-            {row?.stripe_account?.requirements?.currently_due?.length > 0 ? (
+            {row?.stripe_account?.requirements?.currently_due?.length > 0 ||
+            !row?.stripe_information?.account_id ? (
               <Iconify
                 icon="fluent:prohibited-28-filled"
                 color="error"

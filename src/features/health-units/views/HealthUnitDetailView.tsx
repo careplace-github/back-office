@@ -5,6 +5,8 @@ import { useEffect, useCallback, useState } from 'react';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { Modal } from '@mui/material';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+
 // routes
 import { PATHS } from 'src/routes';
 // components
@@ -21,17 +23,21 @@ import { alpha } from '@mui/material/styles';
 //
 import HealthUnitNewViewEditForm from '../components/detail/HealthUnitDetailForm';
 import HealthUnitDetailsReview from '../components/detail/reviews/HealthUnitDetailReviewsSummary';
+import HealthUnitSettings from '../components/detail/settings/HealthUnitSettings';
 
 // ----------------------------------------------------------------------
 
 export default function EditUserView({ services, healthUnit, reviews }) {
   const { themeStretch } = useSettingsContext();
 
-  console.log('healthUnit', healthUnit);
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [currentTab, setCurrentTab] = useState('details');
+  const [currentTab, setCurrentTab] = useState(
+    router.query.tab ? router.query.tab.toString() : 'details'
+    // check if there is a tab in the query string
+  );
 
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
@@ -42,10 +48,6 @@ export default function EditUserView({ services, healthUnit, reviews }) {
   const handleOpenConfirm = () => {
     setOpenConfirm(true);
   };
-
-  useEffect(() => {
-    console.log('healthUnit', healthUnit);
-  }, [healthUnit]);
 
   return (
     <>
@@ -110,6 +112,10 @@ export default function EditUserView({ services, healthUnit, reviews }) {
                   value: 'dashboard',
                   label: 'Dashboard',
                 },
+                {
+                  value: 'account',
+                  label: 'Account',
+                },
               ].map(tab => (
                 <Tab key={tab.value} value={tab.value} label={tab.label} />
               ))}
@@ -132,6 +138,8 @@ export default function EditUserView({ services, healthUnit, reviews }) {
                 averageRating={healthUnit.rating.average}
               />
             )}
+
+            {currentTab === 'account' && <HealthUnitSettings healthUnit={healthUnit} />}
           </Card>
         </Container>
       )}

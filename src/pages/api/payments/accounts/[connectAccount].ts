@@ -14,11 +14,13 @@ export default async function ordersRoute(
 
     const accessToken = session?.accessToken;
 
-    const healthUnit = req.body;
+    const connect_account_id = req.query.connectAccount as string;
 
-    if (req.method === 'POST') {
+    const health_unit_id = req.query.health_unit_id as string;
+
+    if (req.method === 'GET') {
       try {
-        const response = await axios.post(`/health-units`, healthUnit, {
+        const response = await axios.get(`/payments/accounts/${connect_account_id}`, {
           // Set authorization header bearer token
           headers: {
             'Content-Type': 'application/json',
@@ -26,6 +28,7 @@ export default async function ordersRoute(
 
             Authorization: `Bearer ${accessToken}`,
           },
+          params: req.query,
           withCredentials: true,
         });
         return res.status(200).json(response.data);
@@ -40,9 +43,9 @@ export default async function ordersRoute(
       }
     }
 
-    if (req.method === 'GET') {
+    if (req.method === 'DELETE') {
       try {
-        const response = await axios.get(`/health-units/search`, {
+        const response = await axios.delete(`/payments/accounts/${connect_account_id}`, {
           // Set authorization header bearer token
           headers: {
             'Content-Type': 'application/json',

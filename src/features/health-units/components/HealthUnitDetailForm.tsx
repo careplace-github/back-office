@@ -85,15 +85,11 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
     currentHealthUnit?.service_area || { type: 'MultiPolygon', coordinates: [] }
   );
 
-  console.log('current', currentHealthUnit?.service_areas);
-
   const [fileData, setFileData] = useState<FormData | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({});
-
-  console.log('current helath unit', currentHealthUnit);
 
   const defaultValues = useMemo(
     () => ({

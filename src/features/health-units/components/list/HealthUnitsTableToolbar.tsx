@@ -90,7 +90,6 @@ export default function UserTableToolbar({
         value={filterCountry}
         onChange={event => {
           onFilterCountry(event);
-          console.log(filterCountry);
         }}
         SelectProps={{
           MenuProps: {
