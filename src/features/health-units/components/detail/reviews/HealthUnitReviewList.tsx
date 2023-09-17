@@ -83,7 +83,7 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
           <CircularProgress sx={{ color: 'primary.main' }} />
         </Box>
       ) : (
-        reviews.map(review => <ReviewItem key={review._id} review={review} />)
+        reviews?.map(review => <ReviewItem key={review._id} review={review} />)
       )}
 
       <Pagination

@@ -14,45 +14,24 @@ export default async function ordersRoute(
 
     const accessToken = session?.accessToken;
 
-    const healthUnit = req.body;
+    const { health_unit_id } = req.body;
 
     if (req.method === 'POST') {
       try {
-        const response = await axios.post(`/health-units`, healthUnit, {
-          // Set authorization header bearer token
-          headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': accessToken,
+        const response = await axios.post(
+          `/payments/accounts`,
+          { health_unit_id },
+          {
+            // Set authorization header bearer token
+            headers: {
+              'Content-Type': 'application/json',
+              'x-access-token': accessToken,
 
-            Authorization: `Bearer ${accessToken}`,
-          },
-          withCredentials: true,
-        });
-        return res.status(200).json(response.data);
-      } catch (error) {
-        switch (error.response.data.error) {
-          case 'EMAIL_ALREADY_EXISTS':
-            return res.status(400).json({ error: 'EMAIL_ALREADY_EXISTS' });
-
-          default:
-            return res.status(500).json({ error: 'Internal server error' });
-        }
-      }
-    }
-
-    if (req.method === 'GET') {
-      try {
-        const response = await axios.get(`/health-units/search`, {
-          // Set authorization header bearer token
-          headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': accessToken,
-
-            Authorization: `Bearer ${accessToken}`,
-          },
-          params: req.query,
-          withCredentials: true,
-        });
+              Authorization: `Bearer ${accessToken}`,
+            },
+            withCredentials: true,
+          }
+        );
         return res.status(200).json(response.data);
       } catch (error) {
         switch (error.response.data.error) {
