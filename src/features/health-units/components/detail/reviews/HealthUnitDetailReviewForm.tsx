@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import fetch from 'src/lib/fetch';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Stack from '@mui/material/Stack';
@@ -17,96 +18,144 @@ import Dialog, { DialogProps } from '@mui/material/Dialog';
 import { fData } from 'src/utils/formatNumber';
 // types
 // components
-import FormProvider, { RHFTextField, RHFUploadAvatar } from 'src/components/hook-form';
+import { CustomUploadAvatar } from 'src/components/upload-avatar/UploadAvatar';
+import { TextField, Grid } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 interface Props extends DialogProps {
   onClose: VoidFunction;
   review?: any;
+  healthUnitId?: string;
 }
 
-export default function HealthUnitReviewNewForm({ onClose, review, ...other }: Props) {
-  const ReviewSchema = Yup.object().shape({
-    rating: Yup.number().min(1, 'Rating must be greater than or equal to 1'),
-    review: Yup.string().required('Review is required'),
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-  });
+export default function HealthUnitReviewNewForm({
+  healthUnitId,
+  onClose,
+  review,
+  ...other
+}: Props) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [name, setName] = useState<string>(review ? (review?.customer?.name as string) : '');
+  const [email, setEmail] = useState<string>(review ? (review?.customer?.email as string) : '');
+  const [rating, setRating] = useState<number>(review ? (review?.rating as number) : 0);
+  const [comment, setComment] = useState<string>(review ? (review?.comment as string) : '');
+  const [logo, setLogo] = useState<any>(
+    review ? (review?.customer?.profile_picture as string) : undefined
+  );
+  const blockSubmit = !name || !email || !rating || !comment;
+  const blockCustomerUpdate = review?.type !== 'mock' && review;
+  const isUpdate = !!review;
 
-  const defaultValues = {
-    rating: review?.rating || 0,
-    comment: review?.comment || '',
-    name: review?.customer?.name || '',
-    email: review?.customer?.email || '',
-    fileChanged: '',
-    logo: review?.customer?.profile_picture || '',
+  const reset = () => {
+    setIsLoading(false);
+    setName('');
+    setEmail('');
+    setRating(0);
+    setComment('');
+    setLogo(undefined);
   };
-
-  const methods = useForm({
-    resolver: yupResolver(ReviewSchema),
-    defaultValues,
-  });
-
-  const {
-    reset,
-    control,
-    handleSubmit,
-    setValue,
-    register,
-    formState: { errors, isSubmitting },
-  } = methods;
 
   const [fileData, setFileData] = useState<FormData | null>(null);
 
-  const handleDrop = useCallback(
-    acceptedFiles => {
-      const file = acceptedFiles[0]; // eslint-disable-line
+  const handleDrop = useCallback(acceptedFiles => {
+    const file = acceptedFiles[0]; // eslint-disable-line
 
-      const formData = new FormData();
-      formData.append('file', file);
+    const formData = new FormData();
+    formData.append('file', file);
 
-      setFileData(formData);
+    console.log(formData);
+    setFileData(formData);
 
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
+    const newFile = Object.assign(file, {
+      preview: URL.createObjectURL(file),
+    });
 
-      if (file) {
-        setValue('fileChanged', Date.now().toString()); // update the hidden field
+    if (file) {
+      setLogo(newFile.preview);
+    }
+  }, []);
 
-        setValue('logo', newFile.preview, { shouldDirty: true });
-      }
-    },
-    [setValue]
-  );
-
-  const onSubmit = handleSubmit(async data => {
+  const onSubmit = async () => {
+    setIsLoading(true);
+    console.log('filedata', fileData);
+    let uploadedFileURL;
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (fileData) {
+        const response = await fetch('/api/files', {
+          method: 'POST',
+          body: fileData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        uploadedFileURL = response.fileURL;
+      }
+      let customer;
+      if (!isUpdate) {
+        customer = await fetch('/api/customers', {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            email,
+            profile_picture: uploadedFileURL || null,
+          }),
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      } else {
+        customer = await fetch(`/api/customers/${review?.customer?._id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            name,
+            email,
+            profile_picture: uploadedFileURL || null,
+          }),
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      }
+      await fetch(`/api/reviews/health-units/${healthUnitId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          comment,
+          rating,
+          customer: customer._id,
+        }),
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       reset();
       onClose();
-      console.info('DATA', data);
     } catch (error) {
       console.error(error);
     }
-  });
+    setIsLoading(false);
+  };
 
   const onCancel = useCallback(() => {
     onClose();
     reset();
   }, [onClose, reset]);
 
+  const handleRatingChange = (event: any) => {
+    setRating(Number(event.target.value));
+  };
+
   return (
     <Dialog onClose={onClose} {...other} maxWidth="md" fullWidth>
-      <FormProvider methods={methods} onSubmit={onSubmit}>
+      <form>
         <DialogTitle> Add Review </DialogTitle>
 
         <DialogContent>
           <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}></Stack>
-          {!!errors.rating && <FormHelperText error> ERROR </FormHelperText>}
-          <RHFUploadAvatar
+          <CustomUploadAvatar
+            disabled={blockCustomerUpdate}
             name="logo"
+            value={logo}
             maxSize={3145728}
             onDrop={handleDrop}
             helperText={
@@ -125,40 +174,49 @@ export default function HealthUnitReviewNewForm({ onClose, review, ...other }: P
               </Typography>
             }
           />
-          <input type="hidden" {...register('fileChanged')} /> {/* Add this line */}
-          <RHFTextField
-            name="name"
-            label="Name *"
-            sx={{ mt: 3 }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <RHFTextField
-            name="email"
-            label="Email *"
-            sx={{ mt: 3 }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <Controller
-            name="rating"
-            control={control}
-            render={({ field }) => (
-              <Rating sx={{ mt: 3 }} {...field} size="small" value={Number(field.value)} />
-            )}
-          />
-          <RHFTextField
-            name="comment"
-            label="Comment *"
-            multiline
-            minRows={5}
-            sx={{ mt: 3 }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
+          <Grid container xs={12} sx={{ display: 'grid', gridTemplateColumns: 'repeat(1,1fr)' }}>
+            <TextField
+              disabled={blockCustomerUpdate}
+              name="name"
+              label="Name *"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              sx={{ mt: 3 }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <TextField
+              disabled={blockCustomerUpdate}
+              name="email"
+              value={email}
+              label="Email *"
+              onChange={e => setEmail(e.target.value)}
+              sx={{ mt: 3 }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Rating
+              sx={{ mt: 3 }}
+              size="small"
+              value={Number(rating)}
+              onChange={handleRatingChange}
+            />
+            <TextField
+              name="comment"
+              label="Comment *"
+              value={comment}
+              onChange={e => setComment(e.target.value)}
+              multiline
+              minRows={5}
+              sx={{ mt: 3 }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
         </DialogContent>
 
         <DialogActions>
@@ -166,11 +224,15 @@ export default function HealthUnitReviewNewForm({ onClose, review, ...other }: P
             Cancel
           </Button>
 
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Add
+          <LoadingButton
+            disabled={blockSubmit}
+            onClick={() => onSubmit()}
+            variant="contained"
+            loading={isLoading}>
+            {isUpdate ? 'Update' : 'Add'}
           </LoadingButton>
         </DialogActions>
-      </FormProvider>
+      </form>
     </Dialog>
   );
 }

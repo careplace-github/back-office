@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from 'src/pages/api/auth/[...nextauth]';
 import { Session } from 'next-auth';
 
-export default async function ordersRoute(
+export default async function customersRouter(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
@@ -14,45 +14,11 @@ export default async function ordersRoute(
 
     const accessToken = session?.accessToken;
 
-    const healthUnitId = req.query.id;
-
-    const review = req.body;
+    const customer = req.body;
 
     if (req.method === 'POST') {
       try {
-        const response = await axios.post(
-          `/health-units/${healthUnitId}/reviews`,
-          {
-            ...review,
-            rating: parseInt(review.rating, 10),
-          },
-          {
-            // Set authorization header bearer token
-            headers: {
-              'Content-Type': 'application/json',
-              'x-access-token': accessToken,
-
-              Authorization: `Bearer ${accessToken}`,
-            },
-            withCredentials: true,
-          }
-        );
-        return res.status(200).json(response.data);
-      } catch (error) {
-        switch (error.response.data.error) {
-          case 'EMAIL_ALREADY_EXISTS':
-            return res.status(400).json({ error: 'EMAIL_ALREADY_EXISTS' });
-
-          default:
-            console.log('error', error.response.data);
-            return res.status(500).json({ error: 'Internal server error' });
-        }
-      }
-    }
-
-    if (req.method === 'GET') {
-      try {
-        const response = await axios.get(`/health-units/${healthUnitId}/reviews`, {
+        const response = await axios.post(`/customers`, customer, {
           // Set authorization header bearer token
           headers: {
             'Content-Type': 'application/json',
@@ -60,23 +26,46 @@ export default async function ordersRoute(
 
             Authorization: `Bearer ${accessToken}`,
           },
-          params: req.query,
           withCredentials: true,
         });
         return res.status(200).json(response.data);
       } catch (error) {
         switch (error.response.data.error) {
-          case 'EMAIL_ALREADY_EXISTS':
-            return res.status(400).json({ error: 'EMAIL_ALREADY_EXISTS' });
-
           default:
+            console.log(error.response.data);
             return res.status(500).json({ error: 'Internal server error' });
         }
       }
     }
 
-    // This will be returned if the method doesn't match the ones above
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    if (req.method === 'PUT') {
+      try {
+        const customerId = req.query.id;
+        const response = await axios.put(`/customers/${customerId}`, customer, {
+          // Set authorization header bearer token
+          headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': accessToken,
+
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        });
+        return res.status(200).json(response.data);
+      } catch (error) {
+        switch (error.response.data.error) {
+          default:
+            console.log(error.response.data);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+      }
+    }
+
+    return res.status(500).json({ error: 'Internal server error' });
+
+    // if (req.method === 'GET') {
+    //   // TODO: GET CUSTOMER
+    // }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
