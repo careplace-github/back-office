@@ -9,7 +9,7 @@ services:
       dockerfile: ./.docker/frontend/Dockerfile.stag
     image: careplace/business-web-stag:latest  
     ports:
-      - "4000:4000"
+      - "5001:5001"
     container_name: frontend-stag
     volumes:
       - ../../:/usr/src/app

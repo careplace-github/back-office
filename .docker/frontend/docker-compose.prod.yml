@@ -9,7 +9,7 @@ services:
       dockerfile: ./.docker/frontend/Dockerfile.prod
     image: careplace/business-web-prod:latest  
     ports:
-      - "4000:4000"
+      - "5001:5001"
     container_name: frontend-prod
     volumes:
       - ../../:/usr/src/app
