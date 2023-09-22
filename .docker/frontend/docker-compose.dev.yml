@@ -9,7 +9,7 @@ services:
       dockerfile: ./.docker/frontend/Dockerfile.dev
     image: careplace/business-web-dev:latest  
     ports:
-      - "4000:4000"
+      - "5001:5001"
     container_name: frontend-dev
     volumes:
       - type: bind
