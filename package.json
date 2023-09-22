@@ -1,7 +1,7 @@
 {
   "name": "careplace-business",
   "author": "Careplace",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Careplace Business - Software de gestão de operações para Empresas de Serviço de Apoio Domiciliário, Lares e Residências Sénior.",
   "private": true,
   "scripts": {
