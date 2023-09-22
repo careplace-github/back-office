@@ -51,6 +51,13 @@ const handler: NextApiHandler = async (req, res) => {
     const session = (await getServerSession(req, res, authOptions)) as Session | null;
     const accessToken = session?.accessToken;
 
+    // create uploads folder if not exists
+    const uploadsFolderPath = 'public/uploads';
+    if (!fs.existsSync(uploadsFolderPath)) {
+      console.log('Does not exist');
+      await fs.mkdirSync(uploadsFolderPath);
+    }
+
     await fs.promises.readdir(path.join(process.cwd(), '/public', '/uploads'));
     const { files } = await readFile(req, true);
     const file = files?.file;

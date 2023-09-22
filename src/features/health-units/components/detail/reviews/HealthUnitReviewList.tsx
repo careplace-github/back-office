@@ -23,11 +23,13 @@ type Review = {
 
 type HealthUnitReviewListProps = {
   healthUnitId: string;
+  onReviewModalClose: Function;
 };
 
-export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListProps) {
-  const { healthUnitId: _healthUnitId } = healthUnitId;
-
+export default function HealthUnitReviewList({
+  healthUnitId,
+  onReviewModalClose,
+}: HealthUnitReviewListProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState(0);
@@ -39,7 +41,7 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/reviews/health-units/${_healthUnitId}?page=${page}&documentsPerPage=${documentsPerPage}`,
+        `/api/reviews/health-units/${healthUnitId}?page=${page}&documentsPerPage=${documentsPerPage}`,
         {
           method: 'GET',
         }
@@ -61,6 +63,10 @@ export default function HealthUnitReviewList(healthUnitId: HealthUnitReviewListP
     }
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [onReviewModalClose]);
 
   useEffect(() => {
     fetchData();
