@@ -121,27 +121,56 @@ export default function UserTableRow({
                 );
               }
             }}>
-            {row?.stripe_account?.requirements?.currently_due?.length > 0 ||
-            !row?.stripe_information?.account_id ? (
-              <Iconify
-                icon="fluent:prohibited-28-filled"
-                color="error"
-                width={24}
-                height={24}
-                sx={{
-                  cursor: 'pointer',
-                  color: 'error.main',
-                }}
-              />
-            ) : (
+            <Label
+              color={
+                row?.stripe_account?.requirements?.currently_due?.length > 0 ||
+                !row?.stripe_information?.account_id
+                  ? 'error'
+                  : 'info'
+              }
+              endIcon={
+                row?.stripe_account?.requirements?.currently_due?.length > 0 ||
+                !row?.stripe_information?.account_id ? (
+                  <Iconify icon="fluent:prohibited-28-filled" color="main" />
+                ) : (
+                  <Iconify icon="fluent:checkmark-12-filled" color="main" />
+                )
+              }>
+              {row?.stripe_account?.requirements?.currently_due?.length > 0 ||
+              !row?.stripe_information?.account_id
+                ? 'Restricted'
+                : 'Enabled'}
+            </Label>
+          </MuiTooltip>
+        </TableCell>
+
+        <TableCell align="center">
+          <MuiTooltip
+            title={
+              row?.is_active === true
+                ? 'Health Unit is active and will be displayed on the marketplace.'
+                : 'Health Unit is inactive and will not be displayed on the marketplace. To active it go to the Health Unit page and set it to active.'
+            }
+            placement="top"
+            sx={{ cursor: 'pointer' }}>
+            {row?.is_active === true ? (
               <Iconify
                 icon="fluent:checkmark-12-filled"
-                color="success"
                 width={24}
                 height={24}
                 sx={{
                   cursor: 'pointer',
                   color: 'success.main',
+                }}
+              />
+            ) : (
+              <Iconify
+                icon="fluent:prohibited-28-filled"
+                width={24}
+                height={24}
+                sx={{
+                  cursor: 'pointer',
+                  color: 'error.main',
                 }}
               />
             )}
