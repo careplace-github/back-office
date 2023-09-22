@@ -74,6 +74,8 @@ const TABLE_HEAD = [
   { id: 'email', label: 'Email', align: 'left' },
   { id: 'phone', label: 'Phone', align: 'left' },
   { id: 'country', label: 'Country', align: 'left' },
+  { id: 'payments', label: 'Payments', align: 'center' },
+
   { id: 'status', label: 'Status', align: 'center' },
   { id: 'actions', label: '', align: 'right' },
 ];
