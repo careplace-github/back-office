@@ -777,7 +777,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
 
           <RHFTextField name="city" label="City **" InputLabelProps={{ shrink: true }} />
 
-          <RHFSelect native name="country" label="Country **" InputLabelProps={{ shrink: true }}>
+          <RHFSelect native name="country" label="Country *" InputLabelProps={{ shrink: true }}>
             <option value="" />
             {countries.map(country => (
               <option key={country.code} value={country.code}>
