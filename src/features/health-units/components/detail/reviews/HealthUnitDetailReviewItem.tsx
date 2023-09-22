@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 // @mui
 import { Modal, Box, Typography, useTheme, Button, IconButton } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import Label from 'src/components/label';
 import Rating from '@mui/material/Rating';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
@@ -47,9 +48,8 @@ export default function HealthUnitReviewItem({ review }: Props) {
           height: { xs: 48, md: 64 },
         }}
       />
-
       <ListItemText
-        primary={review?.name}
+        primary={review?.customer?.name}
         secondary={fDate(review?.createdAt)}
         primaryTypographyProps={{ noWrap: true, typography: 'subtitle2', mb: 0.5 }}
         secondaryTypographyProps={{ noWrap: true, typography: 'caption', component: 'span' }}
@@ -67,8 +67,8 @@ export default function HealthUnitReviewItem({ review }: Props) {
     <Stack spacing={1} flexGrow={1}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Rating size="small" value={review?.rating} precision={0.1} readOnly />
-
         <Stack direction="row" alignItems="center">
+          {review?.type === 'mock' && <Label color="info">Mock Review</Label>}
           <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>

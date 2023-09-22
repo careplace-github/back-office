@@ -77,7 +77,13 @@ export default function UserTableRow({
               src={row.business_profile.logo}
             />
 
-            <Typography variant="subtitle2" noWrap>
+            <Typography
+              variant="subtitle2"
+              sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+              noWrap
+              onClick={() => {
+                onViewRow();
+              }}>
               {row.business_profile.name}
             </Typography>
           </Stack>
