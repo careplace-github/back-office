@@ -9,6 +9,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 // utils
+import fetch from 'src/lib/fetch';
 // import { fShortenNumber } from 'src/utils/format-number';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -51,11 +52,25 @@ export default function HealthUnitDetailsReview({
   const [newReview, setNewReview] = useState(false);
   const total = totalReviews;
 
+  const handleReviewModalClose = () => {
+    setNewReview(false);
+  };
+
+  function formatAverageRating(num, maxDecimalPlaces) {
+    const parsedNum = parseFloat(num);
+
+    // Check if the number is an integer (e.g., 5.0)
+    const isInteger = parsedNum === Math.floor(parsedNum);
+
+    // Use toFixed with maxDecimalPlaces if it's not an integer, otherwise convert to integer
+    return isInteger ? parsedNum.toFixed(0) : parsedNum.toFixed(maxDecimalPlaces);
+  }
+
   const renderSummary = (
     <Stack spacing={1} alignItems="center" justifyContent="center">
       <Typography variant="subtitle2">Average Rating</Typography>
 
-      <Typography variant="h2">{averageRating}/5</Typography>
+      <Typography variant="h2">{formatAverageRating(averageRating, 1)}/ 5</Typography>
 
       <Rating readOnly value={averageRating} precision={0.1} />
 
@@ -145,9 +160,21 @@ export default function HealthUnitDetailsReview({
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <HealthUnitReviewList healthUnitId={healthUnitId} />
+      <HealthUnitReviewList
+        healthUnitId={healthUnitId}
+        onReviewModalClose={handleReviewModalClose}
+      />
 
-      {newReview && <NewReviewForm onClose={() => setNewReview(false)} open={newReview} sx={{}} />}
+      {newReview && (
+        <NewReviewForm
+          healthUnitId={healthUnitId}
+          onClose={() => {
+            handleReviewModalClose();
+          }}
+          open={newReview}
+          sx={{}}
+        />
+      )}
     </>
   );
 }
