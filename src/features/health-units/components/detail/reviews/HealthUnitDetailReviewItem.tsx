@@ -24,21 +24,22 @@ import ReviewForm from './HealthUnitDetailReviewForm';
 
 type Props = {
   review: any;
+  fetchReviews?: () => void;
 };
 
-export default function HealthUnitReviewItem({ review }: Props) {
+export default function HealthUnitReviewItem({ review, fetchReviews }: Props) {
   const [editReview, setEditReview] = useState(false);
 
   const renderInfo = review && (
     <Stack
       spacing={2}
-      alignItems="center"
+      alignItems="flex-start"
       direction={{
         xs: 'row',
         md: 'column',
       }}
       sx={{
-        width: { md: 240 },
+        width: '120px',
         textAlign: { md: 'center' },
       }}>
       <Avatar
@@ -47,12 +48,6 @@ export default function HealthUnitReviewItem({ review }: Props) {
           width: { xs: 48, md: 64 },
           height: { xs: 48, md: 64 },
         }}
-      />
-      <ListItemText
-        primary={review?.customer?.name}
-        secondary={fDate(review?.createdAt)}
-        primaryTypographyProps={{ noWrap: true, typography: 'subtitle2', mb: 0.5 }}
-        secondaryTypographyProps={{ noWrap: true, typography: 'caption', component: 'span' }}
       />
     </Stack>
   );
@@ -66,7 +61,19 @@ export default function HealthUnitReviewItem({ review }: Props) {
   const renderContent = review && (
     <Stack spacing={1} flexGrow={1}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Rating size="small" value={review?.rating} precision={0.1} readOnly />
+        <Stack direction="column" alignItems="flex-start" justifyContent="flex-start">
+          <Typography>{review?.customer?.name}</Typography>
+          <Typography typography="caption" sx={{ color: 'text.secondary' }}>
+            {fDate(review?.createdAt)}
+          </Typography>
+          <Rating
+            size="small"
+            value={review?.rating}
+            precision={0.1}
+            readOnly
+            sx={{ mt: '10px' }}
+          />
+        </Stack>
         <Stack direction="row" alignItems="center">
           {review?.type === 'mock' && <Label color="info">Mock Review</Label>}
           <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
@@ -120,11 +127,18 @@ export default function HealthUnitReviewItem({ review }: Props) {
       {renderInfo}
 
       {renderContent}
+
       {editReview && (
         <ReviewForm
           review={review}
-          onClose={() => setEditReview(false)}
+          fetchReviews={() => {
+            if (fetchReviews) fetchReviews();
+          }}
+          onClose={() => {
+            setEditReview(false);
+          }}
           open={editReview}
+          healthUnitId={review.health_unit}
           sx={{}}
         />
       )}
@@ -201,6 +215,7 @@ export default function HealthUnitReviewItem({ review }: Props) {
               variant="contained"
               color="error"
               onClick={() => {
+                if (fetchReviews) fetchReviews();
                 setOpen(false);
               }}>
               Delete
