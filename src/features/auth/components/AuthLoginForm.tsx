@@ -76,15 +76,6 @@ export default function AuthLoginForm() {
       sessionStorage.setItem('name', fetchUser?.name || '');
       sessionStorage.setItem('email', fetchUser?.email || '');
       sessionStorage.setItem('picture', fetchUser?.picture || '');
-      sessionStorage.setItem('role', fetchUser?.role || '');
-      sessionStorage.setItem(
-        'health_unit_logo',
-        fetchUser?.health_unit?.business_profile?.logo || ''
-      );
-      sessionStorage.setItem(
-        'health_unit_name',
-        fetchUser?.health_unit?.business_profile?.name || ''
-      );
       sessionStorage.setItem('permissions', fetchUser?.permissions || '');
 
       push(PATHS.root);
