@@ -97,7 +97,6 @@ export default function HealthUnitSettings({ healthUnit }) {
 
   const handleGenerateAccountId = async () => {
     try {
-      console.log('id log', healthUnit._id);
       const response = await fetch(
         `/api/payments/accounts`,
 
@@ -256,15 +255,162 @@ export default function HealthUnitSettings({ healthUnit }) {
           <Typography variant="h5" sx={{ mb: 3, width: '100%', textAlign: 'left' }}>
             Stripe Account
           </Typography>
-          <>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
+
+          <Box sx={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
+            <TextField
+              label="Account ID ***"
+              sx={{
+                width: '300px',
+              }}
+              value={stripeAccountId}
+              disabled={isAccountIdDisabled}
+              InputLabelProps={{ shrink: true }}
+              // view only
+
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    sx={{
+                      cursor:
+                        stripeAccountId && !user?.permissions?.includes('super_admin')
+                          ? 'default'
+                          : 'pointer',
+                    }}
+                    onClick={() => {
+                      if (stripeAccountId && !user?.permissions?.includes('super_admin')) return;
+
+                      setIsAccountIdDisabled(!isAccountIdDisabled);
+                    }}>
+                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                      {isAccountIdDisabled ? (
+                        // show open lock
+                        <Iconify icon="ooui:lock" color="main" />
+                      ) : (
+                        <Iconify icon="ooui:un-lock" color="main" />
+                      )}
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            {!isAccountIdDisabled && !stripeAccountId && (
+              <>
+                <Typography
+                  onClick={() => {
+                    setGenerateAccountIdPopup(true);
+                  }}
+                  sx={{
+                    color: 'text.disabled',
+                    width: 'fit-content',
+                    fontSize: '12px',
+                    pl: '5px',
+                    pt: '5px',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      color: 'primary.main',
+                    },
+                  }}>
+                  Generate Account ID
+                </Typography>
+              </>
+            )}
+
+            {!isAccountIdDisabled && stripeAccountId && (
+              <>
+                <Typography
+                  onClick={() => {
+                    setDeleteAccountIdPopup(true);
+                  }}
+                  sx={{
+                    color: 'text.disabled',
+                    width: 'fit-content',
+                    fontSize: '12px',
+                    pl: '5px',
+                    pt: '5px',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      color: 'primary.main',
+                    },
+                  }}>
+                  Delete Account ID
+                </Typography>
+              </>
+            )}
+
+            <ConfirmDialog
+              open={generateAccountIdPopup}
+              onClose={() => {
+                setGenerateAccountIdPopup(false);
+              }}
+              title="Generate Account ID"
+              content={
+                <Typography component="div">
+                  Are you sure you want to generate the following field:
+                  <br /> <b>Stripe Account ID</b> ? <br />
+                  If you confirm the API will generate a new Account ID for the health unit with the
+                  information provided on the database. <br />
+                  After the Account ID is generated, <b>you will not be able to change it.</b>{' '}
+                  <br />
+                  <br />
+                  <br />
+                  Please make sure you know what you are doing.
+                </Typography>
+              }
+              action={
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    handleGenerateAccountId();
+                    setIsAccountIdDisabled(false);
+                    setGenerateAccountIdPopup(false);
+                  }}>
+                  Generate Account ID
+                </Button>
+              }
+            />
+
+            <ConfirmDialog
+              open={deleteAccountIdPopup}
+              onClose={() => {
+                setDeleteAccountIdPopup(false);
+              }}
+              title="Delete Account ID"
+              content={
+                <Typography component="div">
+                  Are you sure you want to delete the following field:
+                  <br /> <b>Stripe Account ID</b> ? <br />
+                  If you confirm the API will <b>delete the Account ID </b>for the health unit.{' '}
+                  <br />
+                  After the Account ID is deleted the health unit will,{' '}
+                  <b>NOT be able to receive payments.</b> <br />
+                  <br />
+                  <br />
+                  Please make sure you know what you are doing.
+                </Typography>
+              }
+              action={
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    handleDeleteAccountId();
+                    setIsAccountIdDisabled(false);
+                    setDeleteAccountIdPopup(false);
+                  }}>
+                  Delete Account ID
+                </Button>
+              }
+            />
+
+            <Box>
               <TextField
-                label="Account ID ***"
-                sx={{
-                  width: '300px',
-                }}
-                value={stripeAccountId}
-                disabled={isAccountIdDisabled}
+                sx={{ ml: '20px', width: '300px' }}
+                label="Customer ID"
+                value={stripeCustomerId}
+                disabled={isCustomerIdDisabled}
                 InputLabelProps={{ shrink: true }}
                 // view only
 
@@ -275,17 +421,17 @@ export default function HealthUnitSettings({ healthUnit }) {
                       position="end"
                       sx={{
                         cursor:
-                          stripeAccountId && !user?.permissions?.includes('super_admin')
+                          stripeCustomerId && !user?.permissions?.includes('super_admin')
                             ? 'default'
                             : 'pointer',
                       }}
                       onClick={() => {
-                        if (stripeAccountId && !user?.permissions?.includes('super_admin')) return;
+                        if (stripeCustomerId && !user?.permissions?.includes('super_admin')) return;
 
-                        setIsAccountIdDisabled(!isAccountIdDisabled);
+                        setIsCustomerIdDisabled(!isCustomerIdDisabled);
                       }}>
                       <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                        {isAccountIdDisabled ? (
+                        {isCustomerIdDisabled ? (
                           // show open lock
                           <Iconify icon="ooui:lock" color="main" />
                         ) : (
@@ -296,11 +442,29 @@ export default function HealthUnitSettings({ healthUnit }) {
                   ),
                 }}
               />
-              {!isAccountIdDisabled && !stripeAccountId && (
+              {!isCustomerIdDisabled && !stripeCustomerId && (
+                <Typography
+                  onClick={() => setGenerateCustomerIdPopup(true)}
+                  sx={{
+                    color: 'text.disabled',
+                    width: 'fit-content',
+                    fontSize: '12px',
+                    pl: '5px',
+                    pt: '5px',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      color: 'primary.main',
+                    },
+                  }}>
+                  Generate Customer ID
+                </Typography>
+              )}
+
+              {!isCustomerIdDisabled && stripeCustomerId && (
                 <>
                   <Typography
                     onClick={() => {
-                      setGenerateAccountIdPopup(true);
+                      setDeleteCustomerIdPopup(true);
                     }}
                     sx={{
                       color: 'text.disabled',
@@ -312,252 +476,78 @@ export default function HealthUnitSettings({ healthUnit }) {
                       '&:hover': {
                         color: 'primary.main',
                       },
-                    }}>
-                    Generate Account ID
-                  </Typography>
-                </>
-              )}
-
-              {!isAccountIdDisabled && stripeAccountId && (
-                <>
-                  <Typography
-                    onClick={() => {
-                      setDeleteAccountIdPopup(true);
-                    }}
-                    sx={{
-                      color: 'text.disabled',
-                      width: 'fit-content',
-                      fontSize: '12px',
-                      pl: '5px',
-                      pt: '5px',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        color: 'primary.main',
-                      },
-                    }}>
-                    Delete Account ID
-                  </Typography>
-                </>
-              )}
-
-              <ConfirmDialog
-                open={generateAccountIdPopup}
-                onClose={() => {
-                  setGenerateAccountIdPopup(false);
-                }}
-                title="Generate Account ID"
-                content={
-                  <Typography component="div">
-                    Are you sure you want to generate the following field:
-                    <br /> <b>Stripe Account ID</b> ? <br />
-                    If you confirm the API will generate a new Account ID for the health unit with
-                    the information provided on the database. <br />
-                    After the Account ID is generated, <b>
-                      you will not be able to change it.
-                    </b>{' '}
-                    <br />
-                    <br />
-                    <br />
-                    Please make sure you know what you are doing.
-                  </Typography>
-                }
-                action={
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      console.log('id log', healthUnit._id);
-                      handleGenerateAccountId();
-                      setIsAccountIdDisabled(false);
-                      setGenerateAccountIdPopup(false);
-                    }}>
-                    Generate Account ID
-                  </Button>
-                }
-              />
-
-              <ConfirmDialog
-                open={deleteAccountIdPopup}
-                onClose={() => {
-                  setDeleteAccountIdPopup(false);
-                }}
-                title="Delete Account ID"
-                content={
-                  <Typography component="div">
-                    Are you sure you want to delete the following field:
-                    <br /> <b>Stripe Account ID</b> ? <br />
-                    If you confirm the API will <b>delete the Account ID </b>for the health unit.{' '}
-                    <br />
-                    After the Account ID is deleted the health unit will,{' '}
-                    <b>NOT be able to receive payments.</b> <br />
-                    <br />
-                    <br />
-                    Please make sure you know what you are doing.
-                  </Typography>
-                }
-                action={
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      handleDeleteAccountId();
-                      setIsAccountIdDisabled(false);
-                      setDeleteAccountIdPopup(false);
-                    }}>
-                    Delete Account ID
-                  </Button>
-                }
-              />
-
-              <Box>
-                <TextField
-                  sx={{ ml: '20px', width: '300px' }}
-                  label="Customer ID"
-                  value={stripeCustomerId}
-                  disabled={isCustomerIdDisabled}
-                  InputLabelProps={{ shrink: true }}
-                  // view only
-
-                  InputProps={{
-                    readOnly: true,
-                    endAdornment: (
-                      <InputAdornment
-                        position="end"
-                        sx={{
-                          cursor:
-                            stripeCustomerId && !user?.permissions?.includes('super_admin')
-                              ? 'default'
-                              : 'pointer',
-                        }}
-                        onClick={() => {
-                          if (stripeCustomerId && !user?.permissions?.includes('super_admin'))
-                            return;
-
-                          setIsCustomerIdDisabled(!isCustomerIdDisabled);
-                        }}>
-                        <Box
-                          component="span"
-                          sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                          {isCustomerIdDisabled ? (
-                            // show open lock
-                            <Iconify icon="ooui:lock" color="main" />
-                          ) : (
-                            <Iconify icon="ooui:un-lock" color="main" />
-                          )}
-                        </Box>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                {!isCustomerIdDisabled && !stripeCustomerId && (
-                  <Typography
-                    onClick={() => setGenerateCustomerIdPopup(true)}
-                    sx={{
-                      color: 'text.disabled',
-                      width: 'fit-content',
-                      fontSize: '12px',
-                      pl: '5px',
-                      pt: '5px',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        color: 'primary.main',
-                      },
-                    }}>
-                    Generate Customer ID
-                  </Typography>
-                )}
-
-                {!isCustomerIdDisabled && stripeCustomerId && (
-                  <>
-                    <Typography
-                      onClick={() => {
-                        setDeleteCustomerIdPopup(true);
-                      }}
-                      sx={{
-                        color: 'text.disabled',
-                        width: 'fit-content',
-                        fontSize: '12px',
-                        pl: '5px',
-                        pt: '5px',
-                        cursor: 'pointer',
-                        '&:hover': {
-                          color: 'primary.main',
-                        },
-                      }}>
-                      Delete Customer ID
-                    </Typography>
-                  </>
-                )}
-              </Box>
-
-              <ConfirmDialog
-                open={generateCustomerIdPopup}
-                onClose={() => {
-                  setGenerateCustomerIdPopup(false);
-                }}
-                title="Generate Customer ID"
-                content={
-                  <Typography component="div">
-                    Are you sure you want to generate the following field:
-                    <br /> <b>Stripe Customer ID</b> ? <br />
-                    If you confirm the API will generate a new Customer ID for the health unit with
-                    the information provided on the database. <br />
-                    After the Customer ID is generated, <b>
-                      you will not be able to change it.
-                    </b>{' '}
-                    <br />
-                    <br />
-                    Please make sure you know what you are doing.
-                  </Typography>
-                }
-                action={
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      handleGenerateCustomerId();
-                      setIsAccountIdDisabled(false);
-                      setGenerateAccountIdPopup(false);
-                    }}>
-                    Generate Customer ID
-                  </Button>
-                }
-              />
-
-              <ConfirmDialog
-                open={deleteCustomerIdPopup}
-                onClose={() => {
-                  setDeleteAccountIdPopup(false);
-                }}
-                title="Delete Customer ID"
-                content={
-                  <Typography component="div">
-                    Are you sure you want to delete the following field:
-                    <br /> <b>Stripe Customer ID</b> ? <br />
-                    If you confirm the API will <b>delete the Customer ID </b>for the health unit.{' '}
-                    <br />
-                    After the Customer ID is deleted the health unit will,{' '}
-                    <b>NOT be able to receive payments.</b> <br />
-                    <br />
-                    <br />
-                    Please make sure you know what you are doing.
-                  </Typography>
-                }
-                action={
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      handleDeleteCustomerId();
-                      setIsCustomerIdDisabled(false);
-                      setDeleteCustomerIdPopup(false);
                     }}>
                     Delete Customer ID
-                  </Button>
-                }
-              />
+                  </Typography>
+                </>
+              )}
             </Box>
-          </>
+
+            <ConfirmDialog
+              open={generateCustomerIdPopup}
+              onClose={() => {
+                setGenerateCustomerIdPopup(false);
+              }}
+              title="Generate Customer ID"
+              content={
+                <Typography component="div">
+                  Are you sure you want to generate the following field:
+                  <br /> <b>Stripe Customer ID</b> ? <br />
+                  If you confirm the API will generate a new Customer ID for the health unit with
+                  the information provided on the database. <br />
+                  After the Customer ID is generated, <b>you will not be able to change it.</b>{' '}
+                  <br />
+                  <br />
+                  Please make sure you know what you are doing.
+                </Typography>
+              }
+              action={
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    handleGenerateCustomerId();
+                    setIsAccountIdDisabled(false);
+                    setGenerateAccountIdPopup(false);
+                  }}>
+                  Generate Customer ID
+                </Button>
+              }
+            />
+
+            <ConfirmDialog
+              open={deleteCustomerIdPopup}
+              onClose={() => {
+                setDeleteAccountIdPopup(false);
+              }}
+              title="Delete Customer ID"
+              content={
+                <Typography component="div">
+                  Are you sure you want to delete the following field:
+                  <br /> <b>Stripe Customer ID</b> ? <br />
+                  If you confirm the API will <b>delete the Customer ID </b>for the health unit.{' '}
+                  <br />
+                  After the Customer ID is deleted the health unit will,{' '}
+                  <b>NOT be able to receive payments.</b> <br />
+                  <br />
+                  <br />
+                  Please make sure you know what you are doing.
+                </Typography>
+              }
+              action={
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    handleDeleteCustomerId();
+                    setIsCustomerIdDisabled(false);
+                    setDeleteCustomerIdPopup(false);
+                  }}>
+                  Delete Customer ID
+                </Button>
+              }
+            />
+          </Box>
         </Stack>
 
         {user?.permissions?.includes('super_admin') && (
