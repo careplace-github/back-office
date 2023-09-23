@@ -11,6 +11,9 @@ const axiosInstance = axios.create({
   },
 });
 
+console.log('HOST_API: ', HOST_API);
+console.log('process.env.NEXT_PUBLIC_CLIENT_ID: ', process.env.NEXT_PUBLIC_CLIENT_ID);
+
 // set timeout to 30 seconds
 axiosInstance.defaults.timeout = 30000;
 
