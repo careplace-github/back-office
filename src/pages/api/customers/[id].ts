@@ -31,9 +31,9 @@ export default async function customersRouter(
         });
         return res.status(200).json(response.data);
       } catch (error) {
-        switch (error.response.data.error) {
+        switch (error?.response?.data?.error) {
           default:
-            console.log(error.response.data);
+            console.log(error);
             return res.status(500).json({ error: 'Internal server error' });
         }
       }

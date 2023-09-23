@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { parseISO } from 'date-fns';
 // next
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-
 import NextLink from 'next/link';
 // form
 import { useForm, Controller } from 'react-hook-form';
@@ -14,6 +13,7 @@ import DrawableMap from 'src/components/drawable-map/DrawableMap';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import { DatePicker } from '@mui/x-date-pickers';
+import { useResponsive } from 'src/hooks/use-responsive';
 import {
   Box,
   Card,
@@ -29,17 +29,19 @@ import {
   CardContent,
   styled,
   InputAdornment,
+  Modal,
 } from '@mui/material';
 // utils
 import { fData } from 'src/utils/formatNumber';
 import { Tooltip as MuiTooltip } from '@mui/material';
-
+import { useTheme } from '@emotion/react';
 // assets
 import { countries, healthUnitTypes, roles, genders } from 'src/data';
 // routes
 import { PATHS } from 'src/routes';
 // components
 import { useSnackbar } from 'src/components/snackbar';
+import PromptPopup from 'src/components/prompt-popup/PromptPopup';
 import FormProvider, {
   RHFAutocomplete,
   RHFSelect,
@@ -57,13 +59,14 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import ConfirmDialog from 'src/components/confirm-dialog';
 import { s } from '@fullcalendar/core/internal-common';
+import HealthUnitBillingAddresses from '../../billing-address/HealthUnitBilingAddresses';
 
 // ----------------------------------------------------------------------
 
 HealthUnitDetailForm.propTypes = {
   isEdit: PropTypes.bool,
   isNew: PropTypes.bool,
-  currentHealthUnit: PropTypes.object,
+  healthUnit: PropTypes.object,
   services: PropTypes.array,
   user: PropTypes.object,
 };
@@ -79,9 +82,16 @@ const StyledMapContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit, services }) {
+export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, services }) {
   const { push } = useRouter();
   const [customIsDirty, setCustomIsDirty] = useState<boolean>(false);
+  const [isFetchingHealthUnit, setIsFetchingHealthUnit] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [currentHealthUnit, setCurrentHealthUnit] = useState<any>(healthUnit || null);
+  const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState<{
+    show: boolean;
+    id: string | undefined;
+  }>({ show: false, id: undefined });
 
   const [serviceArea, setServiceArea] = useState<any>(
     currentHealthUnit?.service_area || { type: 'MultiPolygon', coordinates: [] }
@@ -96,6 +106,22 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({});
+
+  const fetchHealthUnitInfo = async () => {
+    setIsFetchingHealthUnit(true);
+    try {
+      const response = await fetch(`/api/health-units/${currentHealthUnit._id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      setCurrentHealthUnit(response);
+    } catch (error) {
+      console.log('error', error);
+    }
+    setIsFetchingHealthUnit(false);
+  };
 
   const defaultValues = useMemo(
     () => ({
@@ -310,9 +336,124 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
     [setValue]
   );
 
+  const handleAddNewAddress = async (address: any) => {
+    console.info('ADDRESS', address);
+    try {
+      const addresses = currentHealthUnit?.billing_addresses || [];
+      // remove previous primary tag
+      if (address.primary) {
+        addresses.forEach(a => {
+          a.primary = false;
+        });
+      }
+      addresses.push(address);
+      await fetch(`/api/health-units/${currentHealthUnit._id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ billing_addresses: addresses }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      enqueueSnackbar('Billing Address added successfuly.');
+      fetchHealthUnitInfo();
+    } catch (error) {
+      enqueueSnackbar('Something went wrong, try again.', {
+        variant: 'error',
+      });
+      fetchHealthUnitInfo();
+    }
+  };
+
+  const handleUpdateAddress = async (addressToEdit: any) => {
+    try {
+      const addresses = currentHealthUnit?.billing_addresses;
+      addresses?.forEach((a, index) => {
+        if (a._id === addressToEdit._id) {
+          console.log('here');
+          addresses[index] = addressToEdit;
+        }
+      });
+      console.log('Address to edit', addressToEdit);
+      console.log('updated', addresses);
+      await fetch(`/api/health-units/${currentHealthUnit._id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ billing_addresses: addresses }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      enqueueSnackbar('Billing Address updated successfuly.');
+      fetchHealthUnitInfo();
+    } catch (error) {
+      enqueueSnackbar('Something went wrong, try again.', {
+        variant: 'error',
+      });
+      fetchHealthUnitInfo();
+    }
+  };
+
+  const handleDeleteAddress = async (id: any) => {
+    setIsDeleting(true);
+    const addresses = currentHealthUnit?.billing_addresses?.filter(a => a._id !== id);
+    try {
+      await fetch(`/api/health-units/${currentHealthUnit._id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ billing_addresses: addresses }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      enqueueSnackbar('Billing Address deleted successfuly.');
+      fetchHealthUnitInfo();
+      setOpenConfirmDeleteModal({ show: false, id: undefined });
+    } catch (error) {
+      enqueueSnackbar('Something went wrong, try again.', {
+        variant: 'error',
+      });
+      fetchHealthUnitInfo();
+    }
+    setIsDeleting(false);
+    // const addresses = currentHealthUnit?.billing_addresses?.filter(a => a._id !== id);
+  };
+
+  const handleSetPrimaryAddress = async (id: string) => {
+    const addresses = currentHealthUnit?.billing_addresses;
+    addresses.forEach(a => {
+      if (a._id !== id) a.primary = false;
+      else a.primary = true;
+    });
+
+    try {
+      await fetch(`/api/health-units/${currentHealthUnit?._id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ billing_addresses: addresses }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      enqueueSnackbar('Changed primary address successfuly.');
+      fetchHealthUnitInfo();
+    } catch (error) {
+      enqueueSnackbar('Something went wrong, try again.', {
+        variant: 'error',
+      });
+      fetchHealthUnitInfo();
+    }
+  };
+
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <div style={{ position: 'relative' }}>
+        <PromptPopup
+          open={openConfirmDeleteModal.show}
+          onClose={() => setOpenConfirmDeleteModal({ show: false, id: undefined })}
+          onConfirm={() => handleDeleteAddress(openConfirmDeleteModal.id)}
+          text="Are you sure you want to delete this Billing Address?
+          This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          isSubmitting={isDeleting}
+        />
         {!isNew && (
           <MuiTooltip
             title={
@@ -787,23 +928,49 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
           </RHFSelect>
           <Typography variant="h4"></Typography>
 
-          <Box sx={{ pt: 5 }}>
-            <Typography
-              sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
-              * Required field
-            </Typography>
-
-            <Typography
-              sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
-              ** Required field for Stripe account
-            </Typography>
-
-            <Typography
-              sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
-              *** Required field for active status
-            </Typography>
-          </Box>
           <Typography variant="h4"></Typography>
+        </Box>
+        <Box sx={{ width: '100%', pt: 5 }}>
+          <HealthUnitBillingAddresses
+            isLoading={isFetchingHealthUnit}
+            addressBook={currentHealthUnit?.billing_addresses}
+            onDeleteAddress={id => {
+              const isPrimaryAddress = currentHealthUnit?.billing_addresses?.find(
+                a => a._id === id
+              ).primary;
+              // Prevent deleting primary address
+              if (isPrimaryAddress) {
+                enqueueSnackbar('Delete primary address is not allowed.', {
+                  variant: 'error',
+                });
+                return;
+              }
+              setOpenConfirmDeleteModal({ show: true, id });
+            }}
+            handleAddNewAddress={handleAddNewAddress}
+            handleUpdateAddress={handleUpdateAddress}
+            onSetPrimaryAddress={handleSetPrimaryAddress}
+            legalInformation={{
+              legalName: currentHealthUnit?.legal_information.name || '',
+              taxNumber: currentHealthUnit?.legal_information.tax_number || '',
+            }}
+          />
+        </Box>
+        <Box sx={{ pt: 5 }}>
+          <Typography
+            sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
+            * Required field
+          </Typography>
+
+          <Typography
+            sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
+            ** Required field for Stripe account
+          </Typography>
+
+          <Typography
+            sx={{ fontSize: '12px', color: '#91A0AD', marginTop: '10px', marginLeft: '5px' }}>
+            *** Required field for active status
+          </Typography>
         </Box>
       </Grid>
 
@@ -819,3 +986,91 @@ export default function HealthUnitDetailForm({ isNew, isEdit, currentHealthUnit,
     </FormProvider>
   );
 }
+
+const ConfirmDeleteModal = (open: boolean, onClose: () => void) => {
+  const isMdUp = useResponsive('up', 'md');
+  const theme = useTheme();
+  return (
+    <Modal
+      open={open}
+      onClose={() => {
+        onClose();
+      }}>
+      <Box
+        sx={{
+          width: isMdUp ? 'auto' : '100vw',
+          height: isMdUp ? 'auto' : '100vh',
+          minWidth: isMdUp ? '500px' : undefined,
+          maxHeight: isMdUp ? '90vh' : '100vh',
+          p: isMdUp ? '50px' : '20px',
+          pt: isMdUp ? '50px' : '75px',
+          pb: isMdUp ? '50px' : '75px',
+          backgroundColor: 'white',
+          borderRadius: isMdUp ? '16px' : '0',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translateY(-50%) translateX(-50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          overflowY: 'auto',
+        }}>
+        <Iconify
+          width={30}
+          height={30}
+          icon="material-symbols:close-rounded"
+          sx={{
+            position: 'absolute',
+            right: isMdUp ? '50px' : '20px',
+            cursor: 'pointer',
+            '&:hover': {
+              cursor: 'pointer',
+              color: 'grey.400',
+            },
+          }}
+          onClick={() => {
+            onClose();
+          }}
+        />
+
+        <Typography
+          variant="body2"
+          sx={{ mt: 5, mb: 2, color: 'text.secondary', textAlign: 'center' }}>
+          Are you sure you want to delete this Billing Address? <br />
+          This action cannot be undone.
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            mt: 2,
+            width: '100%',
+            gap: '10px',
+          }}>
+          <Button
+            variant="outlined"
+            color="inherit"
+            sx={{ width: '100%' }}
+            onClick={() => {
+              onClose();
+            }}>
+            Cancel
+          </Button>
+
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ width: '100%' }}
+            onClick={() => {
+              onClose();
+            }}>
+            Delete
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
+  );
+};

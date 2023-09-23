@@ -40,6 +40,29 @@ export default async function ordersRoute(
       return res.status(200).json(response);
     }
 
+    if (req.method === 'GET') {
+      let response = await axios.get(`/health-units/${healthUnitId}`, {
+        // Set authorization header bearer token
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': accessToken,
+
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      });
+
+      if (response.data.error) {
+        return res.status(401).json({
+          error: response.data.error,
+        });
+      }
+
+      response = response.data;
+
+      return res.status(200).json(response);
+    }
+
     if (req.method === 'DELETE') {
       let response = await axios.delete(`/health-units/${healthUnitId}`, {
         // Set authorization header bearer token
