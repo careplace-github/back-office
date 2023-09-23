@@ -122,11 +122,7 @@ export default function EditUserView({ services, healthUnit, reviews }) {
             </Tabs>
 
             {currentTab === 'details' && (
-              <HealthUnitNewViewEditForm
-                isEdit
-                currentHealthUnit={healthUnit}
-                services={services}
-              />
+              <HealthUnitNewViewEditForm isEdit healthUnit={healthUnit} services={services} />
             )}
 
             {currentTab === 'reviews' && (

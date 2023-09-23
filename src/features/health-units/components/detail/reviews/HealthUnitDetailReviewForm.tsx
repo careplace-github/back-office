@@ -27,12 +27,14 @@ interface Props extends DialogProps {
   onClose: VoidFunction;
   review?: any;
   healthUnitId?: string;
+  fetchReviews?: () => void;
 }
 
 export default function HealthUnitReviewNewForm({
   healthUnitId,
   onClose,
   review,
+  fetchReviews,
   ...other
 }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -64,7 +66,6 @@ export default function HealthUnitReviewNewForm({
     const formData = new FormData();
     formData.append('file', file);
 
-    console.log(formData);
     setFileData(formData);
 
     const newFile = Object.assign(file, {
@@ -78,8 +79,8 @@ export default function HealthUnitReviewNewForm({
 
   const onSubmit = async () => {
     setIsLoading(true);
-    console.log('filedata', fileData);
-    let uploadedFileURL;
+
+    let uploadedFileURL = null;
     try {
       if (fileData) {
         const response = await fetch('/api/files', {
@@ -90,6 +91,8 @@ export default function HealthUnitReviewNewForm({
           },
         });
         uploadedFileURL = response.fileURL;
+      } else {
+        uploadedFileURL = review?.customer?.profile_picture;
       }
       let customer;
       if (!isUpdate) {
@@ -98,7 +101,7 @@ export default function HealthUnitReviewNewForm({
           body: JSON.stringify({
             name,
             email,
-            profile_picture: uploadedFileURL || null,
+            profile_picture: uploadedFileURL,
           }),
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -117,18 +120,34 @@ export default function HealthUnitReviewNewForm({
           },
         });
       }
-      await fetch(`/api/reviews/health-units/${healthUnitId}`, {
-        method: 'POST',
-        body: JSON.stringify({
-          comment,
-          rating,
-          customer: customer._id,
-        }),
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+
+      if (!isUpdate) {
+        await fetch(`/api/reviews/health-units/${healthUnitId}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            comment,
+            rating,
+            customer: customer._id,
+          }),
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      } else {
+        await fetch(`/api/reviews/health-units/${healthUnitId}/${review._id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            comment,
+            rating,
+            customer: customer._id,
+          }),
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      }
       reset();
+      if (fetchReviews) fetchReviews();
       onClose();
     } catch (error) {
       console.error(error);
@@ -148,7 +167,7 @@ export default function HealthUnitReviewNewForm({
   return (
     <Dialog onClose={onClose} {...other} maxWidth="md" fullWidth>
       <form>
-        <DialogTitle> Add Review </DialogTitle>
+        <DialogTitle> {isUpdate ? 'Add Review' : 'Update Review'} </DialogTitle>
 
         <DialogContent>
           <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}></Stack>

@@ -24,9 +24,10 @@ import ReviewForm from './HealthUnitDetailReviewForm';
 
 type Props = {
   review: any;
+  fetchReviews?: () => void;
 };
 
-export default function HealthUnitReviewItem({ review }: Props) {
+export default function HealthUnitReviewItem({ review, fetchReviews }: Props) {
   const [editReview, setEditReview] = useState(false);
 
   const renderInfo = review && (
@@ -120,11 +121,18 @@ export default function HealthUnitReviewItem({ review }: Props) {
       {renderInfo}
 
       {renderContent}
+
       {editReview && (
         <ReviewForm
           review={review}
-          onClose={() => setEditReview(false)}
+          fetchReviews={() => {
+            if (fetchReviews) fetchReviews();
+          }}
+          onClose={() => {
+            setEditReview(false);
+          }}
           open={editReview}
+          healthUnitId={review.health_unit}
           sx={{}}
         />
       )}
@@ -201,6 +209,7 @@ export default function HealthUnitReviewItem({ review }: Props) {
               variant="contained"
               color="error"
               onClick={() => {
+                if (fetchReviews) fetchReviews();
                 setOpen(false);
               }}>
               Delete

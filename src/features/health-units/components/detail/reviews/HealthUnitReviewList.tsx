@@ -89,7 +89,9 @@ export default function HealthUnitReviewList({
           <CircularProgress sx={{ color: 'primary.main' }} />
         </Box>
       ) : (
-        reviews?.map(review => <ReviewItem key={review._id} review={review} />)
+        reviews?.map(review => (
+          <ReviewItem key={review._id} review={review} fetchReviews={fetchData} />
+        ))
       )}
 
       <Pagination
