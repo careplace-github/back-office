@@ -60,6 +60,7 @@ import Iconify from 'src/components/iconify';
 import ConfirmDialog from 'src/components/confirm-dialog';
 import { s } from '@fullcalendar/core/internal-common';
 import HealthUnitBillingAddresses from '../../billing-address/HealthUnitBilingAddresses';
+import HealthUnitBankAccounts from '../../bank-accounts/HealthUnitBankAccounts';
 
 // ----------------------------------------------------------------------
 
@@ -954,6 +955,32 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
               legalName: currentHealthUnit?.legal_information.name || '',
               taxNumber: currentHealthUnit?.legal_information.tax_number || '',
             }}
+          />
+        </Box>
+        <Box sx={{ width: '100%', pt: 5 }}>
+          <HealthUnitBankAccounts
+            isLoading={isFetchingHealthUnit}
+            // bankAccounts={[
+            //   {
+            //     bankName: 'Caixa Geral',
+            //     holderName: 'Henrique Fonseca',
+            //     number: '0123 0123 0123 1234',
+            //     primary: true,
+            //   },
+            //   {
+            //     bankName: 'BPI',
+            //     number: '0123 0123 0123 1234',
+            //     holderName: 'Bernardo Bento',
+            //     primary: false,
+            //   },
+            //   {
+            //     bankName: 'Caixa Agrícula',
+            //     number: '0123 0123 0123 1234',
+            //     holderName: 'Miguel Mbappe',
+            //     primary: false,
+            //   },
+            // ]}
+            bankAccounts={[]}
           />
         </Box>
         <Box sx={{ pt: 5 }}>

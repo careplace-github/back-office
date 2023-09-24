@@ -9,13 +9,13 @@ import { Typography, Box, CircularProgress, Popover } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import EmptyState from 'src/components/empty-state/EmptyState';
 //
-import NewBillingAddressForm from './NewBillingAddressForm';
-import HealthUnitBillinAddressItem from './HealthUnitBillingAddressItem';
+import NewBankAccountForm from './NewBankAccountForm';
+import HealthUnitBankAccountItem from './HealthUnitBankAccountItem';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  addressBook: any[];
+  bankAccounts: any[];
   legalInformation: any;
   handleAddNewAddress: (address: any) => void;
   onDeleteAddress: (id: string) => void;
@@ -24,22 +24,10 @@ type Props = {
   handleUpdateAddress: (address: any) => void;
 };
 
-export default function HealthUnitBillingAddresses({
-  addressBook,
-  legalInformation,
-  handleAddNewAddress,
-  handleUpdateAddress,
-  onDeleteAddress,
-  onSetPrimaryAddress,
-  isLoading,
-}: Props) {
+export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Props) {
   const [addressId, setAddressId] = useState('');
   const [openOptions, setOpenOptions] = useState<boolean>(false);
-  const [adressToEdit, setAdressToEdit] = useState<any>();
-  const [openAddNewBillingAddress, setOpenAddNewBillingAddress] = useState<{
-    show: boolean;
-    address: any;
-  }>({ show: false, address: null });
+  const [openAddNewBankAccount, setOpenAddNewBankAccount] = useState<boolean>(false);
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -49,8 +37,8 @@ export default function HealthUnitBillingAddresses({
   };
 
   useEffect(() => {
-    console.log(openAddNewBillingAddress);
-  }, [openAddNewBillingAddress]);
+    console.log(openAddNewBankAccount);
+  }, [openAddNewBankAccount]);
 
   const handleClose = () => {
     setOpenOptions(false);
@@ -66,30 +54,29 @@ export default function HealthUnitBillingAddresses({
       <Stack
         direction="row"
         sx={{ width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h4">Billing Addresses</Typography>
+        <Typography variant="h4">Bank Accounts</Typography>
         <Button
           size="small"
           color="primary"
           startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={() => setOpenAddNewBillingAddress({ show: true, address: null })}>
-          Address
+          onClick={() => setOpenAddNewBankAccount(true)}>
+          Bank Account
         </Button>
       </Stack>
 
       <Stack spacing={2.5} sx={{ my: 5 }}>
-        {addressBook?.length > 0 && !isLoading ? (
-          addressBook
+        {bankAccounts?.length > 0 && !isLoading ? (
+          bankAccounts
             ?.sort((a, b) => {
               if (a.primary) return -1; // Move primary === true to the front
               if (b.primary) return 1;
               return 0; // Leave the order of other elements unchanged
             })
-            .map((address, index) => (
-              <HealthUnitBillinAddressItem
-                legalInformation={legalInformation}
+            .map((account, index) => (
+              <HealthUnitBankAccountItem
                 variant="outlined"
-                key={address.id}
-                address={address}
+                key={account.number}
+                account={account}
                 action={
                   <IconButton
                     onClick={(event: any) => {
@@ -106,11 +93,11 @@ export default function HealthUnitBillingAddresses({
                 }}
               />
             ))
-        ) : addressBook.length === 0 && !isLoading ? (
+        ) : bankAccounts.length === 0 && !isLoading ? (
           <EmptyState
-            icon="mingcute:paper-line"
-            title="This Health Unit has no billing addresses"
-            description="Please note that for this health unit to be able to receive payments, it need to have at least one billing address added."
+            icon="clarity:bank-solid"
+            title="This Health Unit has no Bank Accounts"
+            description="Please note that for this health unit to be able to receive payments, it need to have at least one bank account added."
           />
         ) : (
           <Box
@@ -135,7 +122,7 @@ export default function HealthUnitBillingAddresses({
           horizontal: 'left',
         }}>
         <MenuItem
-          disabled={addressBook.find(a => a._id === addressId)?.primary}
+          disabled={bankAccounts.find(a => a._id === addressId)?.primary}
           sx={{ p: '10px 20px' }}
           onClick={async () => {
             await onSetPrimaryAddress(addressId);
@@ -150,8 +137,8 @@ export default function HealthUnitBillingAddresses({
           onClick={() => {
             handleClose();
             console.info('EDIT', addressId);
-            const editAddress = addressBook.find(a => a._id === addressId);
-            setOpenAddNewBillingAddress({ show: true, address: editAddress });
+            const editAddress = bankAccounts.find(a => a._id === addressId);
+            setOpenAddNewBankAccount(true);
           }}>
           <Iconify icon="solar:pen-bold" sx={{ mr: '7px' }} />
           Edit
@@ -169,15 +156,12 @@ export default function HealthUnitBillingAddresses({
         </MenuItem>
       </Popover>
 
-      <NewBillingAddressForm
-        open={openAddNewBillingAddress.show}
+      <NewBankAccountForm
+        open={openAddNewBankAccount}
         onClose={() => {
-          setOpenAddNewBillingAddress({ show: false, address: null });
+          setOpenAddNewBankAccount(false);
         }}
-        legalInformation={legalInformation}
-        onCreate={handleAddNewAddress}
-        addressToEdit={openAddNewBillingAddress.address}
-        onUpdate={handleUpdateAddress}
+        onCreate={values => console.log(values)}
       />
     </>
   );
