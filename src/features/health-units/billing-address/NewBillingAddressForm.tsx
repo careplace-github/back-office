@@ -153,7 +153,7 @@ export default function NewBillingAddressForm({
         reset();
       }}>
       <FormProvider methods={methods}>
-        <DialogTitle>New address</DialogTitle>
+        <DialogTitle>{!isUpdate ? 'New address' : 'Update Address'}</DialogTitle>
 
         <DialogContent sx={{ pt: '24px' }} dividers>
           <Stack spacing={3}>
@@ -271,7 +271,7 @@ export default function NewBillingAddressForm({
             loading={isSubmitting}
             onClick={() => onSubmit(getValues())}
             disabled={!isValid}>
-            {isUpdate ? 'Add' : 'update'}
+            {!isUpdate ? 'Add' : 'update'}
           </LoadingButton>
         </DialogActions>
       </FormProvider>

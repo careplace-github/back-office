@@ -29,7 +29,7 @@ export default function DrawableMap({ setServiceArea, serviceArea }: props) {
 
   useEffect(() => {
     const polygonsArray: any = [];
-    serviceArea?.coordinates.forEach((arr: any) => {
+    serviceArea?.coordinates?.forEach((arr: any) => {
       arr.forEach((polygons: any) => {
         polygonsArray.push(
           polygons.map((c: any) => {
@@ -50,8 +50,19 @@ export default function DrawableMap({ setServiceArea, serviceArea }: props) {
       .map(c => {
         return [c.lat(), c.lng()];
       });
+
+    // add the first coordinate to the end of the array to close the polygon
+    coordinatesToAdd.push(coordinatesToAdd[0]);
+
     setServiceArea(prev => {
-      return { type: prev.type, coordinates: [...prev.coordinates, [coordinatesToAdd]] };
+      let prevCoordinates = [];
+      if (prev?.coordinates) {
+        prevCoordinates = prev?.coordinates;
+      }
+      return {
+        type: prev?.type || 'MultiPolygon',
+        coordinates: [...prevCoordinates, [coordinatesToAdd]],
+      };
     });
 
     setDrawingMode(undefined);
