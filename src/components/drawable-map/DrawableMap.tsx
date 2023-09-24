@@ -50,6 +50,10 @@ export default function DrawableMap({ setServiceArea, serviceArea }: props) {
       .map(c => {
         return [c.lat(), c.lng()];
       });
+
+    // add the first coordinate to the end of the array to close the polygon
+    coordinatesToAdd.push(coordinatesToAdd[0]);
+
     setServiceArea(prev => {
       let prevCoordinates = [];
       if (prev?.coordinates) {
