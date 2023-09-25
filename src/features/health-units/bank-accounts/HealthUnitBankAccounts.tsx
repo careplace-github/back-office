@@ -16,12 +16,10 @@ import HealthUnitBankAccountItem from './HealthUnitBankAccountItem';
 
 type Props = {
   bankAccounts: any[];
-  legalInformation: any;
   handleAddNewAccount: (account: any) => void;
   onDeleteAccount: (id: string) => void;
   onSetPrimaryAccount: (id: string) => void;
   isLoading: boolean;
-  handleUpdateAddress: (account: any) => void;
 };
 
 export default function HealthUnitBankAccounts({
@@ -29,11 +27,11 @@ export default function HealthUnitBankAccounts({
   isLoading,
   handleAddNewAccount,
   onSetPrimaryAccount,
+  onDeleteAccount,
 }: Props) {
   const [accountId, setAccountId] = useState('');
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [openAddNewBankAccount, setOpenAddNewBankAccount] = useState<boolean>(false);
-
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -142,7 +140,7 @@ export default function HealthUnitBankAccounts({
           onClick={() => {
             handleClose();
             console.info('DELETE', accountId);
-            // onDeleteAccount(accountId);
+            onDeleteAccount(accountId);
           }}
           sx={{ color: 'error.main', p: '10px 20px' }}>
           <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: '7px' }} />

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { parseISO } from 'date-fns';
 // next
 import { useRouter } from 'next/router';
@@ -70,7 +70,6 @@ HealthUnitDetailForm.propTypes = {
   healthUnit: PropTypes.object,
   services: PropTypes.array,
   user: PropTypes.object,
-  bankAccounts: PropTypes.array,
 };
 
 const StyledMapContainer = styled('div')(({ theme }) => ({
@@ -84,19 +83,19 @@ const StyledMapContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function HealthUnitDetailForm({
-  isNew,
-  isEdit,
-  healthUnit,
-  bankAccounts,
-  services,
-}) {
+export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, services }) {
   const { push } = useRouter();
   const [customIsDirty, setCustomIsDirty] = useState<boolean>(false);
   const [isFetchingHealthUnit, setIsFetchingHealthUnit] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [currentHealthUnit, setCurrentHealthUnit] = useState<any>(healthUnit || null);
+  const [isDeletingAccount, setIsDeletingAccount] = useState<boolean>(false);
+  const [isLoadingExternalAccounts, setIsLoadingExternalAccounts] = useState<boolean>(true);
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState<{
+    show: boolean;
+    id: string | undefined;
+  }>({ show: false, id: undefined });
+  const [openConfirmDeleteAccountModal, setOpenConfirmDeleteAccountModal] = useState<{
     show: boolean;
     id: string | undefined;
   }>({ show: false, id: undefined });
@@ -104,6 +103,32 @@ export default function HealthUnitDetailForm({
   const [serviceArea, setServiceArea] = useState<any>(
     currentHealthUnit?.service_area || { type: 'MultiPolygon', coordinates: [] }
   );
+
+  const [healthUnitExternalAccounts, setHealthUnitExternalAccounts] = useState<any>([]);
+
+  const fetchHealthUnitExternalAccounts = async () => {
+    console.log('Fetch external accounts');
+    setIsLoadingExternalAccounts(true);
+    try {
+      const externalAccounts = await fetch(
+        `/api/health-units/${healthUnit._id}/external-accounts`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setHealthUnitExternalAccounts(externalAccounts.data);
+    } catch (error) {
+      console.log('error');
+    }
+    setIsLoadingExternalAccounts(false);
+  };
+
+  useEffect(() => {
+    fetchHealthUnitExternalAccounts();
+  }, []);
 
   const billingAddresses = currentHealthUnit?.billing_addresses || [];
 
@@ -449,7 +474,7 @@ export default function HealthUnitDetailForm({
 
   const handleAddNewAccount = async newAccount => {
     console.log('new account', newAccount);
-
+    setIsLoadingExternalAccounts(true);
     // TODO: MAP BODY TO SEND TO BACKEND
     try {
       const getTokenBody = {
@@ -490,6 +515,7 @@ export default function HealthUnitDetailForm({
         });
       }
       enqueueSnackbar('New Bank account added successfuly.');
+      fetchHealthUnitExternalAccounts();
     } catch (error) {
       enqueueSnackbar('Something went wrong, try again.', {
         variant: 'error',
@@ -507,12 +533,34 @@ export default function HealthUnitDetailForm({
         },
       });
       enqueueSnackbar('Changed primary account successfuly.');
+      fetchHealthUnitExternalAccounts();
     } catch (error) {
       console.log('eeror', error);
       enqueueSnackbar('Something went wrong, try again.', {
         variant: 'error',
       });
     }
+  };
+
+  const handleDeleteAccount = async (id: string) => {
+    setIsDeletingAccount(true);
+    try {
+      await fetch(`/api/health-units/${currentHealthUnit?._id}/external-accounts/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      enqueueSnackbar('Deleted account successfuly.');
+    } catch (error) {
+      enqueueSnackbar('Something went wrong, try again.', {
+        variant: 'error',
+      });
+      console.log('error', error);
+    }
+    setIsDeletingAccount(false);
+    setOpenConfirmDeleteAccountModal({ show: false, id: undefined });
+    fetchHealthUnitExternalAccounts();
   };
 
   return (
@@ -527,6 +575,19 @@ export default function HealthUnitDetailForm({
           confirmText="Delete"
           cancelText="Cancel"
           isSubmitting={isDeleting}
+        />
+        <PromptPopup
+          open={openConfirmDeleteAccountModal.show}
+          onClose={() => setOpenConfirmDeleteAccountModal({ show: false, id: undefined })}
+          onConfirm={() => {
+            if (handleDeleteAccount)
+              handleDeleteAccount(openConfirmDeleteAccountModal?.id as string);
+          }}
+          text="Are you sure you want to delete this Bank Account?
+          This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          isSubmitting={isDeletingAccount}
         />
         {!isNew && (
           <MuiTooltip
@@ -1032,10 +1093,13 @@ export default function HealthUnitDetailForm({
         </Box>
         <Box sx={{ width: '100%', pt: 5 }}>
           <HealthUnitBankAccounts
-            isLoading={isFetchingHealthUnit}
+            isLoading={isLoadingExternalAccounts}
             handleAddNewAccount={handleAddNewAccount}
             onSetPrimaryAccount={handleSetprimaryAccount}
-            bankAccounts={bankAccounts}
+            onDeleteAccount={(id: string) => {
+              setOpenConfirmDeleteAccountModal({ show: true, id });
+            }}
+            bankAccounts={healthUnitExternalAccounts}
           />
         </Box>
         <Box sx={{ pt: 5 }}>
@@ -1068,91 +1132,3 @@ export default function HealthUnitDetailForm({
     </FormProvider>
   );
 }
-
-const ConfirmDeleteModal = (open: boolean, onClose: () => void) => {
-  const isMdUp = useResponsive('up', 'md');
-  const theme = useTheme();
-  return (
-    <Modal
-      open={open}
-      onClose={() => {
-        onClose();
-      }}>
-      <Box
-        sx={{
-          width: isMdUp ? 'auto' : '100vw',
-          height: isMdUp ? 'auto' : '100vh',
-          minWidth: isMdUp ? '500px' : undefined,
-          maxHeight: isMdUp ? '90vh' : '100vh',
-          p: isMdUp ? '50px' : '20px',
-          pt: isMdUp ? '50px' : '75px',
-          pb: isMdUp ? '50px' : '75px',
-          backgroundColor: 'white',
-          borderRadius: isMdUp ? '16px' : '0',
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translateY(-50%) translateX(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          overflowY: 'auto',
-        }}>
-        <Iconify
-          width={30}
-          height={30}
-          icon="material-symbols:close-rounded"
-          sx={{
-            position: 'absolute',
-            right: isMdUp ? '50px' : '20px',
-            cursor: 'pointer',
-            '&:hover': {
-              cursor: 'pointer',
-              color: 'grey.400',
-            },
-          }}
-          onClick={() => {
-            onClose();
-          }}
-        />
-
-        <Typography
-          variant="body2"
-          sx={{ mt: 5, mb: 2, color: 'text.secondary', textAlign: 'center' }}>
-          Are you sure you want to delete this Billing Address? <br />
-          This action cannot be undone.
-        </Typography>
-
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            mt: 2,
-            width: '100%',
-            gap: '10px',
-          }}>
-          <Button
-            variant="outlined"
-            color="inherit"
-            sx={{ width: '100%' }}
-            onClick={() => {
-              onClose();
-            }}>
-            Cancel
-          </Button>
-
-          <Button
-            variant="contained"
-            color="error"
-            sx={{ width: '100%' }}
-            onClick={() => {
-              onClose();
-            }}>
-            Delete
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
-  );
-};

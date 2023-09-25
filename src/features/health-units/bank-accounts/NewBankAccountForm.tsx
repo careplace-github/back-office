@@ -27,6 +27,7 @@ type Props = {
 
 export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const NewAccountSchema = Yup.object().shape({
     accountNumber: Yup.string().required(),
     holderName: Yup.string().required(),
@@ -49,7 +50,7 @@ export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
     reset,
     setValue,
     getValues,
-    formState: { isSubmitting, isValid },
+    formState: { isValid },
   } = methods;
 
   const holderName = watch('holderName');
@@ -70,8 +71,8 @@ export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
         holderName: data.holderName,
         primary: data.primary,
       });
-      onClose();
       reset();
+      onClose();
     } catch (error) {
       console.error(error);
     }

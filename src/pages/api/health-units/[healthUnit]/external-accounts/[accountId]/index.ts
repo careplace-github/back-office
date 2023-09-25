@@ -15,39 +15,14 @@ export default async function ordersRoute(
     const session = (await getServerSession(req, res, authOptions)) as Session | null;
 
     const accessToken = session?.accessToken;
+    console.log('access token: ', accessToken);
 
     const healthUnitId = req.query.healthUnit as string;
-    const externalAccount = req.body;
+    const { accountId } = req.query;
 
-    if (req.method === 'GET') {
-      let response = await axios.get(`/payments/health-units/${healthUnitId}/external-accounts`, {
-        // Set authorization header bearer token
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': accessToken,
-          'x-client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
-          Authorization: `Bearer ${accessToken}`,
-        },
-        withCredentials: true,
-      });
-
-      if (response.data.error) {
-        return res.status(401).json({
-          error: response.data.error,
-        });
-      }
-
-      response = response.data;
-
-      return res.status(200).json(response);
-    }
-
-    if (req.method === 'POST') {
-      let response = await axios.post(
-        `/payments/health-units/${healthUnitId}/external-accounts`,
-        {
-          ...externalAccount,
-        },
+    if (req.method === 'DELETE') {
+      let response = await axios.delete(
+        `/payments/health-units/${healthUnitId}/external-accounts/${accountId}`,
         {
           // Set authorization header bearer token
           headers: {
