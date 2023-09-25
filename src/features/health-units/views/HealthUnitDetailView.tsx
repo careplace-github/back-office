@@ -1,12 +1,10 @@
 // react
 import { useEffect, useCallback, useState } from 'react';
-
 // @mui
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { Modal } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-
 // routes
 import { PATHS } from 'src/routes';
 // components
@@ -16,10 +14,10 @@ import LoadingScreen from 'src/components/loading-screen/LoadingScreen';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Iconify from 'src/components/iconify';
-
 import Card from '@mui/material/Card';
 import { alpha } from '@mui/material/styles';
-
+// lib
+import fetch from 'src/lib/fetch';
 //
 import HealthUnitNewViewEditForm from '../components/detail/HealthUnitDetailForm';
 import HealthUnitDetailsReview from '../components/detail/reviews/HealthUnitDetailReviewsSummary';
@@ -29,6 +27,7 @@ import HealthUnitSettings from '../components/detail/settings/HealthUnitSettings
 
 export default function EditUserView({ services, healthUnit, reviews }) {
   const { themeStretch } = useSettingsContext();
+  const [healthUnitExternalAccounts, setHealthUnitExternalAccounts] = useState<any>([]);
 
   const router = useRouter();
 
@@ -39,8 +38,32 @@ export default function EditUserView({ services, healthUnit, reviews }) {
     // check if there is a tab in the query string
   );
 
+  const fetchHealthUnitExternalAccounts = async () => {
+    console.log('Fetch external accounts');
+    setIsLoading(true);
+    try {
+      const externalAccounts = await fetch(
+        `/api/health-units/${healthUnit._id}/external-accounts`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setHealthUnitExternalAccounts(externalAccounts.data);
+    } catch (error) {
+      console.log('error');
+    }
+    setIsLoading(false);
+  };
+
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
+  }, []);
+
+  useEffect(() => {
+    fetchHealthUnitExternalAccounts();
   }, []);
 
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -122,7 +145,12 @@ export default function EditUserView({ services, healthUnit, reviews }) {
             </Tabs>
 
             {currentTab === 'details' && (
-              <HealthUnitNewViewEditForm isEdit healthUnit={healthUnit} services={services} />
+              <HealthUnitNewViewEditForm
+                isEdit
+                healthUnit={healthUnit}
+                services={services}
+                bankAccounts={healthUnitExternalAccounts}
+              />
             )}
 
             {currentTab === 'reviews' && (

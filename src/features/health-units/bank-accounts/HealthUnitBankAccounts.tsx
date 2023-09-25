@@ -17,15 +17,20 @@ import HealthUnitBankAccountItem from './HealthUnitBankAccountItem';
 type Props = {
   bankAccounts: any[];
   legalInformation: any;
-  handleAddNewAddress: (address: any) => void;
-  onDeleteAddress: (id: string) => void;
-  onSetPrimaryAddress: (id: string) => void;
+  handleAddNewAccount: (account: any) => void;
+  onDeleteAccount: (id: string) => void;
+  onSetPrimaryAccount: (id: string) => void;
   isLoading: boolean;
-  handleUpdateAddress: (address: any) => void;
+  handleUpdateAddress: (account: any) => void;
 };
 
-export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Props) {
-  const [addressId, setAddressId] = useState('');
+export default function HealthUnitBankAccounts({
+  bankAccounts,
+  isLoading,
+  handleAddNewAccount,
+  onSetPrimaryAccount,
+}: Props) {
+  const [accountId, setAccountId] = useState('');
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [openAddNewBankAccount, setOpenAddNewBankAccount] = useState<boolean>(false);
 
@@ -42,13 +47,14 @@ export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Prop
 
   const handleClose = () => {
     setOpenOptions(false);
-    setAddressId('');
+    setAccountId('');
     setAnchorEl(null);
   };
 
   const handleSelectedId = (event: React.MouseEvent<HTMLElement>, id: string) => {
-    setAddressId(id);
+    setAccountId(id);
   };
+
   return (
     <>
       <Stack
@@ -68,8 +74,8 @@ export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Prop
         {bankAccounts?.length > 0 && !isLoading ? (
           bankAccounts
             ?.sort((a, b) => {
-              if (a.primary) return -1; // Move primary === true to the front
-              if (b.primary) return 1;
+              if (a.default_for_currency) return -1; // Move primary === true to the front
+              if (b.default_for_currency) return 1;
               return 0; // Leave the order of other elements unchanged
             })
             .map((account, index) => (
@@ -81,7 +87,7 @@ export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Prop
                   <IconButton
                     onClick={(event: any) => {
                       handleClick(event);
-                      handleSelectedId(event, `${address._id}`);
+                      handleSelectedId(event, `${account?.id}`);
                     }}
                     sx={{ position: 'absolute', top: 8, right: 8 }}>
                     <Iconify icon="eva:more-vertical-fill" />
@@ -113,7 +119,7 @@ export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Prop
         )}
       </Stack>
       <Popover
-        id={addressId}
+        id={accountId}
         open={openOptions}
         anchorEl={anchorEl}
         onClose={handleClose}
@@ -122,10 +128,10 @@ export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Prop
           horizontal: 'left',
         }}>
         <MenuItem
-          disabled={bankAccounts.find(a => a._id === addressId)?.primary}
+          disabled={bankAccounts.find(a => a.id === accountId)?.default_for_currency}
           sx={{ p: '10px 20px' }}
           onClick={async () => {
-            await onSetPrimaryAddress(addressId);
+            await onSetPrimaryAccount(accountId);
             handleClose();
           }}>
           <Iconify icon="eva:star-fill" sx={{ mr: '7px' }} />
@@ -133,22 +139,10 @@ export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Prop
         </MenuItem>
 
         <MenuItem
-          sx={{ p: '10px 20px' }}
           onClick={() => {
             handleClose();
-            console.info('EDIT', addressId);
-            const editAddress = bankAccounts.find(a => a._id === addressId);
-            setOpenAddNewBankAccount(true);
-          }}>
-          <Iconify icon="solar:pen-bold" sx={{ mr: '7px' }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            console.info('DELETE', addressId);
-            onDeleteAddress(addressId);
+            console.info('DELETE', accountId);
+            // onDeleteAccount(accountId);
           }}
           sx={{ color: 'error.main', p: '10px 20px' }}>
           <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: '7px' }} />
@@ -161,7 +155,7 @@ export default function HealthUnitBankAccounts({ bankAccounts, isLoading }: Prop
         onClose={() => {
           setOpenAddNewBankAccount(false);
         }}
-        onCreate={values => console.log(values)}
+        onCreate={handleAddNewAccount}
       />
     </>
   );

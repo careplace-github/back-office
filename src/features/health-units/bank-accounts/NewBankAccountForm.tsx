@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -26,6 +26,7 @@ type Props = {
 };
 
 export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const NewAccountSchema = Yup.object().shape({
     accountNumber: Yup.string().required(),
     holderName: Yup.string().required(),
@@ -48,14 +49,26 @@ export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
     reset,
     setValue,
     getValues,
-    formState: { isSubmitting, isValid, isDirty },
+    formState: { isSubmitting, isValid },
   } = methods;
+
+  const holderName = watch('holderName');
+  const accountNumber = watch('accountNumber');
+
+  useEffect(() => {
+    if (!holderName || !accountNumber) {
+      setIsFormValid(false);
+    } else {
+      setIsFormValid(true);
+    }
+  }, [holderName, accountNumber]);
 
   const onSubmit = async data => {
     try {
       onCreate({
         accountNumber: data.accountNumber,
         holderName: data.holderName,
+        primary: data.primary,
       });
       onClose();
       reset();
@@ -103,9 +116,8 @@ export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
             variant="contained"
             loading={isSubmitting}
             // onClick={() => onSubmit(getValues())}
-            onClick={() => console.log(getValues())}
-            // disabled={!isValid}
-          >
+            onClick={() => onSubmit(getValues())}
+            disabled={!isFormValid}>
             Add
           </LoadingButton>
         </DialogActions>
