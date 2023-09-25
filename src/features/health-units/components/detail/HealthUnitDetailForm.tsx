@@ -1097,6 +1097,16 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
             handleAddNewAccount={handleAddNewAccount}
             onSetPrimaryAccount={handleSetprimaryAccount}
             onDeleteAccount={(id: string) => {
+              const isPrimaryAddress = healthUnitExternalAccounts?.find(
+                a => a.id === id
+              ).default_for_currency;
+              // Prevent deleting primary address
+              if (isPrimaryAddress) {
+                enqueueSnackbar('Delete primary account is not allowed.', {
+                  variant: 'error',
+                });
+                return;
+              }
               setOpenConfirmDeleteAccountModal({ show: true, id });
             }}
             bankAccounts={healthUnitExternalAccounts}
