@@ -1,0 +1,55 @@
+// /admin/payments/health-units/:id/external-accounts
+
+// next
+import { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'src/lib/axios';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from 'src/pages/api/auth/[...nextauth]';
+import { Session } from 'next-auth';
+
+export default async function ordersRoute(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
+  try {
+    const session = (await getServerSession(req, res, authOptions)) as Session | null;
+
+    const accessToken = session?.accessToken;
+    console.log('access token: ', accessToken);
+
+    const healthUnitId = req.query.healthUnit as string;
+    const { accountId } = req.query;
+
+    if (req.method === 'DELETE') {
+      let response = await axios.delete(
+        `/payments/health-units/${healthUnitId}/external-accounts/${accountId}`,
+        {
+          // Set authorization header bearer token
+          headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': accessToken,
+            'x-client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.error) {
+        return res.status(401).json({
+          error: response.data.error,
+        });
+      }
+
+      response = response.data;
+
+      return res.status(200).json(response);
+    }
+
+    // This will be returned if the method doesn't match the ones above
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
