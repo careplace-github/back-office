@@ -70,6 +70,7 @@ HealthUnitDetailForm.propTypes = {
   healthUnit: PropTypes.object,
   services: PropTypes.array,
   user: PropTypes.object,
+  bankAccounts: PropTypes.array,
 };
 
 const StyledMapContainer = styled('div')(({ theme }) => ({
@@ -83,7 +84,13 @@ const StyledMapContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, services }) {
+export default function HealthUnitDetailForm({
+  isNew,
+  isEdit,
+  healthUnit,
+  bankAccounts,
+  services,
+}) {
   const { push } = useRouter();
   const [customIsDirty, setCustomIsDirty] = useState<boolean>(false);
   const [isFetchingHealthUnit, setIsFetchingHealthUnit] = useState<boolean>(false);
@@ -99,8 +106,6 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
   );
 
   const billingAddresses = currentHealthUnit?.billing_addresses || [];
-
-  const bankAccounts = currentHealthUnit?.stripe_account?.external_accounts?.data || [];
 
   const [fileData, setFileData] = useState<FormData | null>(null);
 
@@ -439,6 +444,74 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
         variant: 'error',
       });
       fetchHealthUnitInfo();
+    }
+  };
+
+  const handleAddNewAccount = async newAccount => {
+    console.log('new account', newAccount);
+
+    // TODO: MAP BODY TO SEND TO BACKEND
+    try {
+      const getTokenBody = {
+        country: 'PT',
+        currency: 'eur',
+        account_holder_name: newAccount.holderName,
+        account_holder_type: 'company',
+        // account_number: 'PT50000201231234567890154',
+        account_number: newAccount.accountNumber,
+      };
+
+      const getTokenResponse = await fetch('/api/payments/tokens/bank', {
+        method: 'POST',
+        body: JSON.stringify(getTokenBody),
+      });
+
+      const token = getTokenResponse.id;
+
+      console.log('token', token);
+
+      const accountCreated = await fetch(
+        `/api/health-units/${currentHealthUnit?._id}/external-accounts`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ external_account_token: token }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (newAccount.primary) {
+        await fetch(`/api/health-units/${currentHealthUnit?._id}/external-accounts/default`, {
+          method: 'POST',
+          body: JSON.stringify({ external_account_id: accountCreated.id }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+      enqueueSnackbar('New Bank account added successfuly.');
+    } catch (error) {
+      enqueueSnackbar('Something went wrong, try again.', {
+        variant: 'error',
+      });
+    }
+  };
+
+  const handleSetprimaryAccount = async (id: string) => {
+    try {
+      await fetch(`/api/health-units/${currentHealthUnit?._id}/external-accounts/default`, {
+        method: 'POST',
+        body: JSON.stringify({ external_account_id: id }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      enqueueSnackbar('Changed primary account successfuly.');
+    } catch (error) {
+      console.log('eeror', error);
+      enqueueSnackbar('Something went wrong, try again.', {
+        variant: 'error',
+      });
     }
   };
 
@@ -960,27 +1033,9 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
         <Box sx={{ width: '100%', pt: 5 }}>
           <HealthUnitBankAccounts
             isLoading={isFetchingHealthUnit}
-            // bankAccounts={[
-            //   {
-            //     bankName: 'Caixa Geral',
-            //     holderName: 'Henrique Fonseca',
-            //     number: '0123 0123 0123 1234',
-            //     primary: true,
-            //   },
-            //   {
-            //     bankName: 'BPI',
-            //     number: '0123 0123 0123 1234',
-            //     holderName: 'Bernardo Bento',
-            //     primary: false,
-            //   },
-            //   {
-            //     bankName: 'Caixa Agrícula',
-            //     number: '0123 0123 0123 1234',
-            //     holderName: 'Miguel Mbappe',
-            //     primary: false,
-            //   },
-            // ]}
-            bankAccounts={[]}
+            handleAddNewAccount={handleAddNewAccount}
+            onSetPrimaryAccount={handleSetprimaryAccount}
+            bankAccounts={bankAccounts}
           />
         </Box>
         <Box sx={{ pt: 5 }}>

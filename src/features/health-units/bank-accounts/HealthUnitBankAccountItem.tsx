@@ -18,7 +18,13 @@ type Props = PaperProps &
   };
 
 export default function HealthUnitBankAccountItem({ account, action, sx, ...other }: Props) {
-  const { number, holderName, bankName, primary } = account;
+  const { account_holder_name, bank_name, default_for_currency, last4 } = account;
+
+  const formatIBAN = number => {
+    return `PT** **** **** *********${last4.charAt(0)}${last4.charAt(1)} ${last4.charAt(
+      2
+    )}${last4.charAt(3)}`;
+  };
 
   useEffect(() => {
     console.log('Account', account);
@@ -37,9 +43,9 @@ export default function HealthUnitBankAccountItem({ account, action, sx, ...othe
       {...other}>
       <Stack flexGrow={1} spacing={1}>
         <Stack direction="row" alignItems="center">
-          <Typography variant="subtitle2">{bankName}</Typography>
+          <Typography variant="subtitle2">{bank_name}</Typography>
 
-          {primary && (
+          {default_for_currency && (
             <Label color="info" sx={{ ml: 1 }}>
               Primary
             </Label>
@@ -47,11 +53,11 @@ export default function HealthUnitBankAccountItem({ account, action, sx, ...othe
         </Stack>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Holder Name: {holderName}
+          Holder Name: {account_holder_name}
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Account Number: {number}
+          Account Number: {formatIBAN(last4)}
         </Typography>
       </Stack>
 
