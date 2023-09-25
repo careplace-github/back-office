@@ -27,7 +27,6 @@ import HealthUnitSettings from '../components/detail/settings/HealthUnitSettings
 
 export default function EditUserView({ services, healthUnit, reviews }) {
   const { themeStretch } = useSettingsContext();
-  const [healthUnitExternalAccounts, setHealthUnitExternalAccounts] = useState<any>([]);
 
   const router = useRouter();
 
@@ -38,32 +37,8 @@ export default function EditUserView({ services, healthUnit, reviews }) {
     // check if there is a tab in the query string
   );
 
-  const fetchHealthUnitExternalAccounts = async () => {
-    console.log('Fetch external accounts');
-    setIsLoading(true);
-    try {
-      const externalAccounts = await fetch(
-        `/api/health-units/${healthUnit._id}/external-accounts`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      setHealthUnitExternalAccounts(externalAccounts.data);
-    } catch (error) {
-      console.log('error');
-    }
-    setIsLoading(false);
-  };
-
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
-  }, []);
-
-  useEffect(() => {
-    fetchHealthUnitExternalAccounts();
   }, []);
 
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -145,12 +120,7 @@ export default function EditUserView({ services, healthUnit, reviews }) {
             </Tabs>
 
             {currentTab === 'details' && (
-              <HealthUnitNewViewEditForm
-                isEdit
-                healthUnit={healthUnit}
-                services={services}
-                bankAccounts={healthUnitExternalAccounts}
-              />
+              <HealthUnitNewViewEditForm isEdit healthUnit={healthUnit} services={services} />
             )}
 
             {currentTab === 'reviews' && (
