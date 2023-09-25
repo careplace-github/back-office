@@ -2,9 +2,8 @@
 import { useEffect, useState } from 'react';
 // @mui
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
-// types
-// import { IProductReview } from 'src/types/product';
-//
+// components
+import EmptyState from 'src/components/empty-state/EmptyState';
 import { CircularProgress, Box } from '@mui/material';
 import ReviewItem from './HealthUnitDetailReviewItem';
 
@@ -88,10 +87,16 @@ export default function HealthUnitReviewList({
           }}>
           <CircularProgress sx={{ color: 'primary.main' }} />
         </Box>
-      ) : (
+      ) : reviews?.length > 0 ? (
         reviews?.map(review => (
           <ReviewItem key={review._id} review={review} fetchReviews={fetchData} />
         ))
+      ) : (
+        <EmptyState
+          title="This Health Unit has no reviews"
+          description="All reviews will be displayed here"
+          icon="material-symbols:comments-disabled"
+        />
       )}
 
       <Pagination
