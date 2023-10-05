@@ -493,8 +493,6 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
 
       const token = getTokenResponse.id;
 
-      console.log('token', token);
-
       const accountCreated = await fetch(
         `/api/health-units/${currentHealthUnit?._id}/external-accounts`,
         {
