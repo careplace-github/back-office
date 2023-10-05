@@ -135,7 +135,7 @@ export default function HealthUnitBillingAddresses({
           horizontal: 'left',
         }}>
         <MenuItem
-          disabled={addressBook.find(a => a._id === addressId)?.primary}
+          disabled={addressBook?.find(a => a._id === addressId)?.primary}
           sx={{ p: '10px 20px' }}
           onClick={async () => {
             await onSetPrimaryAddress(addressId);
@@ -150,7 +150,7 @@ export default function HealthUnitBillingAddresses({
           onClick={() => {
             handleClose();
             console.info('EDIT', addressId);
-            const editAddress = addressBook.find(a => a._id === addressId);
+            const editAddress = addressBook?.find(a => a._id === addressId);
             setOpenAddNewBillingAddress({ show: true, address: editAddress });
           }}>
           <Iconify icon="solar:pen-bold" sx={{ mr: '7px' }} />
