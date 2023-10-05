@@ -171,6 +171,7 @@ export default function HealthUnitBillingAddresses({
 
       <NewBillingAddressForm
         open={openAddNewBillingAddress.show}
+        forcePrimary={addressBook?.length === 0}
         onClose={() => {
           setOpenAddNewBillingAddress({ show: false, address: null });
         }}

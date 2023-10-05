@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -35,6 +35,7 @@ type Props = {
   onUpdate: (address: any) => void;
   legalInformation: any;
   addressToEdit: any;
+  forcePrimary: boolean;
 };
 
 export default function NewBillingAddressForm({
@@ -44,17 +45,15 @@ export default function NewBillingAddressForm({
   onClose,
   onCreate,
   onUpdate,
+  forcePrimary,
 }: Props) {
   const { legalName, taxNumber } = legalInformation;
   const isUpdate = !!addressToEdit;
+  const [isValid, setIsValid] = useState<boolean>(false);
 
   const NewAddressSchema = Yup.object().shape({
     address: Yup.string().required('Address is required'),
     city: Yup.string().required('City is required'),
-    country: Yup.object().shape({
-      value: Yup.string().required(''),
-      text: Yup.string().required(''),
-    }),
     zipCode: Yup.string()
       .required('Zip code is required')
       .test('zipCode', 'Insert a valid Zip Code', value => {
@@ -69,7 +68,7 @@ export default function NewBillingAddressForm({
     address: addressToEdit?.street || '',
     zipCode: addressToEdit?.postal_code || '',
     country: { value: 'PT', text: 'Portugal' },
-    primary: addressToEdit?.primary || true,
+    primary: forcePrimary ? true : addressToEdit?.primary || true,
   };
 
   const methods = useForm({
@@ -83,7 +82,7 @@ export default function NewBillingAddressForm({
     reset,
     setValue,
     getValues,
-    formState: { isSubmitting, isValid, isDirty },
+    formState: { isSubmitting, isDirty },
   } = methods;
 
   useEffect(() => {
@@ -112,8 +111,12 @@ export default function NewBillingAddressForm({
   const primary = watch('primary');
 
   useEffect(() => {
-    console.log('city', city);
-  }, [city]);
+    if (city && address && zipCode?.length === 8 && country?.value && country?.text) {
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
+  }, [city, address, zipCode, country]);
 
   const onSubmit = async data => {
     try {
@@ -153,7 +156,7 @@ export default function NewBillingAddressForm({
         reset();
       }}>
       <FormProvider methods={methods}>
-        <DialogTitle>{!isUpdate ? 'New address' : 'Update Address'}</DialogTitle>
+        <DialogTitle>{!isUpdate ? 'New Address' : 'Update Address'}</DialogTitle>
 
         <DialogContent sx={{ pt: '24px' }} dividers>
           <Stack spacing={3}>
@@ -251,7 +254,13 @@ export default function NewBillingAddressForm({
               }}
             />
 
-            <RHFCheckbox disabled={isUpdate} name="primary" label="Use this address as primary." />
+            {!isUpdate && (
+              <RHFCheckbox
+                disabled={forcePrimary}
+                name="primary"
+                label="Use this address as primary."
+              />
+            )}
           </Stack>
         </DialogContent>
 
