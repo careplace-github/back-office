@@ -521,6 +521,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
       enqueueSnackbar('Something went wrong, try again.', {
         variant: 'error',
       });
+      setIsLoadingExternalAccounts(false);
     }
   };
 
