@@ -86,15 +86,12 @@ export default function NewBillingAddressForm({
   } = methods;
 
   useEffect(() => {
-    console.log(addressToEdit);
     if (addressToEdit) {
       setValue('address', addressToEdit?.street);
       setValue('city', addressToEdit?.city);
       setValue('zipCode', addressToEdit?.postal_code);
       setValue('primary', addressToEdit?.primary);
       const findCountry = countries.find(c => {
-        // console.log('code', c.code);
-        // console.log('address country', addressToEdit?.country);
         return c.code === addressToEdit?.country;
       });
       setValue('country', {

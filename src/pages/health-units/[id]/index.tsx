@@ -18,7 +18,8 @@ export default function EditUserPage({ healthUnit, reviews, services }) {
       <Head>
         <title> Edit Health Unit | Careplace Admin </title>
       </Head>
-
+      {/* TODO: remove console.log */}
+      {console.log('Health unit', healthUnit)}
       <DashboardLayout>
         <HealthUnitDetailView healthUnit={healthUnit} services={services} reviews={reviews} />
       </DashboardLayout>
