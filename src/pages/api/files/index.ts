@@ -54,7 +54,6 @@ const handler: NextApiHandler = async (req, res) => {
     // create uploads folder if not exists
     const uploadsFolderPath = 'public/uploads';
     if (!fs.existsSync(uploadsFolderPath)) {
-      console.log('Does not exist');
       await fs.mkdirSync(uploadsFolderPath);
     }
 
