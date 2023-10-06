@@ -48,10 +48,6 @@ export default function HealthUnitBillingAddresses({
     setOpenOptions(true);
   };
 
-  useEffect(() => {
-    console.log(openAddNewBillingAddress);
-  }, [openAddNewBillingAddress]);
-
   const handleClose = () => {
     setOpenOptions(false);
     setAddressId('');

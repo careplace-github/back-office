@@ -107,7 +107,6 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
   const [healthUnitExternalAccounts, setHealthUnitExternalAccounts] = useState<any>([]);
 
   const fetchHealthUnitExternalAccounts = async () => {
-    console.log('Fetch external accounts');
     setIsLoadingExternalAccounts(true);
     try {
       const externalAccounts = await fetch(
@@ -400,12 +399,9 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
       const addresses = currentHealthUnit?.billing_addresses;
       addresses?.forEach((a, index) => {
         if (a._id === addressToEdit._id) {
-          console.log('here');
           addresses[index] = addressToEdit;
         }
       });
-      console.log('Address to edit', addressToEdit);
-      console.log('updated', addresses);
       await fetch(`/api/health-units/${currentHealthUnit._id}`, {
         method: 'PUT',
         body: JSON.stringify({ billing_addresses: addresses }),
@@ -473,7 +469,15 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
   };
 
   const handleAddNewAccount = async newAccount => {
-    console.log('new account', newAccount);
+    if (!healthUnit?.stripe_information?.account_id) {
+      enqueueSnackbar(
+        'You cant add a bank account if the health unit has no stripe account id associated',
+        {
+          variant: 'warning',
+        }
+      );
+      return;
+    }
     setIsLoadingExternalAccounts(true);
     // TODO: MAP BODY TO SEND TO BACKEND
     try {
@@ -482,7 +486,6 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
         currency: 'eur',
         account_holder_name: newAccount.holderName,
         account_holder_type: 'company',
-        // account_number: 'PT50000201231234567890154',
         account_number: newAccount.accountNumber,
       };
 
@@ -1091,6 +1094,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
         </Box>
         <Box sx={{ width: '100%', pt: 5 }}>
           <HealthUnitBankAccounts
+            hasAccountId={healthUnit?.stripe_information?.account_id}
             isLoading={isLoadingExternalAccounts}
             handleAddNewAccount={handleAddNewAccount}
             onSetPrimaryAccount={handleSetprimaryAccount}

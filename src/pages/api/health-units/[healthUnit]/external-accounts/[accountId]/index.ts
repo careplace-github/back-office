@@ -15,8 +15,6 @@ export default async function ordersRoute(
     const session = (await getServerSession(req, res, authOptions)) as Session | null;
 
     const accessToken = session?.accessToken;
-    console.log('access token: ', accessToken);
-
     const healthUnitId = req.query.healthUnit as string;
     const { accountId } = req.query;
 
