@@ -367,7 +367,6 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
   );
 
   const handleAddNewAddress = async (address: any) => {
-    console.info('ADDRESS', address);
     try {
       const addresses = currentHealthUnit?.billing_addresses || [];
       // remove previous primary tag
