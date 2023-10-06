@@ -26,10 +26,6 @@ export default function HealthUnitBankAccountItem({ account, action, sx, ...othe
     )}${last4.charAt(3)}`;
   };
 
-  useEffect(() => {
-    console.log('Account', account);
-  }, [account]);
-
   return (
     <Stack
       component={Paper}

@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-import { Typography, Box, CircularProgress, Popover } from '@mui/material';
+import { Typography, Box, CircularProgress, Popover, Tooltip } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify';
 import EmptyState from 'src/components/empty-state/EmptyState';
@@ -20,10 +20,12 @@ type Props = {
   onDeleteAccount: (id: string) => void;
   onSetPrimaryAccount: (id: string) => void;
   isLoading: boolean;
+  hasAccountId: boolean;
 };
 
 export default function HealthUnitBankAccounts({
   bankAccounts,
+  hasAccountId,
   isLoading,
   handleAddNewAccount,
   onSetPrimaryAccount,
@@ -38,10 +40,6 @@ export default function HealthUnitBankAccounts({
     setAnchorEl(event.currentTarget);
     setOpenOptions(true);
   };
-
-  useEffect(() => {
-    console.log(openAddNewBankAccount);
-  }, [openAddNewBankAccount]);
 
   const handleClose = () => {
     setOpenOptions(false);
@@ -59,13 +57,30 @@ export default function HealthUnitBankAccounts({
         direction="row"
         sx={{ width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h4">Bank Accounts</Typography>
-        <Button
-          size="small"
-          color="primary"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={() => setOpenAddNewBankAccount(true)}>
-          Bank Account
-        </Button>
+        {hasAccountId ? (
+          <Button
+            size="small"
+            color="primary"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+            onClick={() => setOpenAddNewBankAccount(true)}>
+            Bank Account
+          </Button>
+        ) : (
+          <Tooltip
+            arrow
+            title="You need to generate a Stripe Account Id in order to add a new Bank Account.">
+            <div>
+              <Button
+                disabled
+                size="small"
+                color="primary"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+                onClick={() => setOpenAddNewBankAccount(true)}>
+                Bank Account
+              </Button>
+            </div>
+          </Tooltip>
+        )}
       </Stack>
 
       <Stack spacing={2.5} sx={{ my: 5 }}>

@@ -257,46 +257,46 @@ export default function HealthUnitSettings({ healthUnit }) {
           </Typography>
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
-            <TextField
-              label="Account ID ***"
-              sx={{
-                width: '300px',
-              }}
-              value={stripeAccountId}
-              disabled={isAccountIdDisabled}
-              InputLabelProps={{ shrink: true }}
-              // view only
+            <Stack direction="column" alignItems="flex-start" justifyContent="flex-start">
+              <TextField
+                label="Account ID ***"
+                sx={{
+                  width: '300px',
+                }}
+                value={stripeAccountId}
+                disabled={isAccountIdDisabled}
+                InputLabelProps={{ shrink: true }}
+                // view only
 
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    sx={{
-                      cursor:
-                        stripeAccountId && !user?.permissions?.includes('super_admin')
-                          ? 'default'
-                          : 'pointer',
-                    }}
-                    onClick={() => {
-                      if (stripeAccountId && !user?.permissions?.includes('super_admin')) return;
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      sx={{
+                        cursor:
+                          stripeAccountId && !user?.permissions?.includes('super_admin')
+                            ? 'default'
+                            : 'pointer',
+                      }}
+                      onClick={() => {
+                        if (stripeAccountId && !user?.permissions?.includes('super_admin')) return;
 
-                      setIsAccountIdDisabled(!isAccountIdDisabled);
-                    }}>
-                    <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
-                      {isAccountIdDisabled ? (
-                        // show open lock
-                        <Iconify icon="ooui:lock" color="main" />
-                      ) : (
-                        <Iconify icon="ooui:un-lock" color="main" />
-                      )}
-                    </Box>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {!isAccountIdDisabled && !stripeAccountId && (
-              <>
+                        setIsAccountIdDisabled(!isAccountIdDisabled);
+                      }}>
+                      <Box component="span" sx={{ color: 'text.disabled={isView || isScreening}' }}>
+                        {isAccountIdDisabled ? (
+                          // show open lock
+                          <Iconify icon="ooui:lock" color="main" />
+                        ) : (
+                          <Iconify icon="ooui:un-lock" color="main" />
+                        )}
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              {!isAccountIdDisabled && !stripeAccountId && (
                 <Typography
                   onClick={() => {
                     setGenerateAccountIdPopup(true);
@@ -314,11 +314,9 @@ export default function HealthUnitSettings({ healthUnit }) {
                   }}>
                   Generate Account ID
                 </Typography>
-              </>
-            )}
+              )}
 
-            {!isAccountIdDisabled && stripeAccountId && (
-              <>
+              {!isAccountIdDisabled && stripeAccountId && (
                 <Typography
                   onClick={() => {
                     setDeleteAccountIdPopup(true);
@@ -336,8 +334,8 @@ export default function HealthUnitSettings({ healthUnit }) {
                   }}>
                   Delete Account ID
                 </Typography>
-              </>
-            )}
+              )}
+            </Stack>
 
             <ConfirmDialog
               open={generateAccountIdPopup}
@@ -405,9 +403,9 @@ export default function HealthUnitSettings({ healthUnit }) {
               }
             />
 
-            <Box>
+            <Box sx={{ ml: '20px' }}>
               <TextField
-                sx={{ ml: '20px', width: '300px' }}
+                sx={{ width: '300px' }}
                 label="Customer ID"
                 value={stripeCustomerId}
                 disabled={isCustomerIdDisabled}
@@ -461,25 +459,23 @@ export default function HealthUnitSettings({ healthUnit }) {
               )}
 
               {!isCustomerIdDisabled && stripeCustomerId && (
-                <>
-                  <Typography
-                    onClick={() => {
-                      setDeleteCustomerIdPopup(true);
-                    }}
-                    sx={{
-                      color: 'text.disabled',
-                      width: 'fit-content',
-                      fontSize: '12px',
-                      pl: '5px',
-                      pt: '5px',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        color: 'primary.main',
-                      },
-                    }}>
-                    Delete Customer ID
-                  </Typography>
-                </>
+                <Typography
+                  onClick={() => {
+                    setDeleteCustomerIdPopup(true);
+                  }}
+                  sx={{
+                    color: 'text.disabled',
+                    width: 'fit-content',
+                    fontSize: '12px',
+                    pl: '5px',
+                    pt: '5px',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      color: 'primary.main',
+                    },
+                  }}>
+                  Delete Customer ID
+                </Typography>
               )}
             </Box>
 

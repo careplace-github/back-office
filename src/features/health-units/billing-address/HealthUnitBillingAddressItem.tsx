@@ -24,10 +24,6 @@ export default function AddressItem({ address, legalInformation, action, sx, ...
   const { legalName, taxNumber } = legalInformation;
   const countryLabel = countries.find(c => c.code === country);
 
-  useEffect(() => {
-    console.log('Address', address);
-  }, [address]);
-
   return (
     <Stack
       component={Paper}
