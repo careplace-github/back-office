@@ -148,7 +148,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
       });
       setCurrentHealthUnit(response);
     } catch (error) {
-      console.log('error', error);
+      console.log('error in fetch health unit info', error);
     }
     setIsFetchingHealthUnit(false);
   };
