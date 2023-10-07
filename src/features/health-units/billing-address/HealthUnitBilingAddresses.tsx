@@ -102,7 +102,7 @@ export default function HealthUnitBillingAddresses({
                 }}
               />
             ))
-        ) : addressBook?.length === 0 && !isLoading ? (
+        ) : (addressBook?.length === 0 || !addressBook) && !isLoading ? (
           <EmptyState
             icon="mingcute:paper-line"
             title="This Health Unit has no billing addresses"
