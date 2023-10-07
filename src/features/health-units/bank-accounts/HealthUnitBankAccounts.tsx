@@ -164,6 +164,7 @@ export default function HealthUnitBankAccounts({
       </Popover>
 
       <NewBankAccountForm
+        forcePrimary={bankAccounts?.length === 0}
         open={openAddNewBankAccount}
         onClose={() => {
           setOpenAddNewBankAccount(false);

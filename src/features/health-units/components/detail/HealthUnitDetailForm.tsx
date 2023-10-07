@@ -90,7 +90,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [currentHealthUnit, setCurrentHealthUnit] = useState<any>(healthUnit || null);
   const [isDeletingAccount, setIsDeletingAccount] = useState<boolean>(false);
-  const [isLoadingExternalAccounts, setIsLoadingExternalAccounts] = useState<boolean>(true);
+  const [isLoadingExternalAccounts, setIsLoadingExternalAccounts] = useState<boolean>(false);
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState<{
     show: boolean;
     id: string | undefined;
