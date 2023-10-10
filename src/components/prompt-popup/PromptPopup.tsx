@@ -13,16 +13,22 @@ type props = {
   cancelText: string;
   onConfirm: () => void;
   isSubmitting: boolean;
+  color?: 'error' | 'primary';
+  icon?: string;
+  iconColor?: string;
 };
 
 const PromptPopup = ({
   open,
   onClose,
   onConfirm,
+  color = 'error',
   text,
   confirmText,
   cancelText,
   isSubmitting,
+  iconColor = '#FF5630',
+  icon = 'carbon:warning-filled',
 }: props) => {
   const isMdUp = useResponsive('up', 'md');
   const theme = useTheme();
@@ -71,7 +77,7 @@ const PromptPopup = ({
           }}
         />
 
-        <Iconify color="#FF5630" icon="carbon:warning-filled" width={50} height={50} />
+        <Iconify icon={icon} width={50} height={50} sx={{ color: iconColor }} />
 
         <Typography
           variant="body2"
@@ -99,7 +105,7 @@ const PromptPopup = ({
 
           <LoadingButton
             variant="contained"
-            color="error"
+            color={color}
             loading={isSubmitting}
             sx={{ width: '100%' }}
             onClick={async () => {

@@ -47,6 +47,7 @@ interface RHFMultiCheckboxProps extends Omit<FormControlLabelProps, 'control' | 
   label?: string;
   spacing?: number;
   helperText?: React.ReactNode;
+  checked?: boolean;
 }
 
 export function RHFMultiCheckbox({
@@ -56,6 +57,7 @@ export function RHFMultiCheckbox({
   options,
   spacing,
   helperText,
+  checked,
   ...other
 }: RHFMultiCheckboxProps) {
   const { control } = useFormContext();
@@ -100,7 +102,9 @@ export function RHFMultiCheckbox({
                 control={
                   <Checkbox
                     checked={field.value.includes(option.value)}
-                    onChange={() => field.onChange(getSelected(field.value, option.value))}
+                    onChange={() => {
+                      field.onChange(getSelected(field.value, option.value));
+                    }}
                   />
                 }
                 label={option.label}
