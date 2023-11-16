@@ -23,9 +23,10 @@ type Props = {
   open: boolean;
   onClose: VoidFunction;
   onCreate: (address: any) => void;
+  forcePrimary: boolean;
 };
 
-export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
+export default function NewBankAccountForm({ open, onClose, onCreate, forcePrimary }: Props) {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const NewAccountSchema = Yup.object().shape({
@@ -98,7 +99,11 @@ export default function NewBankAccountForm({ open, onClose, onCreate }: Props) {
               <RHFTextField name="accountNumber" label="Account Number" />
             </Box>
 
-            <RHFCheckbox name="primary" label="Use this bank account as primary." />
+            <RHFCheckbox
+              disabled={forcePrimary}
+              name="primary"
+              label="Use this bank account as primary."
+            />
           </Stack>
         </DialogContent>
 

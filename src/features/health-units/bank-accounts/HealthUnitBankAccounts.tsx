@@ -112,7 +112,7 @@ export default function HealthUnitBankAccounts({
                 }}
               />
             ))
-        ) : bankAccounts.length === 0 && !isLoading ? (
+        ) : bankAccounts?.length === 0 && !isLoading ? (
           <EmptyState
             icon="clarity:bank-solid"
             title="This Health Unit has no Bank Accounts"
@@ -164,6 +164,7 @@ export default function HealthUnitBankAccounts({
       </Popover>
 
       <NewBankAccountForm
+        forcePrimary={bankAccounts?.length === 0}
         open={openAddNewBankAccount}
         onClose={() => {
           setOpenAddNewBankAccount(false);

@@ -27,6 +27,7 @@ import {
   Button,
   Chip,
   CardContent,
+  Checkbox,
   styled,
   InputAdornment,
   Modal,
@@ -90,7 +91,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [currentHealthUnit, setCurrentHealthUnit] = useState<any>(healthUnit || null);
   const [isDeletingAccount, setIsDeletingAccount] = useState<boolean>(false);
-  const [isLoadingExternalAccounts, setIsLoadingExternalAccounts] = useState<boolean>(true);
+  const [isLoadingExternalAccounts, setIsLoadingExternalAccounts] = useState<boolean>(false);
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState<{
     show: boolean;
     id: string | undefined;
@@ -132,6 +133,10 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
   const billingAddresses = currentHealthUnit?.billing_addresses || [];
 
   const [fileData, setFileData] = useState<FormData | null>(null);
+  const [openSetActivePopUp, setOpenSetActivePopUp] = useState<{
+    show: boolean;
+    action: 'enable' | 'disable' | undefined;
+  }>({ show: false, action: undefined });
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -148,7 +153,7 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
       });
       setCurrentHealthUnit(response);
     } catch (error) {
-      console.log('error', error);
+      console.log('error in fetch health unit info', error);
     }
     setIsFetchingHealthUnit(false);
   };
@@ -219,6 +224,8 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
     handleSubmit,
     formState: { isSubmitting, isDirty },
   } = methods;
+
+  const isActive = watch('isActive');
 
   const onSubmit = async data => {
     let fileURL;
@@ -774,14 +781,53 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
             ))}
           </RHFSelect>
           <Typography variant="h4"></Typography>
-
+          <PromptPopup
+            isSubmitting={false}
+            open={openSetActivePopUp.show}
+            onClose={() => setOpenSetActivePopUp({ show: false, action: undefined })}
+            icon={openSetActivePopUp.action === 'enable' ? 'typcn:info-outline' : undefined}
+            iconColor={openSetActivePopUp.action === 'enable' ? 'primary.main' : undefined}
+            color={openSetActivePopUp.action === 'enable' ? 'primary' : 'error'}
+            onConfirm={() => {
+              setValue('isActive', !isActive);
+              setOpenSetActivePopUp({ show: false, action: undefined });
+            }}
+            text={
+              openSetActivePopUp.action === 'enable'
+                ? 'By activating this health unit, it will be listed in the marketplace and will be able to receive orders. Are you sure you want to proceed?'
+                : 'By desactivating this health unit, it will not be listed in the marketplace and will be unable to receive orders. Are you sure you want to proceed?'
+            }
+            confirmText="Confirm"
+            cancelText="Cancel"
+          />
           {!isNew && (
             <Stack
               direction="row"
               alignItems="center"
               justifyContent="flex-start"
               sx={{ gridColumn: 'span 2' }}>
-              <RHFCheckbox name="isActive" label="Active" />
+              {!healthUnit?.stripe_information?.account_id ? (
+                <MuiTooltip
+                  title="You need to generate a Stripe account id in order to activate this health unit"
+                  arrow>
+                  <div>
+                    <Checkbox disabled checked={false} />
+                  </div>
+                </MuiTooltip>
+              ) : (
+                <Checkbox
+                  checked={isActive}
+                  value={isActive}
+                  onClick={() => {
+                    setOpenSetActivePopUp({ show: true, action: isActive ? 'disable' : 'enable' });
+                  }}
+                  onChange={e => {
+                    // do nothing
+                    return false;
+                  }}
+                />
+              )}
+              <Typography sx={{ mr: '5px' }}>Active</Typography>
               <Tooltip
                 placement="right"
                 text="If you mark this health unit as active, it will be visible to the public. If you mark it as inactive, it will not be visible to the public. Please make sure you know what you are doing."
