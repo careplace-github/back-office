@@ -22,6 +22,7 @@ import fetch from 'src/lib/fetch';
 import HealthUnitNewViewEditForm from '../components/detail/HealthUnitDetailForm';
 import HealthUnitDetailsReview from '../components/detail/reviews/HealthUnitDetailReviewsSummary';
 import HealthUnitSettings from '../components/detail/settings/HealthUnitSettings';
+import UserNewEditForm from '../components/UserNewEditForm';
 
 // ----------------------------------------------------------------------
 
@@ -114,6 +115,10 @@ export default function EditUserView({ services, healthUnit, reviews }) {
                   value: 'account',
                   label: 'Account',
                 },
+                {
+                  value: 'newCollaborator',
+                  label: 'Add Collaborator',
+                },
               ].map(tab => (
                 <Tab key={tab.value} value={tab.value} label={tab.label} />
               ))}
@@ -121,6 +126,10 @@ export default function EditUserView({ services, healthUnit, reviews }) {
 
             {currentTab === 'details' && (
               <HealthUnitNewViewEditForm isEdit healthUnit={healthUnit} services={services} />
+            )}
+
+            {currentTab === 'newCollaborator' && (
+              <UserNewEditForm services={services} healthUnitId={healthUnit._id} />
             )}
 
             {currentTab === 'reviews' && (
