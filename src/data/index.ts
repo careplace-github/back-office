@@ -4,3 +4,4 @@ export { default as kinshipDegrees } from './kinshipDegrees';
 export { default as roles } from './roles';
 export { default as socials } from './socials';
 export { default as healthUnitTypes } from './healthUnitTypes';
+export { default as collaboratorRoles } from './collaboratorRoles';
