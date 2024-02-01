@@ -55,13 +55,8 @@ export default async function ordersRoute(
         });
         return res.status(200).json(response.data);
       } catch (error) {
-        switch (error.response.data.error) {
-          case 'EMAIL_ALREADY_EXISTS':
-            return res.status(400).json({ error: 'EMAIL_ALREADY_EXISTS' });
-
-          default:
-            return res.status(500).json({ error: 'Internal server error' });
-        }
+        console.log('error', error.response);
+        return res.status(500).json({ error: 'Internal server error first' });
       }
     }
 
