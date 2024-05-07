@@ -63,10 +63,16 @@ const ROLES_OPTIONS = [{ value: 'all', label: 'All' }, ...roles];
 
 const COUNTRIES_OPTIONS = [{ code: 'all', label: 'All' }, ...countries];
 
-const STATUS_OPTIONS = [
+const PAYMENTS_OPTIONS = [
   { value: 'all', label: 'All' },
   { value: 'enabled', label: 'Enabled' },
   { value: 'restricted', label: 'Restricted' },
+];
+
+const STATUS_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'inactive', label: 'Inactive' },
 ];
 
 const TABLE_HEAD = [
@@ -114,6 +120,7 @@ export default function healthUnitsListView() {
   const [filterType, setFilterType] = useState('all');
   const [filterCountry, setFilterCountry] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterPayments, setFilterPayments] = useState('all');
 
   const [dataFiltered, setDataFiltered] = useState<ICollaboratorProps[]>([]);
   const fetchHealthUnits = async () => {
@@ -136,6 +143,7 @@ export default function healthUnitsListView() {
         filterCountry,
         filterType,
         filterStatus,
+        filterPayments,
       });
 
       setDataFiltered(filteredData);
@@ -150,7 +158,7 @@ export default function healthUnitsListView() {
     setIsLoading(true);
 
     fetchHealthUnits();
-  }, [page, rowsPerPage, order, orderBy, filterName, filterCountry, filterType, filterStatus]);
+  }, [page, rowsPerPage, order, orderBy, filterName, filterCountry, filterType, filterStatus, filterPayments]);
 
   const { themeStretch } = useSettingsContext();
 
@@ -185,6 +193,11 @@ export default function healthUnitsListView() {
   const handleFilterStatus = event => {
     setPage(0);
     setFilterStatus(event.target.value);
+  };
+
+  const handleFilterPayments = event => {
+    setPage(0);
+    setFilterPayments(event.target.value);
   };
 
   const handleFilterName = event => {
@@ -230,6 +243,7 @@ export default function healthUnitsListView() {
     setFilterType('all');
     setFilterCountry('all');
     setFilterStatus('all');
+    setFilterPayments('all');
     setPage(0);
   };
 
@@ -256,13 +270,16 @@ export default function healthUnitsListView() {
           filterType={filterType}
           filterCountry={filterCountry}
           filterStatus={filterStatus}
+          filterPayments={filterPayments}
           optionsRole={ROLES_OPTIONS}
           optionsCountry={COUNTRIES_OPTIONS}
           optionsStatus={STATUS_OPTIONS}
+          optionsPayments={PAYMENTS_OPTIONS}
           onFilterName={handleFilterName}
           onFilterType={handleFilterType}
           onFilterCountry={handleFilterCountry}
           onFilterStatus={handleFilterStatus}
+          onFilterPayments={handleFilterPayments}
           onResetFilter={handleResetFilter}
         />
 
@@ -339,6 +356,7 @@ function applyFilter({
   filterCountry,
   filterType,
   filterStatus,
+  filterPayments,
 }) {
   const stabilizedThis = inputData?.map((el, index) => [el, index]);
 
@@ -369,6 +387,23 @@ function applyFilter({
 
   if (filterStatus !== 'all') {
     switch (filterStatus) {
+      case 'active':
+        inputData = inputData.filter(healthUnit => healthUnit.is_active === true);
+
+        break;
+
+      case 'inactive':
+        inputData = inputData.filter(healthUnit => healthUnit.is_active === false);
+
+        break;
+      default:
+        inputData = inputData.filter(healthUnit => healthUnit.is_active === true);
+        break;
+    }
+  }
+
+  if (filterPayments !== 'all') {
+    switch (filterPayments) {
       case 'enabled':
         inputData = inputData.filter(
           healthUnit => healthUnit.stripe_account?.requirements?.currently_due?.length === 0
@@ -389,5 +424,6 @@ function applyFilter({
         break;
     }
   }
+
   return inputData;
 }

@@ -806,27 +806,18 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
               alignItems="center"
               justifyContent="flex-start"
               sx={{ gridColumn: 'span 2' }}>
-              {!healthUnit?.stripe_information?.account_id ? (
-                <MuiTooltip
-                  title="You need to generate a Stripe account id in order to activate this health unit"
-                  arrow>
-                  <div>
-                    <Checkbox disabled checked={false} />
-                  </div>
-                </MuiTooltip>
-              ) : (
-                <Checkbox
-                  checked={isActive}
-                  value={isActive}
-                  onClick={() => {
-                    setOpenSetActivePopUp({ show: true, action: isActive ? 'disable' : 'enable' });
-                  }}
-                  onChange={e => {
-                    // do nothing
-                    return false;
-                  }}
-                />
-              )}
+              <Checkbox
+                checked={isActive}
+                value={isActive}
+                onClick={() => {
+                  setOpenSetActivePopUp({ show: true, action: isActive ? 'disable' : 'enable' });
+                }}
+                onChange={e => {
+                  // do nothing
+                  return false;
+                }}
+              />
+
               <Typography sx={{ mr: '5px' }}>Active</Typography>
               <Tooltip
                 placement="right"
