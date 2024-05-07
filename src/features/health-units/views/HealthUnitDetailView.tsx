@@ -34,12 +34,20 @@ export default function EditUserView({ services, healthUnit, reviews }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [currentTab, setCurrentTab] = useState(
-    router.query.tab ? router.query.tab.toString() : 'details'
-    // check if there is a tab in the query string
+    router.query.tab ? router.query.tab.toString() : 'details' // get the tab from the query string or default to 'details'
   );
 
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
+    // Add the tab to the query string
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, tab: newValue },
+      },
+      undefined,
+      { shallow: true }
+    );
   }, []);
 
   const [openConfirm, setOpenConfirm] = useState(false);
