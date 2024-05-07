@@ -31,6 +31,8 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 export default function NavAccount({ sx, ...other }: StackProps) {
   const { data: user } = useSession();
+    console.log('user', user);
+
 
   // Use useSessionStorage to get and set values
   const [name, setName] = useSessionStorage('name', '');
@@ -40,8 +42,11 @@ export default function NavAccount({ sx, ...other }: StackProps) {
   useEffect(() => {
     if (user) {
       setName(user.name || '');
+      setPicture(user.picture || '');
+      console.log('picture', picture);
     }
   }, [user, setName]);
+
 
   return (
     <Stack sx={sx} {...other}>

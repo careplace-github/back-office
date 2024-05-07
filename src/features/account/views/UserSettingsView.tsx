@@ -33,20 +33,6 @@ export default function UserSettingstView({ user }) {
       icon: <Iconify icon="ic:round-account-box" />,
       component: <AccountGeneral user={user} />,
     },
-
-    {
-      value: 'change_password',
-      label: 'Change Password',
-      icon: <Iconify icon="ic:round-vpn-key" />,
-      component: <AccountChangePassword />,
-    },
-
-    {
-      value: 'account_settings',
-      label: 'Account Settings',
-      icon: <Iconify icon="ic:round-settings" />,
-      component: <AccountSettings />,
-    },
   ];
 
   return (

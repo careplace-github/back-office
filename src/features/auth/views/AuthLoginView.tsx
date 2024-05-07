@@ -17,7 +17,7 @@ export default function LoginView() {
     <>
       {isMdUp && (
         <Stack spacing={2} sx={{ mb: 5, mt: 0, position: 'relative' }}>
-          <Typography variant="h4">Login</Typography>
+          <Typography variant="h4">Admin Login</Typography>
         </Stack>
       )}
 

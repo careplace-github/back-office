@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { parseISO } from 'date-fns';
 // next
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 // form
@@ -281,6 +281,8 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
           name: `${data.directorName} ${data.directorSurname}`,
           email: data.directorEmail,
           phone: data.directorPhone,
+          role: data.directorRole,
+          birthdate: data.directorBirthdate,
           address: {
             street: data.directorStreet,
             postal_code: data.directorPostalCode,
@@ -313,6 +315,9 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
         }
 
         enqueueSnackbar('Health unit updated successfully!');
+
+        // Go to the top of the page
+        window.scrollTo(0, 0);
       } catch (err) {
         switch (err.message) {
           default:
@@ -744,6 +749,9 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
               if (newValue.length === 0) {
                 setValue('services', []);
               }
+
+              // Update isDirty to allow form submission
+              setCustomIsDirty(true);
             }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
@@ -791,6 +799,8 @@ export default function HealthUnitDetailForm({ isNew, isEdit, healthUnit, servic
             onConfirm={() => {
               setValue('isActive', !isActive);
               setOpenSetActivePopUp({ show: false, action: undefined });
+              // Update isDirty to allow form submission
+              setCustomIsDirty(true);
             }}
             text={
               openSetActivePopUp.action === 'enable'

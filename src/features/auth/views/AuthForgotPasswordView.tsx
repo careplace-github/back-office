@@ -22,15 +22,13 @@ export default function ForgotPasswordView() {
       />
 
       <Typography variant="h3" paragraph>
-        Esqueceu-se da Password?
+        Forgot Password?
       </Typography>
 
       <Typography variant="body2" sx={{ color: 'text.secondary', mb: 5 }}>
-        Por favor insira o endereço de email associado à sua conta e enviaremos um código de
-        verificação para repor a sua password.
+        Please contact your administrator to reset your password.
       </Typography>
 
-      <AuthForgotPasswordForm />
 
       <Link
         component={NextLink}
@@ -44,7 +42,7 @@ export default function ForgotPasswordView() {
           display: 'inline-flex',
         }}>
         <Iconify icon="carbon:chevron-left" width={16} sx={{ mr: 1 }} />
-        Voltar ao Login
+        Back to login
       </Link>
     </>
   );

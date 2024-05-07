@@ -115,7 +115,7 @@ export default function AuthLoginForm() {
           variant="body2"
           sx={{ cursor: 'pointer', textDecoration: 'underline' }}
           color="text.secondary">
-          Esqueceu-se da password?
+          Forgot password?
         </Typography>
       </Stack>
 
@@ -134,7 +134,7 @@ export default function AuthLoginForm() {
             color: theme => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
           },
         }}>
-        Entrar
+        Admin Login
       </LoadingButton>
     </FormProvider>
   );

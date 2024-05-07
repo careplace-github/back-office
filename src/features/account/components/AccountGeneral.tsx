@@ -162,6 +162,8 @@ export default function AccountGeneral({ user }) {
           <Card sx={{ py: 10, px: 3, textAlign: 'center' }}>
             <RHFUploadAvatar
               name="picture"
+              // block the user from changing the avatar
+              disabled
               maxSize={3145728}
               onDrop={handleDrop}
               helperText={
@@ -193,23 +195,15 @@ export default function AccountGeneral({ user }) {
                 xs: 'repeat(1, 1fr)',
                 sm: 'repeat(2, 1fr)',
               }}>
-              <RHFTextField name="firstName" label="Name" />
-              <RHFTextField name="lastName" label="Surname" />
+              <RHFTextField name="firstName" label="Name" disabled/>
+              <RHFTextField name="lastName" label="Surname" disabled/>
 
               <RHFTextField
                 name="email"
                 label="Email"
                 disabled
                 value={truncateString(user?.email as string, 32) || ''}
-                tooltip={{
-                  tooltipWidth: '200px',
-                  icon: user?.email_verified === true ? 'simple-line-icons:check' : 'ep:warning',
-                  text:
-                    user?.email_verified === true
-                      ? 'O seu email foi verificado com sucesso!'
-                      : 'O seu email não está verificado.',
-                  iconColor: user?.email_verified === true ? 'green' : 'orange',
-                }}
+               
               />
 
               <Box>
@@ -219,15 +213,7 @@ export default function AccountGeneral({ user }) {
                   defaultCountry="PT"
                   forceCallingCode
                   disabled
-                  tooltip={{
-                    tooltipWidth: '200px',
-                    icon: user?.phone_verified === true ? 'simple-line-icons:check' : 'ep:warning',
-                    text:
-                      user?.phone_verified === true
-                        ? 'O seu telemóvel foi verificado com sucesso!'
-                        : 'O seu telemóvel não está verificado.',
-                    iconColor: user?.phone_verified === true ? 'green' : 'orange',
-                  }}
+                 
                   onChange={value => {
                     /**
                      * Portuguese Number Validation
@@ -253,25 +239,7 @@ export default function AccountGeneral({ user }) {
                   }}
                 />
 
-                {user?.phone_verified !== true && (
-                  <Typography
-                    onClick={() => {
-                      handleConfirmPhoneClick();
-                    }}
-                    sx={{
-                      color: 'text.disabled',
-                      width: 'fit-content',
-                      fontSize: '12px',
-                      pl: '5px',
-                      pt: '5px',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        color: 'primary.main',
-                      },
-                    }}>
-                    Confirm phone
-                  </Typography>
-                )}
+               
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>

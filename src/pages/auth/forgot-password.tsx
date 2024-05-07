@@ -15,7 +15,7 @@ export default function ForgotPasswordPage() {
   return (
     <>
       <Head>
-        <title>Esqueceu-se da Password? | Careplace Admin</title>
+        <title>Forgot Password? | Careplace Admin</title>
       </Head>
 
       <AuthForgotPasswordView />
